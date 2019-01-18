@@ -54,6 +54,11 @@ else:
 app.config['DEBUG'] = bool(os.environ.get('DEBUG', True))
 app.config['ASSETS_DEBUG'] = app.config['DEBUG']
 app.config['TEMPLATES_AUTO_RELOAD'] = app.config['DEBUG']
+
+# Static settings
+app.config['STATIC_DIR'] = config['REQUIRED']['static dir']
+app.config['STATIC_PATH'] = config['REQUIRED']['static path']
+
 # This is a seperate thing bc it can get messy af
 app.config['SQLALCHEMY_ECHO'] = bool(os.environ.get('SQL_DEBUG', 0))
 # Settings from the config file
@@ -62,3 +67,7 @@ app.config['SECRET_KEY'] = config['REQUIRED']['secret key']
 
 # This is for signals. Probably won't need it.
 # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+
+# Some kinda magic
+if __name__ == '__main__':
+    app.run()

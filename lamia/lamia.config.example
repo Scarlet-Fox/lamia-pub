@@ -10,3 +10,10 @@ database uri=postgresql://username:password@localhost/database_name
 ; btw, lamia only supports PostgreSQL but you can use postgresql+pg8000 if you 
 ; need a pure python implementation (which is PyPy friendly)
 ; (if you're using pypy, you can also pip install psycopg2cffi)
+
+static dir=/the/absolute/file/path/to/static/directory
+; static files meaning things like uploads, js libraries, oh and lamia's js stuff
+; basically point this to where they are on your server/desktop/laptop/raspberry pi
+
+static path=/relative/url/path
+; point this to where static files will be on your webserver
