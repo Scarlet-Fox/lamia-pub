@@ -3,7 +3,8 @@
 ; to customize, tbh.
 
 secret key=your key here. btw you want to change this
-; get a fancy one with `python -c 'import os; print(os.urandom(24).hex())'`
+; get a fancy one with "python -c 'import os; print(os.urandom(24).hex())'"
+; run that without the double quotes
 
 database uri=postgresql://username:password@localhost/database_name
 ; this is based on the format here - https://docs.sqlalchemy.org/en/latest/core/engines.html

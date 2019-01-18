@@ -4,9 +4,16 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		{% assets filters="cssmin", output="generated/base.css" %}
+		<link href="{{ASSET_URL}}" rel="stylesheet">
+		{% endassets %}
 	</head>
 	
 	<body>
+		{% block content %}
+		{% endblock %}
+		
+		{% block script %}
+		{% endblock %}
 	</body>
-	
 </html>
