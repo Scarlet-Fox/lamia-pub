@@ -11,6 +11,7 @@ from flask_assets import Environment, Bundle
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.contrib.fixers import ProxyFix
 from werkzeug.contrib.cache import RedisCache
+from flask_babel import lazy_gettext
 from os import path
 import configparser
 import os
@@ -40,20 +41,14 @@ config_file_path = os.environ.get('CONFIG','lamia.config')
 if os.path.exists(config_file_path):
     config.read(config_file_path)
 else:
-    sys.exit("""
+    sys.exit(lazy_gettext("""
     Hello there!
     
     Your config file doesn\'t exist. This makes the
     lamia sad.
     
     Copy lamia.config.example from the lamia folder,
-    customize it, and then rename it to lamia.config.""")
-    
-
-# Debug settings for flask and flask-assets based on env variable
-app.config['DEBUG'] = bool(os.environ.get('DEBUG', True))
-app.config['ASSETS_DEBUG'] = app.config['DEBUG']
-app.config['TEMPLATES_AUTO_RELOAD'] = app.config['DEBUG']
+    customize it, and then rename it to lamia.config."""))
 
 # Static settings
 app.config['STATIC_DIR'] = config['REQUIRED']['static dir']
@@ -64,9 +59,16 @@ app.config['SQLALCHEMY_ECHO'] = bool(os.environ.get('SQL_DEBUG', 0))
 # Settings from the config file
 app.config['SQLALCHEMY_DATABASE_URI'] = config['REQUIRED']['database uri']
 app.config['SECRET_KEY'] = config['REQUIRED']['secret key']
+# We don't need this
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# This is for signals. Probably won't need it.
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+alchemy = SQLAlchemy(app)
+
+# TODO: load babel configuration from file
+
+
+# Import models
+from .models import users
 
 # Some kinda magic
 if __name__ == '__main__':
