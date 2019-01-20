@@ -103,5 +103,8 @@ venv.bak/
 # mypy
 .mypy_cache/
 
+# a very annoying mac-related file
+.DS_Store
+
 # lamia related local only files
 lamia.config
