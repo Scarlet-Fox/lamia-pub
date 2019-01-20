@@ -1,8 +1,11 @@
 # License header will go here when I pick one.
 from lamia import alchemy as db
 
-class User(db.Model):
+class Actor(db.Model):
     # A user is an 'actor' in activitypub lingo
+    # Within lamia, users are puppets for identities
+    # and blogs locally and all kinds of fun stuff
+    # in the broader fediverse.
     id = db.Column(db.Integer, primary_key=True)
     
     # Ap_id is the unique global identifier for this actor
@@ -11,7 +14,7 @@ class User(db.Model):
     # Keys help you hide things
     public_key = db.Column(db.String)
     
-    # Identification stuffz
+    # Identification stuff
     display_name = db.Column(db.String)
     user_name = db.Column(db.String)
     domain = db.Column(db.String)
@@ -60,8 +63,13 @@ class Identity(db.Model):
         name="fk_identity_account", ondelete="CASCADE"), index=True)
     # An identity has an associated user, where user is just
     # an acvitivitypub actor type 'Person'
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id',
-        name="fk_identity_user", ondelete="CASCADE"), index=True)
+    actor_id = db.Column(db.Integer, db.ForeignKey('actor.id',
+        name="fk_identity_actor", ondelete="CASCADE"), index=True)
+        
+    # This may be a mistake, but basically, you don't want
+    # multiple identities sharing the same name.
+    # I just saw the trailer for Us (2019). Doppelgangers suck. 
+    display_name = db.Column(db.String, unique=True)
     
     # Locked identity - followers are manually approved
     locked = db.Column(db.Boolean, default=False)
@@ -91,4 +99,88 @@ class Filter(db.Model):
     # Filters are set on an identity level
     identity_id = db.Column(db.Integer, db.ForeignKey('identity.id',
         name="fk_filter_identity", ondelete="CASCADE"), index=True)
+    
+class Follow(db.Model):
+    # These are the subscriptions for our local actors
+    id = db.Column(db.Integer, primary_key=True)
+    # Actors follow things
+    follower = db.Column(db.Integer, db.ForeignKey('actor.id',
+        name="fk_actor_following", ondelete="CASCADE"), index=True)
+    # We can follow actors
+    being_followed = db.Column(db.Integer, db.ForeignKey('actor.id',
+        name="fk_actor_being_followed", ondelete="CASCADE"), index=True)
+    created = db.Column(db.DateTime)
+    updated = db.Column(db.DateTime)
+        
+class PendingFollow(db.Model):
+    # If someone follows you and you have a private/locked account then one
+    # of these is created.
+    id = db.Column(db.Integer, primary_key=True)
+    # Actors can request to follow a local actor
+    requested_by = db.Column(db.Integer, db.ForeignKey('actor.id',
+        name="fk_follow_requested_by_actor", ondelete="CASCADE"), index=True)
+    request_for_actor = db.Column(db.Integer, db.ForeignKey('actor.id',
+        name="fk_follow_pending_for_actor", ondelete="CASCADE"), index=True)
+    # Approval status, rejecting a follow can optionally be a block btw
+    accepted = db.Column(db.Boolean)
+    # Insistence on following should prob not be possible
+    # blocked follows autoreject when they're made again
+    blocked = db.Column(db.Boolean)
+    created = db.Column(db.DateTime)
+    updated = db.Column(db.DateTime)
+    
+class ActorMute(db.Model):
+    # If a mute exists, the muting actor will not see toots 
+    # and should also prevent boosts bc um, i muted them
+    id = db.Column(db.Integer, primary_key=True)
+    muting_actor = db.Column(db.Integer, db.ForeignKey('actor.id',
+        name="fk_mute_belongs_to_actor", ondelete="CASCADE"), index=True)
+    muted_actor = db.Column(db.Integer, db.ForeignKey('actor.id',
+        name="fk_mute_is_muting_actor", ondelete="CASCADE"), index=True)
+
+    created = db.Column(db.DateTime)
+    
+class ActorBlock(db.Model):
+    # A block prevents all interaction - breaks mutual follows,
+    # prevents all notifications, removes actors from your sight
+    id = db.Column(db.Integer, primary_key=True)
+    blocking_actor = db.Column(db.Integer, db.ForeignKey('actor.id',
+        name="fk_block_belongs_to_actor", ondelete="CASCADE"), index=True)
+    blocked_actor = db.Column(db.Integer, db.ForeignKey('actor.id',
+        name="fk_block_is_blocking_actor", ondelete="CASCADE"), index=True)
+
+    created = db.Column(db.DateTime)
+    
+class Notification(db.Model):
+    # Lamia should group up notifications based on object
+    # and describe them based on type.
+    id = db.Column(db.Integer, primary_key=True)
+    # Link back to the original activity for some flexibility
+    # in implementing certain things after the fact.
+#    activity = FK to ap activity
+    ap_object = db.Column(db.String, index=True)
+    ap_type = db.Column(db.String, index=True)
+
+    # If a notification is successfully sent to a client
+    # of some kind then it was "seen".
+    seen = db.Column(db.Boolean)
+    created = db.Column(db.DateTime)
+    
+class ActorFeed(db.Model):
+    # You can create named feeds that collect actor activity
+    id = db.Column(db.Integer, primary_key=True)
+    # They have names, names have power
+    name = db.Column(db.String)
+    # Maybe we can add some context clues here for feeds
+    # context = ???
+    created = db.Column(db.DateTime)
+    updated = db.Column(db.DateTime)
+    
+class ActorFeedSource(db.Model):
+    # Just an actor to keep up with using a feed
+    id = db.Column(db.Integer, primary_key=True)
+    actor = db.Column(db.Integer, db.ForeignKey('actor.id',
+        name="fk_feed_source_actor", ondelete="CASCADE"), index=True)
+    feed = db.Column(db.Integer, db.ForeignKey('feed.id',
+        name="fk_feed_source_feed", ondelete="CASCADE"), index=True)
     
