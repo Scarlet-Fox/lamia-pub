@@ -1,2 +1,2 @@
 # lamia-pub
-Distributed blogging powered by activitypub, python, the gay agenda, and snake women.
+Distributed blogging and status updates powered by activitypub, python, the gay agenda, and snake women.
