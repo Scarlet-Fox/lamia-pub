@@ -200,3 +200,5 @@ class Bookmark(db.Models):
     
     id = db.Column(db.Integer(), primary_key=True)
     
+    
+# TODO: Tag models!!!! Incl. tag feed and some kind of map.
