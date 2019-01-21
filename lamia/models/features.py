@@ -20,18 +20,52 @@ class Account(db.Model):
     __tablename__ = 'accounts'
     
     id = db.Column(db.Integer(), primary_key=True)
+    primary_identity_id = db.Column(db.Column(), db.ForeignKey('identities.id'))
+    email_address = db.Column(db.String())
+    # Should be a hash encrypted by scrypt
+    password = db.Column(db.String())
+    joined = db.Column(db.DateTime())
+    low_bandwidth = db.Column(db.)
     
+    # Either someone is banned or not banned.
+    # Problematic users, nazis, etc should be banned without mercy or guilt.
+    # Just fucking do it, they aren't worth having around.
+    # You shouldn't even have to think about it. Do it. Do it now.
+    # Unless a deletion is desired. In which case, there is a way to do this.
+    banned = db.Column(db.Boolean())
+    # Profile customizations enabled/disabled for this account
+    disable_profile_customizations = db.Column(db.Boolean())
     
     
 class Identity(db.Model):
     """An account can have more than one identity. Each identity connects an 
     account to a single ActivityPub actor.
+    
+    Identities hold all of the profile customization details that are not
+    contained within an actor model.
     """
     __tablename__ = 'identities'
     
     id = db.Column(db.Integer(), primary_key=True)
+    actor_id = db.Column(db.Column(), db.ForeignKey('actors.id'))
     
-
+    # Non-standard profile customizations
+    page_background_color = db.Column(db.String())
+    page_background_image = db.Column(db.String())
+    page_background_tiled = db.Column(db.Boolean())
+    page_background_static = db.Column(db.Boolean())
+    section_background_color = db.Column(db.String())
+    section_header_image = db.Column(db.String())
+    section_text_color = db.Column(db.String())
+    section_text_shadow = db.Column(db.Boolean())
+    section_text_shadow_color = db.Column(db.Boolean())
+    # Can be disabled
+    disabled = db.Column(db.Boolean())
+    # Can be soft deleted. To permanently delete, delete the associated account.
+    # This is done to prevent abuse in the form of rapidly created temporary
+    # accounts being used to torment and then removed after a block/mute.
+    deleted = db.Column(db.Boolean())
+    
     
 class Blog(db.Model):
     """An account can have more than one blog. Each blog connects an 
@@ -40,7 +74,24 @@ class Blog(db.Model):
     __tablename__ = 'blogs'
     
     id = db.Column(db.Integer(), primary_key=True)
+    actor_id = db.Column(db.Column(), db.ForeignKey('actors.id'))
     
+    # Non-standard profile customizations
+    page_background_color = db.Column(db.String())
+    page_background_image = db.Column(db.String())
+    page_background_tiled = db.Column(db.Boolean())
+    page_background_static = db.Column(db.Boolean())
+    section_background_color = db.Column(db.String())
+    section_header_image = db.Column(db.String())
+    section_text_color = db.Column(db.String())
+    section_text_shadow = db.Column(db.Boolean())
+    section_text_shadow_color = db.Column(db.Boolean())
+    # Can be disabled
+    disabled = db.Column(db.Boolean())
+    # Can be soft deleted. To permanently delete, delete the associated account.
+    # This is done to prevent abuse in the form of rapidly created temporary
+    # accounts being used to torment and then removed after a block/mute.
+    deleted = db.Column(db.Boolean())
     
     
 class Block(db.Model):
@@ -57,7 +108,9 @@ class Block(db.Model):
     __tablename__ = 'blocks'
     
     id = db.Column(db.Integer(), primary_key=True)
-    
+    account_id = db.Column(db.Integer(), db.ForeignKey('accounts.id'))
+    target_actor_id = db.Column(db.Integer(), db.ForeignKey('actors.id'))
+    created = db.Column(db.DateTime())
     
     
 class Mute(db.Model):
@@ -73,7 +126,9 @@ class Mute(db.Model):
     __tablename__ = 'mutes'
     
     id = db.Column(db.Integer(), primary_key=True)
-    
+    account_id = db.Column(db.Integer(), db.ForeignKey('accounts.id'))
+    target_actor_id = db.Column(db.Integer(), db.ForeignKey('actors.id'))
+    created = db.Column(db.DateTime())
     
     
 class Filter(db.Model):
@@ -84,7 +139,16 @@ class Filter(db.Model):
     __tablename__ = 'filters'
     
     id = db.Column(db.Integer(), primary_key=True)
+    account_id = db.Column(db.Integer(), db.ForeignKey('accounts.id'))
     
+    query = db.Column(db.String)
+    hide = db.Column(db.Boolean)
+    minimize = db.Column(db.Boolean)
+    filter_actor_id = db.Column(db.Integer(), db.ForeignKey('actors.id'))
+    
+    created = db.Column(db.DateTime())
+    duration = db.Column(db.Interval())
+    forever = db.Column(db.Boolean())
     
     
 class Feed(db.Model):
@@ -97,7 +161,7 @@ class Feed(db.Model):
     __tablename__ = 'feeds'
     
     id = db.Column(db.Integer(), primary_key=True)
-    
+    identity_id = db.Column(db.Integer(), db.ForeignKey('identities.id'))
     
     
 class FeedActor(db.Model):
@@ -105,21 +169,9 @@ class FeedActor(db.Model):
     __tablename__ = 'feed_actors'
     
     id = db.Column(db.Integer(), primary_key=True)
-    
-    
-    
-class Follow(db.Model):
-    """Subscriptions are a link between actors. When you subscribe, you are
-    saying, "yes, please, show me the things that you create."
-    
-    This activity is explicitly supported by ActivityPub, but I call it out 
-    explicitly for convenience.
-    """
-    __tablename__ = 'follows'
-    
-    id = db.Column(db.Integer(), primary_key=True)
-    
-    
+    feed_id = db.Column(db.Integer(), db.ForeignKey('feeds.id'))
+    target_actor_id = db.Column(db.Integer(), db.ForeignKey('actors.id'))
+        
     
 class Attachments(db.Model):
     """An attachment is an image tied to some kind of ActivityPub object.

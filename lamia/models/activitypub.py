@@ -34,6 +34,10 @@ class Actor(db.Model):
     last_updated = db.Column(db.DateTime())
     
     data = db.Column(db.JSONB())
+    
+    # Convenience fields for local actors.
+    identity_id = db.Column(db.Integer(), db.ForeignKey('identities.id'))
+    blog_id = db.Column(db.Integer(), db.ForeignKey('blogs.id'))
 
 
 class Activity(db.Model):
@@ -68,3 +72,16 @@ class Object(db.Model):
     
     data = db.Column(db.JSONB())
     
+
+class Follow(db.Model):
+    """Subscriptions are a link between actors. When you subscribe, you are
+    saying, "yes, please, show me the things that you create."
+    
+    This activity is explicitly supported by ActivityPub, but I call it out 
+    explicitly for convenience. Explicitly..
+    """
+    __tablename__ = 'follows'
+    
+    id = db.Column(db.Integer(), primary_key=True)
+    actor_id = db.Column(db.Integer(), db.ForeignKey('identities.id'))
+    target_actor_id = db.Column(db.Integer(), db.ForeignKey('actors.id'))

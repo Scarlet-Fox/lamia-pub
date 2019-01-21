@@ -1,5 +1,8 @@
 """Models that pertain directly to the messy business of keeping an online 
 environment safe from harmful intentions are in this module.
+
+Moderators should ban nazis, by the way. This shouldn't need to be said, but
+it is being said right here. Get rid of them.
 """
 from .. import db
 
@@ -15,6 +18,7 @@ class ModerationLog(db.Model):
     
     created = db.Column(db.DateTime())
     created_by_account_id = db.Column(db.Integer(), db.ForeignKey('accounts.id'))
+
 
 class Import(db.Model):
     """Followed, muted, and blocked actors can be imported from ActivityPub 
