@@ -8,7 +8,13 @@ class Emoji(db.Model):
     __tablename__ = 'emojis'
     
     id = db.Column(db.Integer(), primary_key=True)
-    
+    # A path to the image in /statics
+    image = db.Column(db.String())
+    replacement = db.Column(db.String())
+    # Only needed if replacement doesn't do it justice
+    description = db.Column(db.String())
+    # for linear algebra with emojis, in this essay, i will...
+    set_name = db.Column(db.String())
 
 
 class Setting(db.Model):
@@ -23,6 +29,8 @@ class Setting(db.Model):
     __tablename__ = 'settings'
     
     id = db.Column(db.Integer(), primary_key=True)
+    key = db.Column(db.String())
+    value = db.Column(db.JSONB())
     
 
 
