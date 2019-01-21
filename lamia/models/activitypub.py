@@ -18,6 +18,22 @@ class Actor(db.Model):
     - Snakespeare, As You Lamia It
     """
     __tablename__ = 'actors'
+    
+    id = db.Column(db.Integer(), primary_key=True)
+    
+    avatar = db.Column(db.String())
+    header = db.Column(db.String())
+    summary = db.Column(db.String())
+    parameters = db.Column(db.JSONB())
+    
+    display_name = db.Column(db.String())
+    uri = db.Column(db.String())
+    local = db.Column(db.Boolean())
+    
+    created = db.Column(db.DateTime())
+    last_updated = db.Column(db.DateTime())
+    
+    data = db.Column(db.JSONB())
 
 
 class Activity(db.Model):
@@ -29,6 +45,11 @@ class Activity(db.Model):
     """
     __tablename__ = 'activities'
     
+    id = db.Column(db.Integer(), primary_key=True)
+    
+    datetime = db.Column(db.DateTime())
+    data = db.Column(db.JSONB())
+    
     
 class Object(db.Model):
     """Objects are the Things in the fediverse.
@@ -38,4 +59,11 @@ class Object(db.Model):
     """
     __tablename__ = 'objects'
     
+    id = db.Column(db.Integer(), primary_key=True)
+    uri = db.Column(db.String())
+
+    created = db.Column(db.DateTime())
+    last_updated = db.Column(db.DateTime())
+    
+    data = db.Column(db.JSONB())
     

@@ -19,12 +19,18 @@ class Account(db.Model):
     """
     __tablename__ = 'accounts'
     
+    id = db.Column(db.Integer(), primary_key=True)
+    
+    
     
 class Identity(db.Model):
     """An account can have more than one identity. Each identity connects an 
     account to a single ActivityPub actor.
     """
     __tablename__ = 'identities'
+    
+    id = db.Column(db.Integer(), primary_key=True)
+    
 
     
 class Blog(db.Model):
@@ -32,6 +38,9 @@ class Blog(db.Model):
     account to a single ActivityPub actor.
     """
     __tablename__ = 'blogs'
+    
+    id = db.Column(db.Integer(), primary_key=True)
+    
     
     
 class Block(db.Model):
@@ -47,6 +56,9 @@ class Block(db.Model):
     """
     __tablename__ = 'blocks'
     
+    id = db.Column(db.Integer(), primary_key=True)
+    
+    
     
 class Mute(db.Model):
     """Muting a user is a lightweight user to user moderation action.
@@ -60,6 +72,9 @@ class Mute(db.Model):
     """
     __tablename__ = 'mutes'
     
+    id = db.Column(db.Integer(), primary_key=True)
+    
+    
     
 class Filter(db.Model):
     """Filters are best described as a more nuanced version of muting, allowing
@@ -67,6 +82,9 @@ class Filter(db.Model):
     timeline.
     """
     __tablename__ = 'filters'
+    
+    id = db.Column(db.Integer(), primary_key=True)
+    
     
     
 class Feed(db.Model):
@@ -78,10 +96,16 @@ class Feed(db.Model):
     """
     __tablename__ = 'feeds'
     
+    id = db.Column(db.Integer(), primary_key=True)
+    
+    
     
 class FeedActor(db.Model):
     """A single actor watched by a feed."""
     __tablename__ = 'feed_actors'
+    
+    id = db.Column(db.Integer(), primary_key=True)
+    
     
     
 class Follow(db.Model):
@@ -93,6 +117,9 @@ class Follow(db.Model):
     """
     __tablename__ = 'follows'
     
+    id = db.Column(db.Integer(), primary_key=True)
+    
+    
     
 class Attachments(db.Model):
     """An attachment is an image tied to some kind of ActivityPub object.
@@ -102,10 +129,16 @@ class Attachments(db.Model):
     """
     __tablename__ = 'attachments'
     
+    id = db.Column(db.Integer(), primary_key=True)
+    
+    
     
 class BookmarkGroup(db.Models):
     """Bookmark groups can be implicitly created to organize bookmarks"""
     __tablename__ = 'bookmark_groups'
+    
+    id = db.Column(db.Integer(), primary_key=True)
+    
 
 
 class Bookmark(db.Models):
@@ -113,4 +146,5 @@ class Bookmark(db.Models):
     an actor."""
     __tablename__ = 'boookmarks'
     
+    id = db.Column(db.Integer(), primary_key=True)
     

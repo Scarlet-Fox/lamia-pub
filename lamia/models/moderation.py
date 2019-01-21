@@ -14,6 +14,9 @@ class Import(db.Model):
     """
     __tablename__ = 'imports'
     
+    id = db.Column(db.Integer(), primary_key=True)
+    
+    
     
 class Report(db.Model):
     """Reports are a necessary part of any online social environment. They are 
@@ -21,7 +24,9 @@ class Report(db.Model):
     can be created and sent to this instance from other instances. 
     """
     __tablename__ = 'reports'
-
+    
+    id = db.Column(db.Integer(), primary_key=True)
+    
     
 class ActorCensor(db.Model):
     """An actor censor is a light server to client moderation action.
@@ -30,6 +35,9 @@ class ActorCensor(db.Model):
     activities to either appear content warned or minimized.
     """
     __tablename__ = 'actor_censors'
+    
+    id = db.Column(db.Integer(), primary_key=True)
+    
 
 
 class ActorMute(db.Model):
@@ -39,6 +47,9 @@ class ActorMute(db.Model):
     activities from the federated timeline or minimizes them.
     """
     __tablename__ = 'actor_mutes'
+    
+    id = db.Column(db.Integer(), primary_key=True)
+    
 
 
 class ActorBlock(db.Model):
@@ -50,6 +61,9 @@ class ActorBlock(db.Model):
     """
     __tablename__ = 'actor_blocks'
     
+    id = db.Column(db.Integer(), primary_key=True)
+    
+    
     
 class DomainCensor(db.Model):
     """A domain censor is a light server to server moderation action. 
@@ -59,6 +73,9 @@ class DomainCensor(db.Model):
     """
     __tablename__ = 'domain_censors'
     
+    id = db.Column(db.Integer(), primary_key=True)
+    
+    
     
 class DomainMute(db.Model):
     """A domain mute is a moderate server to server moderation action. 
@@ -67,6 +84,9 @@ class DomainMute(db.Model):
     activities from the federated timeline or minimizes them.
     """
     __tablename__ = 'domain_mutes'
+    
+    id = db.Column(db.Integer(), primary_key=True)
+    
 
 
 class DomainBlock(db.Model):
@@ -78,10 +98,16 @@ class DomainBlock(db.Model):
     """
     __tablename__ = 'domain_blocks'
     
+    id = db.Column(db.Integer(), primary_key=True)
+    
+    
 
 class DomainEmailBlock(db.Model):
     """Email domain blocks prevent harmful registrations and registrations 
     from spammers.
     """
     __tablename__ = 'domain_email_block'
+    
+    id = db.Column(db.Integer(), primary_key=True)
+    
     

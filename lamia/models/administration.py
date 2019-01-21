@@ -6,6 +6,9 @@ class Emoji(db.Model):
     faces throughout the fediverse.
     """
     __tablename__ = 'emojis'
+    
+    id = db.Column(db.Integer(), primary_key=True)
+    
 
 
 class Setting(db.Model):
@@ -18,6 +21,9 @@ class Setting(db.Model):
     TODO: figure out settings we may need here.
     """
     __tablename__ = 'settings'
+    
+    id = db.Column(db.Integer(), primary_key=True)
+    
 
 
 # TODO: relay support   
