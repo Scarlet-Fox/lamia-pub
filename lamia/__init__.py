@@ -7,12 +7,12 @@ from .middleware.gino import Gino
 import logging
 logging.basicConfig()
 logging.getLogger('gino').setLevel(logging.WARN)
-
 # Initialize the app, including the database connection.
 db = Gino()
 config = Config('.env')
 app = Starlette(debug=config("DEBUG", cast=bool, default=False))
 db.init_app(app, config)
+# TODO: Setup redis here
 
-# Have to import views in order to use them
+# There's probably a more graceful way to do this (a la blueprints)
 from .views import core
