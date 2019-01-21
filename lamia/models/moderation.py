@@ -4,6 +4,18 @@ environment safe from harmful intentions are in this module.
 from .. import db
 
 
+class ModerationLog(db.Model):
+    """Quis custodiet ipsos custodes?
+    
+    Instance admins and other moderators should keep an eye on log entries
+    and log entries should result in notifications, in theory.
+    """
+    __tablename__ = 'moderation_logs'
+    description = db.Column(db.String())
+    
+    created = db.Column(db.DateTime())
+    created_by_account_id = db.Column(db.Integer(), db.ForeignKey('accounts.id'))
+
 class Import(db.Model):
     """Followed, muted, and blocked actors can be imported from ActivityPub 
     files. 
@@ -16,8 +28,28 @@ class Import(db.Model):
     
     id = db.Column(db.Integer(), primary_key=True)
     
+    request_by_account_id = db.Column(db.Integer(), db.ForeignKey('accounts.id'))
+    request_for_identity_id = db.Column(db.Integer(), db.ForeignKey('identities.id'))
+    data_to_import = db.Column(db.JSONB())
     
+    created = db.Column(db.DateTime())
+    last_updated = db.Column(db.DateTime())
+    processed = db.Column(db.DateTime())
     
+    allowed = db.Column(db.Boolean())
+
+
+REPORT_STATUSES = {
+    'ignored': 'will not address',
+    'open': 'received, no action done yet',
+    'feedback': 'paused, waiting for feedback',
+    'waiting': 'waiting for action',
+    'actiontaken': 'action has been taken',
+    'working': 'someone is already looking into this',
+    'escalation': 'an admin is requested to look into this',
+}
+
+
 class Report(db.Model):
     """Reports are a necessary part of any online social environment. They are 
     a way to flag local content for moderators on a local instance, and they 
@@ -26,6 +58,38 @@ class Report(db.Model):
     __tablename__ = 'reports'
     
     id = db.Column(db.Integer(), primary_key=True)
+    original_content = db.Column(db.String())
+    content_uri = db.Column(db.String())
+    target_actor_id = db.Column(db.Integer(), db.ForeignKey('actors.id'))
+    actor_uri = db.Column(db.String())
+    
+    report_by_actor_id = db.Column(db.Integer(), db.ForeignKey('actors.id'))
+    current_status = db.Column(db.String())
+    assigned_to_account_id = db.Column(db.Integer(), db.ForeignKey('accounts.id'))
+    comment_count = db.Column(db.Integer())
+    
+    created = db.Column(db.DateTime())
+    last_updated = db.Column(db.DateTime())
+    resolved = db.Column(db.Boolean())
+    marked_resolved_by_account_id = db.Column(
+        db.Integer(), 
+        db.ForeignKey('accounts.id'),
+    )
+    
+    
+class ReportComment(db.Model):
+    """Allow moderator to moderator talk in a report, should work like chat
+    messages."""
+    __tablename__ = 'report_comments'
+    
+    message = db.Column(db.String())
+    created_by_account_id = db.Column(db.Integer(), db.ForeignKey('accounts.id'))
+    created = db.Column(db.DateTime())
+    
+    report_id = db.Column(db.Integer(), db.ForeignKey('reports.id'))
+    # Changing the status of a report should create a comment where the message
+    # is something like 'changed status from ignored to open'.
+    status_change = db.Column(db.Boolean())
     
     
 class ActorCensor(db.Model):
@@ -37,7 +101,9 @@ class ActorCensor(db.Model):
     __tablename__ = 'actor_censors'
     
     id = db.Column(db.Integer(), primary_key=True)
-    
+    target_actor_id = db.Column(db.Integer(), db.ForeignKey('actors.id'))
+    created = db.Column(db.DateTime())
+    created_by_account_id = db.Column(db.Integer(), db.ForeignKey('accounts.id'))
 
 
 class ActorMute(db.Model):
@@ -49,7 +115,11 @@ class ActorMute(db.Model):
     __tablename__ = 'actor_mutes'
     
     id = db.Column(db.Integer(), primary_key=True)
-    
+    target_actor_id = db.Column(db.Integer(), db.ForeignKey('actors.id'))
+    created = db.Column(db.DateTime())
+    duration = db.Column(db.Interval())
+    forever = db.Column(db.Boolean())
+    created_by_account_id = db.Column(db.Integer(), db.ForeignKey('accounts.id'))
 
 
 class ActorBlock(db.Model):
@@ -62,7 +132,9 @@ class ActorBlock(db.Model):
     __tablename__ = 'actor_blocks'
     
     id = db.Column(db.Integer(), primary_key=True)
-    
+    target_actor_id = db.Column(db.Integer(), db.ForeignKey('actors.id'))
+    created = db.Column(db.DateTime())
+    created_by_account_id = db.Column(db.Integer(), db.ForeignKey('accounts.id'))
     
     
 class DomainCensor(db.Model):
@@ -74,7 +146,9 @@ class DomainCensor(db.Model):
     __tablename__ = 'domain_censors'
     
     id = db.Column(db.Integer(), primary_key=True)
-    
+    domain = db.Column(db.String())
+    created = db.Column(db.DateTime())
+    created_by_account_id = db.Column(db.Integer(), db.ForeignKey('accounts.id'))
     
     
 class DomainMute(db.Model):
@@ -86,8 +160,12 @@ class DomainMute(db.Model):
     __tablename__ = 'domain_mutes'
     
     id = db.Column(db.Integer(), primary_key=True)
+    domain = db.Column(db.String())
+    created = db.Column(db.DateTime())
+    duration = db.Column(db.Interval())
+    forever = db.Column(db.Boolean())
+    created_by_account_id = db.Column(db.Integer(), db.ForeignKey('accounts.id'))
     
-
 
 class DomainBlock(db.Model):
     """A domain block is a severe server to client moderation action.
@@ -99,7 +177,9 @@ class DomainBlock(db.Model):
     __tablename__ = 'domain_blocks'
     
     id = db.Column(db.Integer(), primary_key=True)
-    
+    domain = db.Column(db.String())
+    created = db.Column(db.DateTime())
+    created_by_account_id = db.Column(db.Integer(), db.ForeignKey('accounts.id'))
     
 
 class DomainEmailBlock(db.Model):
@@ -109,5 +189,8 @@ class DomainEmailBlock(db.Model):
     __tablename__ = 'domain_email_block'
     
     id = db.Column(db.Integer(), primary_key=True)
+    domain = db.Column(db.String())
+    created = db.Column(db.DateTime())
+    created_by_account_id = db.Column(db.Integer(), db.ForeignKey('accounts.id'))
     
     

@@ -46,6 +46,7 @@ class Activity(db.Model):
     __tablename__ = 'activities'
     
     id = db.Column(db.Integer(), primary_key=True)
+    object_uri = db.Column(db.String())
     
     datetime = db.Column(db.DateTime())
     data = db.Column(db.JSONB())
