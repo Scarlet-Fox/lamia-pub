@@ -5,4 +5,7 @@ from .. import db
 @app.route('/')
 async def introduction(request):
     async with db.acquire(lazy=True) as connection:
-        return JSONResponse({'time': str(await connection.scalar('select now()'))})
+        return JSONResponse({
+            'time': str(await connection.scalar('select now()')),
+            'math': str(await connection.scalar('select 4 + 4')),
+        })
