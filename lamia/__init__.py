@@ -22,3 +22,4 @@ db.init_app(app, config)
 
 # There's probably a more graceful way to do this (a la blueprints)
 from .views import core
+

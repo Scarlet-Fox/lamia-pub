@@ -10,3 +10,4 @@ async def introduction(request):
             'time': str(await connection.scalar('select now()')),
             'math': str(await connection.scalar('select 4 + 4')),
         })
+

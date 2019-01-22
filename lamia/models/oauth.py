@@ -12,3 +12,5 @@ class OauthToken(db.Model):
 
 class OauthApplication(db.Model):
     __tablename__ = 'oauth_applications'
+    
+    

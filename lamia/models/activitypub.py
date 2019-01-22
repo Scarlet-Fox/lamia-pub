@@ -76,6 +76,11 @@ class Object(db.Model):
     uri = db.Column(db.String())
 
     created = db.Column(db.DateTime())
+    created_by_actor_id = db.Column(
+        db.Column(), 
+        db.ForeignKey('actors.id', ondelete="SET NULL"),
+        nullable=True,
+    )
     last_updated = db.Column(db.DateTime())
     
     data = db.Column(db.JSONB())
@@ -109,3 +114,5 @@ class Follow(db.Model):
     
     created = db.Column(db.DateTime())
     last_updated = db.Column(db.DateTime())
+    
+    

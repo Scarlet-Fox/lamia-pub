@@ -36,3 +36,4 @@ class Setting(db.Model):
 # TODO: relay support   
 #class Relay(db.Model):
 #    __tablename__ = 'relays'
+

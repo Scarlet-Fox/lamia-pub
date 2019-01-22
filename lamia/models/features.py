@@ -28,7 +28,7 @@ class Account(db.Model):
     email_address = db.Column(db.String())
     # Should be a hash encrypted by scrypt
     password = db.Column(db.String())
-    joined = db.Column(db.DateTime())
+    created = db.Column(db.DateTime())
     # Activates low bandwidth mode to control image transmissions
     low_bandwidth = db.Column(db.Boolean())
     # Content should be hidden and attachments marked as sensitive by default
@@ -77,6 +77,8 @@ class Identity(db.Model):
     # This is done to prevent abuse in the form of rapidly created temporary
     # accounts being used to torment and then removed after a block/mute.
     deleted = db.Column(db.Boolean())
+    created = db.Column(db.DateTime())
+    last_updated = db.Column(db.DateTime())
     
     
 class Blog(db.Model):
@@ -107,7 +109,8 @@ class Blog(db.Model):
     # This is done to prevent abuse in the form of rapidly created temporary
     # accounts being used to torment and then removed after a block/mute.
     deleted = db.Column(db.Boolean())
-    
+    created = db.Column(db.DateTime())
+    last_updated = db.Column(db.DateTime())
     
 class Interest(db.Model):
     """A hashtag but for actors. Maps tags to actors. Works similarly to
@@ -115,6 +118,8 @@ class Interest(db.Model):
     used to find users with similar interests.
     """
     __tablename__ = 'interests'
+    id = db.Column(db.Integer(), primary_key=True)
+    
     actor_id = db.Column(
         db.Integer(), 
         db.ForeignKey('actors.id', ondelete="CASCADE"),
@@ -211,6 +216,7 @@ class Feed(db.Model):
         db.Integer(), 
         db.ForeignKey('identities.id', ondelete="CASCADE"),
     )
+    created = db.Column(db.DateTime())
     
     
 class FeedActor(db.Model):
@@ -223,6 +229,7 @@ class FeedActor(db.Model):
         db.ForeignKey('feeds.id', ondelete="CASCADE"),
     )
     target_actor_id = db.Column(db.Integer(), db.ForeignKey('actors.id'))
+    created = db.Column(db.DateTime())
         
 
 class Tag(db.Model):
@@ -231,6 +238,7 @@ class Tag(db.Model):
     
     id = db.Column(db.Integer(), primary_key=True)
     tag = db.Column(db.String())
+    created = db.Column(db.DateTime())
 
 
 class ObjectTag(db.Model):
@@ -243,6 +251,7 @@ class ObjectTag(db.Model):
         db.ForeignKey('tags.id', ondelete="CASCADE"),
     )
     object_id = db.Column(db.Integer(), db.ForeignKey('objects.id'))
+    created = db.Column(db.DateTime())
     
 
 class FeedTag(db.Model):
@@ -258,6 +267,7 @@ class FeedTag(db.Model):
         db.Integer(), 
         db.ForeignKey('tags.id', ondelete="CASCADE"),
     )
+    created = db.Column(db.DateTime())
     
     
 class Attachments(db.Model):
@@ -288,6 +298,8 @@ class BookmarkGroup(db.Models):
     
     id = db.Column(db.Integer(), primary_key=True)
     group = db.Column(db.String())
+    
+    created = db.Column(db.DateTime())
 
 
 class Bookmark(db.Models):
@@ -303,3 +315,29 @@ class Bookmark(db.Models):
         db.Integer(),
         db.ForeignKey('bookmark_groups.id', ondelete="CASCADE")
     )
+    
+    created = db.Column(db.DateTime())
+    
+class Notification(db.Models):
+    """Our fancy notification class."""
+    id = db.Column(db.Integer(), primary_key=True)
+    
+    category = db.Column(db.String())
+    object_uri = db.Column(db.String())
+    icon = db.Column(db.String())
+    
+    seen = db.Column(db.Boolean())
+    acknowledged = db.Column(db.Boolean())
+    
+    created_by_actor_id = db.Column(
+        db.Column(), 
+        db.ForeignKey('actors.id', ondelete="SET NULL"),
+        nullable=True,
+    )
+    for_identity_id = db.Column(
+        db.Column(), 
+        db.ForeignKey('identities.id', ondelete="CASCADE"),
+    )
+    created = db.Column(db.DateTime())
+    
+    
