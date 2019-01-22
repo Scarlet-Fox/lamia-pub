@@ -32,7 +32,10 @@ class Import(db.Model):
     
     id = db.Column(db.Integer(), primary_key=True)
     
-    request_by_account_id = db.Column(db.Integer(), db.ForeignKey('accounts.id'))
+    request_by_account_id = db.Column(
+        db.Integer(), 
+        db.ForeignKey('accounts.id', ondelete="CASCADE"),
+    )
     request_for_identity_id = db.Column(db.Integer(), db.ForeignKey('identities.id'))
     data_to_import = db.Column(db.JSONB())
     
@@ -64,12 +67,23 @@ class Report(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     original_content = db.Column(db.String())
     content_uri = db.Column(db.String())
-    target_actor_id = db.Column(db.Integer(), db.ForeignKey('actors.id'))
-    actor_uri = db.Column(db.String())
+    target_actor_id = db.Column(
+        db.Integer(), 
+        db.ForeignKey('actors.id', ondelete="SET NULL"),
+        nullable=True,
+    )
     
-    report_by_actor_id = db.Column(db.Integer(), db.ForeignKey('actors.id'))
+    report_by_actor_id = db.Column(
+        db.Integer(), 
+        db.ForeignKey('actors.id', ondelete="SET NULL"),
+        nullable=True,
+    )
     current_status = db.Column(db.String())
-    assigned_to_account_id = db.Column(db.Integer(), db.ForeignKey('accounts.id'))
+    assigned_to_account_id = db.Column(
+        db.Integer(), 
+        db.ForeignKey('accounts.id', ondelete="SET NULL"),
+        nullable=True,
+    )
     comment_count = db.Column(db.Integer())
     
     created = db.Column(db.DateTime())
@@ -77,7 +91,8 @@ class Report(db.Model):
     resolved = db.Column(db.Boolean())
     marked_resolved_by_account_id = db.Column(
         db.Integer(), 
-        db.ForeignKey('accounts.id'),
+        db.ForeignKey('accounts.id', ondelete="SET NULL"),
+        nullable=True
     )
     
     
@@ -87,7 +102,11 @@ class ReportComment(db.Model):
     __tablename__ = 'report_comments'
     
     message = db.Column(db.String())
-    created_by_account_id = db.Column(db.Integer(), db.ForeignKey('accounts.id'))
+    created_by_account_id = db.Column(
+        db.Integer(), 
+        db.ForeignKey('accounts.id', ondelete="SET NULL"),
+        nullable=True
+    )
     created = db.Column(db.DateTime())
     
     report_id = db.Column(db.Integer(), db.ForeignKey('reports.id'))
@@ -105,9 +124,16 @@ class ActorCensor(db.Model):
     __tablename__ = 'actor_censors'
     
     id = db.Column(db.Integer(), primary_key=True)
-    target_actor_id = db.Column(db.Integer(), db.ForeignKey('actors.id'))
+    target_actor_id = db.Column(
+        db.Integer(),
+        db.ForeignKey('actors.id', ondelete="CASCADE"),
+    )
     created = db.Column(db.DateTime())
-    created_by_account_id = db.Column(db.Integer(), db.ForeignKey('accounts.id'))
+    created_by_account_id = db.Column(
+        db.Integer(),
+        db.ForeignKey('accounts.id', ondelete="SET NULL"),
+        nullable=True
+    )
 
 
 class ActorMute(db.Model):
@@ -119,12 +145,18 @@ class ActorMute(db.Model):
     __tablename__ = 'actor_mutes'
     
     id = db.Column(db.Integer(), primary_key=True)
-    target_actor_id = db.Column(db.Integer(), db.ForeignKey('actors.id'))
+    target_actor_id = db.Column(
+        db.Integer(),
+        db.ForeignKey('actors.id', ondelete="CASCADE"),
+    )
     created = db.Column(db.DateTime())
     duration = db.Column(db.Interval())
     forever = db.Column(db.Boolean())
-    created_by_account_id = db.Column(db.Integer(), db.ForeignKey('accounts.id'))
-
+    created_by_account_id = db.Column(
+        db.Integer(),
+        db.ForeignKey('accounts.id', ondelete="SET NULL"),
+        nullable=True
+    )
 
 class ActorBlock(db.Model):
     """An actor block is a severe server to client moderation action.
@@ -136,9 +168,16 @@ class ActorBlock(db.Model):
     __tablename__ = 'actor_blocks'
     
     id = db.Column(db.Integer(), primary_key=True)
-    target_actor_id = db.Column(db.Integer(), db.ForeignKey('actors.id'))
+    target_actor_id = db.Column(
+        db.Integer(),
+        db.ForeignKey('actors.id', ondelete="CASCADE"),
+    )
     created = db.Column(db.DateTime())
-    created_by_account_id = db.Column(db.Integer(), db.ForeignKey('accounts.id'))
+    created_by_account_id = db.Column(
+        db.Integer(),
+        db.ForeignKey('accounts.id', ondelete="SET NULL"),
+        nullable=True
+    )
     
     
 class DomainCensor(db.Model):
@@ -152,7 +191,11 @@ class DomainCensor(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     domain = db.Column(db.String())
     created = db.Column(db.DateTime())
-    created_by_account_id = db.Column(db.Integer(), db.ForeignKey('accounts.id'))
+    created_by_account_id = db.Column(
+        db.Integer(),
+        db.ForeignKey('accounts.id', ondelete="SET NULL"),
+        nullable=True
+    )
     
     
 class DomainMute(db.Model):
@@ -168,7 +211,11 @@ class DomainMute(db.Model):
     created = db.Column(db.DateTime())
     duration = db.Column(db.Interval())
     forever = db.Column(db.Boolean())
-    created_by_account_id = db.Column(db.Integer(), db.ForeignKey('accounts.id'))
+    created_by_account_id = db.Column(
+        db.Integer(),
+        db.ForeignKey('accounts.id', ondelete="SET NULL"),
+        nullable=True
+    )
     
 
 class DomainBlock(db.Model):
@@ -183,7 +230,11 @@ class DomainBlock(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     domain = db.Column(db.String())
     created = db.Column(db.DateTime())
-    created_by_account_id = db.Column(db.Integer(), db.ForeignKey('accounts.id'))
+    created_by_account_id = db.Column(
+        db.Integer(),
+        db.ForeignKey('accounts.id', ondelete="SET NULL"),
+        nullable=True
+    )
     
 
 class DomainEmailBlock(db.Model):
@@ -195,6 +246,10 @@ class DomainEmailBlock(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     domain = db.Column(db.String())
     created = db.Column(db.DateTime())
-    created_by_account_id = db.Column(db.Integer(), db.ForeignKey('accounts.id'))
+    created_by_account_id = db.Column(
+        db.Integer(),
+        db.ForeignKey('accounts.id', ondelete="SET NULL"),
+        nullable=True
+    )
     
     

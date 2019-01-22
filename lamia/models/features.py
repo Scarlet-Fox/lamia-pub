@@ -20,7 +20,11 @@ class Account(db.Model):
     __tablename__ = 'accounts'
     
     id = db.Column(db.Integer(), primary_key=True)
-    primary_identity_id = db.Column(db.Column(), db.ForeignKey('identities.id'))
+    primary_identity_id = db.Column(
+        db.Column(), 
+        db.ForeignKey('identities.id', ondelete="SET NULL"),
+        nullable=True,
+    )
     email_address = db.Column(db.String())
     # Should be a hash encrypted by scrypt
     password = db.Column(db.String())
@@ -52,7 +56,10 @@ class Identity(db.Model):
     __tablename__ = 'identities'
     
     id = db.Column(db.Integer(), primary_key=True)
-    actor_id = db.Column(db.Column(), db.ForeignKey('actors.id'))
+    actor_id = db.Column(
+        db.Column(), 
+        db.ForeignKey('actors.id', ondelete="CASCADE"),
+    )
     
     # Non-standard profile customizations
     page_background_color = db.Column(db.String())
@@ -79,7 +86,10 @@ class Blog(db.Model):
     __tablename__ = 'blogs'
     
     id = db.Column(db.Integer(), primary_key=True)
-    actor_id = db.Column(db.Column(), db.ForeignKey('actors.id'))
+    actor_id = db.Column(
+        db.Column(), 
+        db.ForeignKey('actors.id', ondelete="CASCADE"),
+    )
     
     # Non-standard profile customizations
     page_background_color = db.Column(db.String())
@@ -113,7 +123,10 @@ class Block(db.Model):
     __tablename__ = 'blocks'
     
     id = db.Column(db.Integer(), primary_key=True)
-    account_id = db.Column(db.Integer(), db.ForeignKey('accounts.id'))
+    account_id = db.Column(
+        db.Integer(), 
+        db.ForeignKey('accounts.id', ondelete="CASCADE")
+    )
     target_actor_id = db.Column(db.Integer(), db.ForeignKey('actors.id'))
     created = db.Column(db.DateTime())
     
@@ -131,8 +144,14 @@ class Mute(db.Model):
     __tablename__ = 'mutes'
     
     id = db.Column(db.Integer(), primary_key=True)
-    account_id = db.Column(db.Integer(), db.ForeignKey('accounts.id'))
-    target_actor_id = db.Column(db.Integer(), db.ForeignKey('actors.id'))
+    account_id = db.Column(
+        db.Integer(), 
+        db.ForeignKey('accounts.id', ondelete="CASCADE"),
+    )
+    target_actor_id = db.Column(
+        db.Integer(), 
+        db.ForeignKey('actors.id', ondelete="CASCADE"),
+    )
     created = db.Column(db.DateTime())
     
     
@@ -144,12 +163,18 @@ class Filter(db.Model):
     __tablename__ = 'filters'
     
     id = db.Column(db.Integer(), primary_key=True)
-    account_id = db.Column(db.Integer(), db.ForeignKey('accounts.id'))
+    account_id = db.Column(
+        db.Integer(), 
+        db.ForeignKey('accounts.id', ondelete="CASCADE"),
+    )
     
     query = db.Column(db.String)
     hide = db.Column(db.Boolean)
     minimize = db.Column(db.Boolean)
-    filter_actor_id = db.Column(db.Integer(), db.ForeignKey('actors.id'))
+    filter_actor_id = db.Column(
+        db.Integer(), 
+        db.ForeignKey('actors.id', ondelete="CASCADE"),
+    )
     
     created = db.Column(db.DateTime())
     duration = db.Column(db.Interval())
@@ -167,7 +192,10 @@ class Feed(db.Model):
     
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String())
-    identity_id = db.Column(db.Integer(), db.ForeignKey('identities.id'))
+    identity_id = db.Column(
+        db.Integer(), 
+        db.ForeignKey('identities.id', ondelete="CASCADE"),
+    )
     
     
 class FeedActor(db.Model):
@@ -175,7 +203,10 @@ class FeedActor(db.Model):
     __tablename__ = 'feed_actors'
     
     id = db.Column(db.Integer(), primary_key=True)
-    feed_id = db.Column(db.Integer(), db.ForeignKey('feeds.id'))
+    feed_id = db.Column(
+        db.Integer(), 
+        db.ForeignKey('feeds.id', ondelete="CASCADE"),
+    )
     target_actor_id = db.Column(db.Integer(), db.ForeignKey('actors.id'))
         
 
@@ -192,7 +223,10 @@ class ObjectTag(db.Model):
     __tablename__ = 'object_tags'
     
     id = db.Column(db.Integer(), primary_key=True)
-    tag_id = db.Column(db.Integer(), db.ForeignKey('tags.id'))
+    tag_id = db.Column(
+        db.Integer(),
+        db.ForeignKey('tags.id', ondelete="CASCADE"),
+    )
     object_id = db.Column(db.Integer(), db.ForeignKey('objects.id'))
     
 
@@ -201,7 +235,10 @@ class FeedTag(db.Model):
     __tablename__ == 'feed_tags'
     
     id = db.Column(db.Integer(), primary_key=True)
-    feed_id = db.Column(db.Integer(), db.ForeignKey('feeds.id'))
+    feed_id = db.Column(
+        db.Integer(), 
+        db.ForeignKey('feeds.id', ondelete="CASCADE"),
+    )
     target_tag_id = db.Column(db.Integer(), db.ForeignKey('tags.id'))
     
     
@@ -224,6 +261,8 @@ class Attachments(db.Model):
     size_in_bytes = db.Column(db.Integer())
     local = db.Column(db.Boolean())
     
+    created = db.Column(db.DateTime())
+    
     
 class BookmarkGroup(db.Models):
     """Bookmark groups can be implicitly created to organize bookmarks"""
@@ -242,4 +281,7 @@ class Bookmark(db.Models):
     object_id = db.Column(db.String())
     description = db.Column(db.String())
     
-    bookmark_group_id = db.Column(db.Integer(), db.ForeignKey('bookmark_groups.id'))
+    bookmark_group_id = db.Column(
+        db.Integer(),
+        db.ForeignKey('bookmark_groups.id', ondelete="CASCADE")
+    )

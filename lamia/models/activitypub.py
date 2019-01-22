@@ -36,8 +36,16 @@ class Actor(db.Model):
     data = db.Column(db.JSONB())
     
     # Convenience fields for local actors.
-    identity_id = db.Column(db.Integer(), db.ForeignKey('identities.id'))
-    blog_id = db.Column(db.Integer(), db.ForeignKey('blogs.id'))
+    identity_id = db.Column(
+        db.Integer(), 
+        db.ForeignKey('identities.id', ondelete="SET NULL"),
+        nullable=True,
+    )
+    blog_id = db.Column(
+        db.Integer(), 
+        db.ForeignKey('blogs.id', ondelete="SET NULL"),
+        nullable=True,
+    )
 
 
 class Activity(db.Model):
@@ -83,9 +91,21 @@ class Follow(db.Model):
     __tablename__ = 'follows'
     
     id = db.Column(db.Integer(), primary_key=True)
-    actor_id = db.Column(db.Integer(), db.ForeignKey('identities.id'))
-    target_actor_id = db.Column(db.Integer(), db.ForeignKey('actors.id'))
+    actor_id = db.Column(
+        db.Integer(), 
+        db.ForeignKey('actors.id', ondelete="CASCADE"),
+    )
+    target_actor_id = db.Column(
+        db.Integer(), 
+        db.ForeignKey('actors.id', ondelete="CASCADE"),
+    )
     
+    # Waiting for account review
     pending_review = db.Column(db.Boolean())
-    last_updated = db.Column(db.DateTime())
+    # Approved by actor owner
+    approved = db.Column(db.Boolean())
+    # Hard rejected by owner, all future requests will also be blocked
+    blocked = db.Column(db.Boolean())
+    
     created = db.Column(db.DateTime())
+    last_updated = db.Column(db.DateTime())
