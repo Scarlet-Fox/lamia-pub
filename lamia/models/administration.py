@@ -33,7 +33,6 @@ class Setting(db.Model):
     value = db.Column(db.JSONB())
     
 
-
 # TODO: relay support   
 #class Relay(db.Model):
 #    __tablename__ = 'relays'

@@ -158,6 +158,7 @@ class ActorMute(db.Model):
         nullable=True
     )
 
+
 class ActorBlock(db.Model):
     """An actor block is a severe server to client moderation action.
     
