@@ -85,3 +85,7 @@ class Follow(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     actor_id = db.Column(db.Integer(), db.ForeignKey('identities.id'))
     target_actor_id = db.Column(db.Integer(), db.ForeignKey('actors.id'))
+    
+    pending_review = db.Column(db.Boolean())
+    last_updated = db.Column(db.DateTime())
+    created = db.Column(db.DateTime())

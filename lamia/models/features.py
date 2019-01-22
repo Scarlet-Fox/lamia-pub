@@ -25,7 +25,12 @@ class Account(db.Model):
     # Should be a hash encrypted by scrypt
     password = db.Column(db.String())
     joined = db.Column(db.DateTime())
-    low_bandwidth = db.Column(db.)
+    # Activates low bandwidth mode to control image transmissions
+    low_bandwidth = db.Column(db.Boolean())
+    # Content should be hidden and attachments marked as sensitive by default
+    sensitive_content = db.Column(db.Boolean())
+    # All follows require confirmation if this is true
+    approval_for_follows = db.Column(db.Boolean())
     
     # Either someone is banned or not banned.
     # Problematic users, nazis, etc should be banned without mercy or guilt.
@@ -161,6 +166,7 @@ class Feed(db.Model):
     __tablename__ = 'feeds'
     
     id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String())
     identity_id = db.Column(db.Integer(), db.ForeignKey('identities.id'))
     
     
@@ -172,6 +178,32 @@ class FeedActor(db.Model):
     feed_id = db.Column(db.Integer(), db.ForeignKey('feeds.id'))
     target_actor_id = db.Column(db.Integer(), db.ForeignKey('actors.id'))
         
+
+class Tag(db.Model):
+    """The metaphysical concept of the hashtag, made real and without conceit."""
+    __tablename__ = 'tags'
+    
+    id = db.Column(db.Integer(), primary_key=True)
+    tag = db.Column(db.String())
+
+
+class ObjectTag(db.Model):
+    """A crosswalk table that ties tags to objects, for ease of querying."""
+    __tablename__ = 'object_tags'
+    
+    id = db.Column(db.Integer(), primary_key=True)
+    tag_id = db.Column(db.Integer(), db.ForeignKey('tags.id'))
+    object_id = db.Column(db.Integer(), db.ForeignKey('objects.id'))
+    
+
+class FeedTag(db.Model):
+    """A single tag watched by a feed."""
+    __tablename__ == 'feed_tags'
+    
+    id = db.Column(db.Integer(), primary_key=True)
+    feed_id = db.Column(db.Integer(), db.ForeignKey('feeds.id'))
+    target_tag_id = db.Column(db.Integer(), db.ForeignKey('tags.id'))
+    
     
 class Attachments(db.Model):
     """An attachment is an image tied to some kind of ActivityPub object.
@@ -182,7 +214,15 @@ class Attachments(db.Model):
     __tablename__ = 'attachments'
     
     id = db.Column(db.Integer(), primary_key=True)
+    uploaded_by_actor_uri = db.Column(db.String())
+    alt_text = db.Column(db.String())
     
+    storage_path = db.Column(db.String())
+    storage_uri = db.Column(db.String())
+    remote_uri = db.Column(db.String())
+    
+    size_in_bytes = db.Column(db.Integer())
+    local = db.Column(db.Boolean())
     
     
 class BookmarkGroup(db.Models):
@@ -190,7 +230,7 @@ class BookmarkGroup(db.Models):
     __tablename__ = 'bookmark_groups'
     
     id = db.Column(db.Integer(), primary_key=True)
-    
+    group = db.Column(db.String())
 
 
 class Bookmark(db.Models):
@@ -199,6 +239,7 @@ class Bookmark(db.Models):
     __tablename__ = 'boookmarks'
     
     id = db.Column(db.Integer(), primary_key=True)
+    object_id = db.Column(db.String())
+    description = db.Column(db.String())
     
-    
-# TODO: Tag models!!!! Incl. tag feed and some kind of map.
+    bookmark_group_id = db.Column(db.Integer(), db.ForeignKey('bookmark_groups.id'))
