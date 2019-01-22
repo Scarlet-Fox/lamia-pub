@@ -109,6 +109,21 @@ class Blog(db.Model):
     deleted = db.Column(db.Boolean())
     
     
+class Interest(db.Model):
+    """A hashtag but for actors. Maps tags to actors. Works similarly to
+    the FeedTag model but has a much broader use-case. Basically, can be
+    used to find users with similar interests.
+    """
+    __tablename__ = 'interests'
+    actor_id = db.Column(
+        db.Integer(), 
+        db.ForeignKey('actors.id', ondelete="CASCADE"),
+    )
+    tag_id = db.Column(
+        db.Integer(), 
+        db.ForeignKey('tags.id', ondelete="CASCADE"),
+    )
+
 class Block(db.Model):
     """Blocking a user is the strongest user to user moderation action.
     
@@ -239,7 +254,10 @@ class FeedTag(db.Model):
         db.Integer(), 
         db.ForeignKey('feeds.id', ondelete="CASCADE"),
     )
-    target_tag_id = db.Column(db.Integer(), db.ForeignKey('tags.id'))
+    target_tag_id = db.Column(
+        db.Integer(), 
+        db.ForeignKey('tags.id', ondelete="CASCADE"),
+    )
     
     
 class Attachments(db.Model):
