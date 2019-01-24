@@ -1,9 +1,11 @@
 from starlette.applications import Starlette
+from starlette.staticfiles import StaticFiles
 from starlette.config import Config
 from .middleware.gino import Gino
 import jinja2
 import inspect
 
+# TODO : mypy
 
 # Included this code to change gino's logging level. This prevents some double
 # logging that was making my lose my mind with uvicorn's defaults.
@@ -19,8 +21,8 @@ app = Starlette(debug=config("DEBUG", cast=bool, default=False))
 db.init_app(app, config)
 
 
-# Setup a jinja2 env (https://www.starlette.io/templates/)
 def setup_jinja2(template_dirs):
+    """Setup a jinja2 env (https://www.starlette.io/templates/)"""
     @jinja2.contextfunction
     def url_for(context, name, **path_params):
         request = context['request']
@@ -48,9 +50,12 @@ except NameError:
 jinja = setup_jinja2(templates_dirs)
     
 
+# Static content loading
+app.mount('/static', StaticFiles(directory='statics'), name='static')
+
 # TODO: Setup redis here
 
 
 # There's probably a more graceful way to do this (a la blueprints)
-from .views import core
+from .views import general
 
