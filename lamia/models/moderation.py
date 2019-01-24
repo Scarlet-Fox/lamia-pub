@@ -34,9 +34,12 @@ class Import(db.Model):
     
     request_by_account_id = db.Column(
         db.Integer(), 
-        db.ForeignKey('accounts.id', ondelete="CASCADE"),
+        db.ForeignKey('accounts.id', ondelete='CASCADE'),
     )
-    request_for_identity_id = db.Column(db.Integer(), db.ForeignKey('identities.id'))
+    request_for_identity_id = db.Column(
+        db.Integer(),
+        db.ForeignKey('identities.id', ondelete='CASCADE'),
+    )
     data_to_import = db.Column(db.JSONB())
     
     created = db.Column(db.DateTime())
@@ -69,19 +72,19 @@ class Report(db.Model):
     content_uri = db.Column(db.String())
     target_actor_id = db.Column(
         db.Integer(), 
-        db.ForeignKey('actors.id', ondelete="SET NULL"),
+        db.ForeignKey('actors.id', ondelete='SET NULL'),
         nullable=True,
     )
     
     report_by_actor_id = db.Column(
         db.Integer(), 
-        db.ForeignKey('actors.id', ondelete="SET NULL"),
+        db.ForeignKey('actors.id', ondelete='SET NULL'),
         nullable=True,
     )
     current_status = db.Column(db.String())
     assigned_to_account_id = db.Column(
         db.Integer(), 
-        db.ForeignKey('accounts.id', ondelete="SET NULL"),
+        db.ForeignKey('accounts.id', ondelete='SET NULL'),
         nullable=True,
     )
     comment_count = db.Column(db.Integer())
@@ -91,7 +94,7 @@ class Report(db.Model):
     resolved = db.Column(db.Boolean())
     marked_resolved_by_account_id = db.Column(
         db.Integer(), 
-        db.ForeignKey('accounts.id', ondelete="SET NULL"),
+        db.ForeignKey('accounts.id', ondelete='SET NULL'),
         nullable=True
     )
     
@@ -104,7 +107,7 @@ class ReportComment(db.Model):
     message = db.Column(db.String())
     created_by_account_id = db.Column(
         db.Integer(), 
-        db.ForeignKey('accounts.id', ondelete="SET NULL"),
+        db.ForeignKey('accounts.id', ondelete='SET NULL'),
         nullable=True
     )
     created = db.Column(db.DateTime())
@@ -126,12 +129,12 @@ class ActorCensor(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     target_actor_id = db.Column(
         db.Integer(),
-        db.ForeignKey('actors.id', ondelete="CASCADE"),
+        db.ForeignKey('actors.id', ondelete='CASCADE'),
     )
     created = db.Column(db.DateTime())
     created_by_account_id = db.Column(
         db.Integer(),
-        db.ForeignKey('accounts.id', ondelete="SET NULL"),
+        db.ForeignKey('accounts.id', ondelete='SET NULL'),
         nullable=True
     )
 
@@ -147,14 +150,14 @@ class ActorMute(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     target_actor_id = db.Column(
         db.Integer(),
-        db.ForeignKey('actors.id', ondelete="CASCADE"),
+        db.ForeignKey('actors.id', ondelete='CASCADE'),
     )
     created = db.Column(db.DateTime())
     duration = db.Column(db.Interval())
     forever = db.Column(db.Boolean())
     created_by_account_id = db.Column(
         db.Integer(),
-        db.ForeignKey('accounts.id', ondelete="SET NULL"),
+        db.ForeignKey('accounts.id', ondelete='SET NULL'),
         nullable=True
     )
 
@@ -171,12 +174,12 @@ class ActorBlock(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     target_actor_id = db.Column(
         db.Integer(),
-        db.ForeignKey('actors.id', ondelete="CASCADE"),
+        db.ForeignKey('actors.id', ondelete='CASCADE'),
     )
     created = db.Column(db.DateTime())
     created_by_account_id = db.Column(
         db.Integer(),
-        db.ForeignKey('accounts.id', ondelete="SET NULL"),
+        db.ForeignKey('accounts.id', ondelete='SET NULL'),
         nullable=True
     )
     
@@ -194,7 +197,7 @@ class DomainCensor(db.Model):
     created = db.Column(db.DateTime())
     created_by_account_id = db.Column(
         db.Integer(),
-        db.ForeignKey('accounts.id', ondelete="SET NULL"),
+        db.ForeignKey('accounts.id', ondelete='SET NULL'),
         nullable=True
     )
     
@@ -214,7 +217,7 @@ class DomainMute(db.Model):
     forever = db.Column(db.Boolean())
     created_by_account_id = db.Column(
         db.Integer(),
-        db.ForeignKey('accounts.id', ondelete="SET NULL"),
+        db.ForeignKey('accounts.id', ondelete='SET NULL'),
         nullable=True
     )
     
@@ -233,7 +236,7 @@ class DomainBlock(db.Model):
     created = db.Column(db.DateTime())
     created_by_account_id = db.Column(
         db.Integer(),
-        db.ForeignKey('accounts.id', ondelete="SET NULL"),
+        db.ForeignKey('accounts.id', ondelete='SET NULL'),
         nullable=True
     )
     
@@ -249,7 +252,7 @@ class DomainEmailBlock(db.Model):
     created = db.Column(db.DateTime())
     created_by_account_id = db.Column(
         db.Integer(),
-        db.ForeignKey('accounts.id', ondelete="SET NULL"),
+        db.ForeignKey('accounts.id', ondelete='SET NULL'),
         nullable=True
     )
     

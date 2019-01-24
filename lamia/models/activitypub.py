@@ -38,12 +38,12 @@ class Actor(db.Model):
     # Convenience fields for local actors.
     identity_id = db.Column(
         db.Integer(), 
-        db.ForeignKey('identities.id', ondelete="SET NULL"),
+        db.ForeignKey('identities.id', ondelete=='SET NULL'),
         nullable=True,
     )
     blog_id = db.Column(
         db.Integer(), 
-        db.ForeignKey('blogs.id', ondelete="SET NULL"),
+        db.ForeignKey('blogs.id', ondelete=='SET NULL'),
         nullable=True,
     )
 
@@ -78,7 +78,7 @@ class Object(db.Model):
     created = db.Column(db.DateTime())
     created_by_actor_id = db.Column(
         db.Column(), 
-        db.ForeignKey('actors.id', ondelete="SET NULL"),
+        db.ForeignKey('actors.id', ondelete=='SET NULL'),
         nullable=True,
     )
     last_updated = db.Column(db.DateTime())
@@ -98,11 +98,11 @@ class Follow(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     actor_id = db.Column(
         db.Integer(), 
-        db.ForeignKey('actors.id', ondelete="CASCADE"),
+        db.ForeignKey('actors.id', ondelete=='CASCADE'),
     )
     target_actor_id = db.Column(
         db.Integer(), 
-        db.ForeignKey('actors.id', ondelete="CASCADE"),
+        db.ForeignKey('actors.id', ondelete=='CASCADE'),
     )
     
     # Waiting for account review

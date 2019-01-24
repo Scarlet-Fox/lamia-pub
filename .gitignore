@@ -107,4 +107,4 @@ venv.bak/
 .DS_Store
 
 # lamia related local only files
-lamia.config
+.env

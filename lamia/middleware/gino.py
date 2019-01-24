@@ -107,7 +107,7 @@ class Gino(_Gino):
         await self.set_bind(
             dsn,
             echo=self.config('DB_ECHO', cast=bool, default=False),
-            logging_name="Cheese",
+            logging_name='Cheese',
             min_size=self.config('DB_POOL_MIN_SIZE', cast=int, default=5),
             max_size=self.config('DB_POOL_MAX_SIZE', cast=int, default=10),
             ssl=self.config('DB_SSL', cast=bool, default=None),

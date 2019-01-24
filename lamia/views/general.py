@@ -3,14 +3,19 @@ from starlette.responses import HTMLResponse
 from .. import app
 from .. import db
 from .. import jinja
+from .. import config
 
 
 @app.route('/')
 async def introduction(request):
     template = jinja.get_template('base.html')
-    content = template.render(request=request)
+    content = template.render(
+        request=request,
+        title=f'{config.SITE_NAME}'
+    )
     return HTMLResponse(content)
     
+
 
 
 
