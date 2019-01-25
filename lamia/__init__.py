@@ -21,7 +21,16 @@ app = Starlette(debug=config('DEBUG', cast=bool, default=False))
 db.init_app(app, config)
 
 
-def setup_jinja2(template_dirs):
+# Some config loading
+app.instance_name = config(
+    'INSTANCE_NAME',
+    cast=str,
+    default='A Lamia Community'
+)
+
+
+# Jinja2 science starts here
+def setup_jinja2(template_dirs, auto_reload):
     """Setup a jinja2 env (https://www.starlette.io/templates/)"""
     @jinja2.contextfunction
     def url_for(context, name, **path_params):
@@ -29,7 +38,11 @@ def setup_jinja2(template_dirs):
         return request.url_for(name, **path_params)
 
     loader = jinja2.FileSystemLoader(template_dirs)
-    env = jinja2.Environment(loader=loader, autoescape=True)
+    env = jinja2.Environment(
+        loader=loader,
+        autoescape=True,
+        auto_reload=auto_reload,
+    )
     env.globals['url_for'] = url_for
     return env
 
@@ -47,7 +60,14 @@ except NameError:
     # All is well, just use the ./templates folder
     pass
 
-jinja = setup_jinja2(templates_dirs)
+jinja = setup_jinja2(
+    templates_dirs, 
+    config(
+        "TEMPLATE_RELOAD",
+        cast=bool,
+        default=False,
+    ),
+)
     
 
 # Static content loading

@@ -1,16 +1,31 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<head>
+		<!-- Required meta tags -->
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+		<!-- Bootstrap CSS -->
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
-    <title>{{ title }}</title>
-  </head>
-  <body>
-    <h1>Hello, world!</h1>
-  </body>
+		<title>{% block title %}{% endblock %}</title>
+		
+		<link rel="stylesheet" href="/static/lamia.css">
+		{% block css %}
+		{% endblock %}
+	</head>
+	<body>
+		<div id="lm-header">
+			{% block header %}
+			{% endblock %}
+		</div>
+		<div id="lm-content">
+			{% block content %}
+			{% endblock %}
+		</div>
+		<div id="lm-footer">
+			{% block footer %}
+			{% endblock %}
+		</div>
+	</body>
 </html>

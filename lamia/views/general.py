@@ -8,10 +8,10 @@ from .. import config
 
 @app.route('/')
 async def introduction(request):
-    template = jinja.get_template('base.html')
+    template = jinja.get_template('index.html')
     content = template.render(
         request=request,
-        title=f'{config.SITE_NAME}'
+        instance_name=f'{app.instance_name}'
     )
     return HTMLResponse(content)
     

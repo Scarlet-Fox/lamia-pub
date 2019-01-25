@@ -1,5 +1,9 @@
 aiocontextvars==0.2.1
+aiofiles==0.4.0
+amqp==2.4.0
 asyncpg==0.18.2
+billiard==3.5.0.5
+celery==4.2.1
 Click==7.0
 gino==0.8.1
 h11==0.8.1
@@ -8,11 +12,16 @@ hpack==3.0.0
 httptools==0.0.11
 Hypercorn==0.4.6
 hyperframe==5.2.0
+Jinja2==2.10
+kombu==4.2.2.post1
+MarkupSafe==1.1.0
 pytoml==0.1.20
+pytz==2018.9
 SQLAlchemy==1.2.16
 starlette==0.9.10
 typing-extensions==3.7.2
 uvicorn==0.3.25
 uvloop==0.11.3
+vine==1.2.0
 websockets==7.0
 wsproto==0.12.0
