@@ -7,7 +7,7 @@ from .. import db
 
 class Actor(db.Model):
     """Actually, actors are objects (or ActivityStreams), but I call them out
-    explicitly, because they are a key component in how Lamia sees the 
+    explicitly, because they are a key component in how lamia sees the 
     fediverse.
     
     From the ActivityPub specifications: 

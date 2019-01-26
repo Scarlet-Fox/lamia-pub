@@ -1,4 +1,4 @@
-"""Models in this module are the sugar that makes Lamia worth using over
+"""Models in this module are the sugar that makes lamia worth using over
 just a plain federator. They're directly or indirectly associated with the
 user-level things that make ActivityPub taste better.
 """
