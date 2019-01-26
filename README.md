@@ -35,6 +35,7 @@ We'll clean these up later on, but for now this is as good as it gets.
 ### Requirements
 
 * Python 3.7+
+* PostgreSQL
 
 ### Create a config file
 
