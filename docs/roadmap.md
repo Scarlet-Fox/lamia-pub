@@ -13,6 +13,8 @@ This isn't everything but it's a few things.
 
 #### FUTURE
 
+Things on this list should be ~struck through~ when they're completed.
+
 * Fully featured blogs
 * Fully featured status updates
 * Draft functionality and an interface for managing drafts
@@ -31,4 +33,15 @@ This isn't everything but it's a few things.
 * User muting, blocking, image blocking
 * Support for multiple identities per account
 * Accessibility helpers in the interface
-
+* Cutesy installer with Lamilia walking through setup because
+* More lamia pictures
+* Local timeline posting (to local instance and followers)
+* Privacy settings for identities and blogs
+* Profile customization so that profiles can be pretty
+* Built-in blocking for IP addresses
+* More advanced instance blocking tools that use the built-in IP blocking
+* Filtering for users
+* Admin level filtering
+* Multiple storage backends for files
+* Mastodon compatible migration scripts (my soul weeps, it weeps, it weeps, it weeps)
+* Docker support
