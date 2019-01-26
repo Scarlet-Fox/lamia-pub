@@ -61,5 +61,5 @@ TEMPLATE_RELOAD=True
 Other Contributors
 ------------------
 
-* [MrsRemi](https://www.deviantart.com/mrsremi) - created the first drawing of Lamilia
+* [MrsRemi](https://www.deviantart.com/mrsremi) - created the first drawing of [Lamilia](docs/Lamilia.png)
 
