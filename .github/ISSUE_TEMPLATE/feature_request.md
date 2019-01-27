@@ -2,19 +2,19 @@
 name: Feature request
 about: Suggest an idea for this project
 title: ''
-labels: ''
-assignees: ''
+labels: 'open discussion'
+assignees: 'Ghost-in-the-Chel'
 
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+**What would you like to see? -** Let us know what you want! Share it in your own words, and don't hesitate to use examples:
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+**If you had unlimited power, how would you fix it -** Don't laugh! This is sometimes a useful way to think about things, it can help us to share your perspective: 
 
-**Additional context**
-Add any other context or screenshots about the feature request here.
+
+**Are there any other alternatives that you can think of -** Let us know if there's more than one way to meet this need:
+
+
+**Anything else -** Share anything that didn't fit into the earlier sections:
+
