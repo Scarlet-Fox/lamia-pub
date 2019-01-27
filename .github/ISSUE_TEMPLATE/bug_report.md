@@ -2,37 +2,19 @@
 name: Bug report
 about: Create a report to help us improve
 title: ''
-labels: ''
-assignees: ''
+labels: 'bug report'
+assignees: 'Ghost-in-the-Chel'
 
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+**Describe the bug -** Tell us what's broken so we can fix it. Let us know why you consider it broken as well, just so that we understand everything completely:
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+**How did you find it -** Let us know what you did that led you to uncover the bug. Include screenshots where you can:
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+**Browser/operating system versions (and other system information) -** This if information that we need to research this bug: 
 
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
 
-**Additional context**
-Add any other context about the problem here.
+**Anything else -** Share anything that didn't fit into the earlier sections:
+
