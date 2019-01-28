@@ -16,7 +16,7 @@ logging.getLogger('gino').setLevel(logging.WARN)
 
 # Initialize the app, including the database connection.
 db = Gino()
-config = Config('.env')
+config = Config('lamia.config')
 app = Starlette(debug=config('DEBUG', cast=bool, default=False))
 db.init_app(app, config)
 
