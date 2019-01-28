@@ -1,23 +1,26 @@
+import logging
+import inspect
+import jinja2
 from starlette.applications import Starlette
 from starlette.staticfiles import StaticFiles
 from starlette.config import Config
 from .middleware.gino import Gino
-import jinja2
-import inspect
 
 # TODO : mypy
 
 # Included this code to change gino's logging level. This prevents some double
 # logging that was making my lose my mind with uvicorn's defaults.
-import logging
 logging.basicConfig()
 logging.getLogger('gino').setLevel(logging.WARN)
 
 # Initialize the app, including the database connection.
+# disabling pylint warning, as this is conventional for these packages
+# pylint: disable=invalid-name
 db = Gino()
 config = Config('lamia.config')
 app = Starlette(debug=config('DEBUG', cast=bool, default=False))
 db.init_app(app, config)
+# pylint: enable=invalid-name
 
 # Some config loading
 app.instance_name = config(
@@ -43,27 +46,30 @@ def setup_jinja2(template_dirs, auto_reload):
     return env
 
 
-templates_dirs = ['templates']
+TEMPLATES_DIRS = ['templates']
 try:
     # I feel like this may not be cool, but it uh works.
     import lamia
     # Damn, I love neat tricks, this looks up the lamia module path.
-    module_template_dir = inspect.getfile(lamia)
+    MODULE_TEMPLATE_DIR = inspect.getfile(lamia)
     # The path includes __init__.py so you have to drop it.
     templates_dirs.append(
-        '/'.join(module_template_dir.split("/")[:-1] + ['templates']))
+        '/'.join(MODULE_TEMPLATE_DIR.split("/")[:-1] + ['templates']))
 except NameError:
     # All is well, just use the ./templates folder
     pass
 
+# pylint: disable=invalid-name
+# same rational as above
 jinja = setup_jinja2(
-    templates_dirs,
+    TEMPLATES_DIRS,
     config(
         "TEMPLATE_RELOAD",
         cast=bool,
         default=False,
     ),
 )
+# pylint: enable=invalid-name
 
 # Static content loading
 app.mount('/static', StaticFiles(directory='statics'), name='static')
