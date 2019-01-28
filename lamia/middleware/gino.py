@@ -1,14 +1,13 @@
-import asyncio
-import logging
-
 from sqlalchemy.engine.url import URL
-
 from gino.api import Gino as _Gino, GinoExecutor as _Executor
 from gino.engine import GinoConnection as _Connection, GinoEngine as _Engine
 from gino.strategies import GinoStrategy
-
+from asyncpg.exceptions import InvalidAuthorizationSpecificationError
 from starlette.datastructures import CommaSeparatedStrings, DatabaseURL, Secret
 from starlette.exceptions import HTTPException
+import asyncio
+import logging
+import sys
 
 
 class StarletteModelMixin:
@@ -104,15 +103,41 @@ class Gino(_Gino):
                 database=self.config('DB_DATABASE', cast=str, default='postgres'),
             )
         
-        await self.set_bind(
-            dsn,
-            echo=self.config('DB_ECHO', cast=bool, default=False),
-            logging_name='Cheese',
-            min_size=self.config('DB_POOL_MIN_SIZE', cast=int, default=5),
-            max_size=self.config('DB_POOL_MAX_SIZE', cast=int, default=10),
-            ssl=self.config('DB_SSL', cast=bool, default=None),
-            loop=asyncio.get_running_loop(),
-        )
+        try:
+            await self.set_bind(
+                dsn,
+                echo=self.config('DB_ECHO', cast=bool, default=False),
+                logging_name='Cheese',
+                min_size=self.config('DB_POOL_MIN_SIZE', cast=int, default=5),
+                max_size=self.config('DB_POOL_MAX_SIZE', cast=int, default=10),
+                ssl=self.config('DB_SSL', cast=bool, default=None),
+                loop=asyncio.get_running_loop(),
+            )
+        except InvalidAuthorizationSpecificationError:
+            sys.exit(
+                """
+                InvalidAuthorizationSpecificationError:
+            
+                Your database username or password is invalid. Please
+                check your config and try again.
+            
+                If you did not configure a database, then add a database
+                configuration line to your lamia.config file.
+                """
+            )
+        except ConnectionRefusedError:
+            sys.exit(
+                """
+                ConnectionRefusedError:
+            
+                Check that your database details are in the lamia.config
+                file and can actually connect to the database.
+            
+                If the database username and password look right, then check
+                that your postgreSQL database is online and accepting 
+                connections at the right port and address.
+                """
+            )
         
     async def shutdown(self):
         await self.pop_bind().close()
