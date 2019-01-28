@@ -13,25 +13,21 @@ import logging
 logging.basicConfig()
 logging.getLogger('gino').setLevel(logging.WARN)
 
-
 # Initialize the app, including the database connection.
 db = Gino()
 config = Config('lamia.config')
 app = Starlette(debug=config('DEBUG', cast=bool, default=False))
 db.init_app(app, config)
 
-
 # Some config loading
 app.instance_name = config(
-    'INSTANCE_NAME',
-    cast=str,
-    default='A Lamia Community'
-)
+    'INSTANCE_NAME', cast=str, default='A Lamia Community')
 
 
 # Jinja2 science starts here
 def setup_jinja2(template_dirs, auto_reload):
     """Setup a jinja2 env (https://www.starlette.io/templates/)"""
+
     @jinja2.contextfunction
     def url_for(context, name, **path_params):
         request = context['request']
@@ -46,6 +42,7 @@ def setup_jinja2(template_dirs, auto_reload):
     env.globals['url_for'] = url_for
     return env
 
+
 templates_dirs = ['templates']
 try:
     # I feel like this may not be cool, but it uh works.
@@ -54,28 +51,24 @@ try:
     module_template_dir = inspect.getfile(lamia)
     # The path includes __init__.py so you have to drop it.
     templates_dirs.append(
-        '/'.join(module_template_dir.split("/")[:-1]+['templates'])
-    )
+        '/'.join(module_template_dir.split("/")[:-1] + ['templates']))
 except NameError:
     # All is well, just use the ./templates folder
     pass
 
 jinja = setup_jinja2(
-    templates_dirs, 
+    templates_dirs,
     config(
         "TEMPLATE_RELOAD",
         cast=bool,
         default=False,
     ),
 )
-    
 
 # Static content loading
 app.mount('/static', StaticFiles(directory='statics'), name='static')
 
 # TODO: Setup redis here
 
-
 # There's probably a more graceful way to do this (a la blueprints)
 from .views import general
-

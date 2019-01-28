@@ -10,17 +10,9 @@ from .. import config
 async def introduction(request):
     template = jinja.get_template('index.html')
     content = template.render(
-        request=request,
-        instance_name=f'{app.instance_name}'
-    )
+        request=request, instance_name=f'{app.instance_name}')
     return HTMLResponse(content)
-    
-
-
-
 
 
 # How to get a connection
 #async with db.acquire(lazy=True) as connection:
-        
-
