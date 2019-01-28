@@ -111,7 +111,7 @@ class Gino(_Gino):
             min_size=self.config('DB_POOL_MIN_SIZE', cast=int, default=5),
             max_size=self.config('DB_POOL_MAX_SIZE', cast=int, default=10),
             ssl=self.config('DB_SSL', cast=bool, default=None),
-            loop=asyncio.get_event_loop(),
+            loop=asyncio.get_running_loop(),
         )
         
     async def shutdown(self):
