@@ -108,3 +108,4 @@ venv.bak/
 
 # lamia related local only files
 .env
+lamia.config
