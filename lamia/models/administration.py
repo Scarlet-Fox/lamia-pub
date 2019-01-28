@@ -1,12 +1,13 @@
 from .. import db
 
+
 class Emoji(db.Model):
     """A mapping of images, replacement text, and description text all of which
     exists for the purpose of proliferating blob emojis and upside down smiley
     faces throughout the fediverse.
     """
     __tablename__ = 'emojis'
-    
+
     id = db.Column(db.Integer(), primary_key=True)
     # A path to the image in /statics
     image = db.Column(db.String())
@@ -27,13 +28,12 @@ class Setting(db.Model):
     TODO: figure out settings we may need here.
     """
     __tablename__ = 'settings'
-    
+
     id = db.Column(db.Integer(), primary_key=True)
     key = db.Column(db.String())
     value = db.Column(db.JSONB())
-    
 
-# TODO: relay support   
+
+# TODO: relay support
 #class Relay(db.Model):
 #    __tablename__ = 'relays'
-

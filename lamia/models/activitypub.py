@@ -18,32 +18,32 @@ class Actor(db.Model):
     - Snakespeare, As You Lamia It
     """
     __tablename__ = 'actors'
-    
+
     id = db.Column(db.Integer(), primary_key=True)
-    
+
     avatar = db.Column(db.String())
     header = db.Column(db.String())
     summary = db.Column(db.String())
     parameters = db.Column(db.JSONB())
-    
+
     display_name = db.Column(db.String())
     uri = db.Column(db.String())
     local = db.Column(db.Boolean())
-    
+
     created = db.Column(db.DateTime())
     last_updated = db.Column(db.DateTime())
-    
+
     data = db.Column(db.JSONB())
-    
+
     # Convenience fields for local actors.
     identity_id = db.Column(
-        db.Integer(), 
-        db.ForeignKey('identities.id', ondelete=='SET NULL'),
+        db.Integer(),
+        db.ForeignKey('identities.id', ondelete == 'SET NULL'),
         nullable=True,
     )
     blog_id = db.Column(
-        db.Integer(), 
-        db.ForeignKey('blogs.id', ondelete=='SET NULL'),
+        db.Integer(),
+        db.ForeignKey('blogs.id', ondelete == 'SET NULL'),
         nullable=True,
     )
 
@@ -56,14 +56,14 @@ class Activity(db.Model):
     * https://www.w3.org/TR/activitypub/#server-to-server-interactions
     """
     __tablename__ = 'activities'
-    
+
     id = db.Column(db.Integer(), primary_key=True)
     object_uri = db.Column(db.String())
-    
+
     datetime = db.Column(db.DateTime())
     data = db.Column(db.JSONB())
-    
-    
+
+
 class Object(db.Model):
     """Objects are the Things in the fediverse.
     
@@ -71,20 +71,20 @@ class Object(db.Model):
     https://www.w3.org/TR/activitypub/#obj
     """
     __tablename__ = 'objects'
-    
+
     id = db.Column(db.Integer(), primary_key=True)
     uri = db.Column(db.String())
 
     created = db.Column(db.DateTime())
     created_by_actor_id = db.Column(
-        db.Column(), 
-        db.ForeignKey('actors.id', ondelete=='SET NULL'),
+        db.Column(),
+        db.ForeignKey('actors.id', ondelete == 'SET NULL'),
         nullable=True,
     )
     last_updated = db.Column(db.DateTime())
-    
+
     data = db.Column(db.JSONB())
-    
+
 
 class Follow(db.Model):
     """Subscriptions are a link between actors. When you subscribe, you are
@@ -94,25 +94,23 @@ class Follow(db.Model):
     explicitly for convenience. Explicitly..
     """
     __tablename__ = 'follows'
-    
+
     id = db.Column(db.Integer(), primary_key=True)
     actor_id = db.Column(
-        db.Integer(), 
-        db.ForeignKey('actors.id', ondelete=='CASCADE'),
+        db.Integer(),
+        db.ForeignKey('actors.id', ondelete == 'CASCADE'),
     )
     target_actor_id = db.Column(
-        db.Integer(), 
-        db.ForeignKey('actors.id', ondelete=='CASCADE'),
+        db.Integer(),
+        db.ForeignKey('actors.id', ondelete == 'CASCADE'),
     )
-    
+
     # Waiting for account review
     pending_review = db.Column(db.Boolean())
     # Approved by actor owner
     approved = db.Column(db.Boolean())
     # Hard rejected by owner, all future requests will also be blocked
     blocked = db.Column(db.Boolean())
-    
+
     created = db.Column(db.DateTime())
     last_updated = db.Column(db.DateTime())
-    
-    
