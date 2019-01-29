@@ -1,3 +1,5 @@
+#TODO: Remove this pylint statment when this file isn't super WIP
+# pylint: skip-file
 from starlette.responses import JSONResponse
 from starlette.responses import HTMLResponse
 from .. import app
@@ -10,17 +12,9 @@ from .. import config
 async def introduction(request):
     template = jinja.get_template('index.html')
     content = template.render(
-        request=request,
-        instance_name=f'{app.instance_name}'
-    )
+        request=request, instance_name=f'{app.instance_name}')
     return HTMLResponse(content)
-    
-
-
-
 
 
 # How to get a connection
 #async with db.acquire(lazy=True) as connection:
-        
-

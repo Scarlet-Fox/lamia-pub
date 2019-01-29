@@ -1,4 +1,6 @@
 from .. import db
+from gino.dialects.asyncpg import JSONB
+
 
 class Emoji(db.Model):
     """A mapping of images, replacement text, and description text all of which
@@ -6,7 +8,7 @@ class Emoji(db.Model):
     faces throughout the fediverse.
     """
     __tablename__ = 'emojis'
-    
+
     id = db.Column(db.Integer(), primary_key=True)
     # A path to the image in /statics
     image = db.Column(db.String())
@@ -27,13 +29,12 @@ class Setting(db.Model):
     TODO: figure out settings we may need here.
     """
     __tablename__ = 'settings'
-    
+
     id = db.Column(db.Integer(), primary_key=True)
     key = db.Column(db.String())
-    value = db.Column(db.JSONB())
-    
+    value = db.Column(JSONB())
 
-# TODO: relay support   
+
+# TODO: relay support
 #class Relay(db.Model):
 #    __tablename__ = 'relays'
-

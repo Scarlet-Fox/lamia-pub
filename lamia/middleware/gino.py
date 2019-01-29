@@ -76,33 +76,35 @@ class Gino(_Gino):
     * ``echo`` - enable SQLAlchemy echo mode.
     * ``ssl`` - SSL context passed to ``asyncpg.connect``, default is ``None``.
     """
-    
-    model_base_classes = _Gino.model_base_classes + (StarletteModelMixin,)
+
+    model_base_classes = _Gino.model_base_classes + (StarletteModelMixin, )
     query_executor = GinoExecutor
-    
+
     def init_app(self, app, config):
         self.config = config
         app.add_event_handler('startup', self.startup)
         app.add_event_handler('shutdown', self.shutdown)
-                                
+
     def __init__(self, app=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if app is not None:
             self.init_app(app)
-            
-    async def startup(self):        
+
+    async def startup(self):
         if self.config('DB_DSN', default=False):
             dsn = str(self.config('DB_DSN', cast=DatabaseURL))
         else:
             dsn = URL(
-                drivername=self.config('DB_DRIVER', cast=str, default='asyncpg'),
+                drivername=self.config(
+                    'DB_DRIVER', cast=str, default='asyncpg'),
                 host=self.config('DB_HOST', cast=str, default='localhost'),
                 port=self.config('DB_PORT', cast=int, default=5432),
                 username=self.config('DB_USER', cast=str, default='postgres'),
                 password=self.config('DB_PASSWORD', cast=Secret, default=''),
-                database=self.config('DB_DATABASE', cast=str, default='postgres'),
+                database=self.config(
+                    'DB_DATABASE', cast=str, default='postgres'),
             )
-        
+
         try:
             await self.set_bind(
                 dsn,
@@ -114,8 +116,7 @@ class Gino(_Gino):
                 loop=asyncio.get_running_loop(),
             )
         except InvalidAuthorizationSpecificationError:
-            sys.exit(
-                """
+            sys.exit("""
                 InvalidAuthorizationSpecificationError:
             
                 Your database username or password is invalid. Please
@@ -123,11 +124,9 @@ class Gino(_Gino):
             
                 If you did not configure a database, then add a database
                 configuration line to your lamia.config file.
-                """
-            )
+                """)
         except ConnectionRefusedError:
-            sys.exit(
-                """
+            sys.exit("""
                 ConnectionRefusedError:
             
                 Check that your database details are in the lamia.config
@@ -136,10 +135,7 @@ class Gino(_Gino):
                 If the database username and password look right, then check
                 that your postgreSQL database is online and accepting 
                 connections at the right port and address.
-                """
-            )
-        
+                """)
+
     async def shutdown(self):
         await self.pop_bind().close()
-    
-    

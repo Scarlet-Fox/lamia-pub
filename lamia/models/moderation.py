@@ -5,6 +5,7 @@ Moderators should ban nazis, by the way. This shouldn't need to be said, but
 it is being said right here. Get rid of them.
 """
 from .. import db
+from gino.dialects.asyncpg import JSONB
 
 
 class ModerationLog(db.Model):
@@ -15,9 +16,10 @@ class ModerationLog(db.Model):
     """
     __tablename__ = 'moderation_logs'
     description = db.Column(db.String())
-    
+
     created = db.Column(db.DateTime())
-    created_by_account_id = db.Column(db.Integer(), db.ForeignKey('accounts.id'))
+    created_by_account_id = db.Column(db.Integer(),
+                                      db.ForeignKey('accounts.id'))
 
 
 class Import(db.Model):
@@ -29,23 +31,23 @@ class Import(db.Model):
     and can be selectively authorized to move forward by moderators.
     """
     __tablename__ = 'imports'
-    
+
     id = db.Column(db.Integer(), primary_key=True)
-    
+
     request_by_account_id = db.Column(
-        db.Integer(), 
+        db.Integer(),
         db.ForeignKey('accounts.id', ondelete='CASCADE'),
     )
     request_for_identity_id = db.Column(
         db.Integer(),
         db.ForeignKey('identities.id', ondelete='CASCADE'),
     )
-    data_to_import = db.Column(db.JSONB())
-    
+    data_to_import = db.Column(JSONB())
+
     created = db.Column(db.DateTime())
     last_updated = db.Column(db.DateTime())
     processed = db.Column(db.DateTime())
-    
+
     allowed = db.Column(db.Boolean())
 
 
@@ -66,58 +68,56 @@ class Report(db.Model):
     can be created and sent to this instance from other instances. 
     """
     __tablename__ = 'reports'
-    
+
     id = db.Column(db.Integer(), primary_key=True)
     original_content = db.Column(db.String())
     content_uri = db.Column(db.String())
     target_actor_id = db.Column(
-        db.Integer(), 
+        db.Integer(),
         db.ForeignKey('actors.id', ondelete='SET NULL'),
         nullable=True,
     )
-    
+
     report_by_actor_id = db.Column(
-        db.Integer(), 
+        db.Integer(),
         db.ForeignKey('actors.id', ondelete='SET NULL'),
         nullable=True,
     )
     current_status = db.Column(db.String())
     assigned_to_account_id = db.Column(
-        db.Integer(), 
+        db.Integer(),
         db.ForeignKey('accounts.id', ondelete='SET NULL'),
         nullable=True,
     )
     comment_count = db.Column(db.Integer())
-    
+
     created = db.Column(db.DateTime())
     last_updated = db.Column(db.DateTime())
     resolved = db.Column(db.Boolean())
     marked_resolved_by_account_id = db.Column(
-        db.Integer(), 
+        db.Integer(),
         db.ForeignKey('accounts.id', ondelete='SET NULL'),
-        nullable=True
-    )
-    
-    
+        nullable=True)
+
+
 class ReportComment(db.Model):
     """Allow moderator to moderator talk in a report, should work like chat
     messages."""
     __tablename__ = 'report_comments'
-    
+
     message = db.Column(db.String())
     created_by_account_id = db.Column(
-        db.Integer(), 
+        db.Integer(),
         db.ForeignKey('accounts.id', ondelete='SET NULL'),
-        nullable=True
-    )
+        nullable=True)
     created = db.Column(db.DateTime())
-    
+
     report_id = db.Column(db.Integer(), db.ForeignKey('reports.id'))
     # Changing the status of a report should create a comment where the message
     # is something like 'changed status from ignored to open'.
     status_change = db.Column(db.Boolean())
-    
-    
+
+
 class ActorCensor(db.Model):
     """An actor censor is a light server to client moderation action.
     
@@ -125,7 +125,7 @@ class ActorCensor(db.Model):
     activities to either appear content warned or minimized.
     """
     __tablename__ = 'actor_censors'
-    
+
     id = db.Column(db.Integer(), primary_key=True)
     target_actor_id = db.Column(
         db.Integer(),
@@ -135,8 +135,7 @@ class ActorCensor(db.Model):
     created_by_account_id = db.Column(
         db.Integer(),
         db.ForeignKey('accounts.id', ondelete='SET NULL'),
-        nullable=True
-    )
+        nullable=True)
 
 
 class ActorMute(db.Model):
@@ -146,7 +145,7 @@ class ActorMute(db.Model):
     activities from the federated timeline or minimizes them.
     """
     __tablename__ = 'actor_mutes'
-    
+
     id = db.Column(db.Integer(), primary_key=True)
     target_actor_id = db.Column(
         db.Integer(),
@@ -158,8 +157,7 @@ class ActorMute(db.Model):
     created_by_account_id = db.Column(
         db.Integer(),
         db.ForeignKey('accounts.id', ondelete='SET NULL'),
-        nullable=True
-    )
+        nullable=True)
 
 
 class ActorBlock(db.Model):
@@ -170,7 +168,7 @@ class ActorBlock(db.Model):
     actors on this instance and the actor that is blocked.
     """
     __tablename__ = 'actor_blocks'
-    
+
     id = db.Column(db.Integer(), primary_key=True)
     target_actor_id = db.Column(
         db.Integer(),
@@ -180,10 +178,9 @@ class ActorBlock(db.Model):
     created_by_account_id = db.Column(
         db.Integer(),
         db.ForeignKey('accounts.id', ondelete='SET NULL'),
-        nullable=True
-    )
-    
-    
+        nullable=True)
+
+
 class DomainCensor(db.Model):
     """A domain censor is a light server to server moderation action. 
     
@@ -191,17 +188,16 @@ class DomainCensor(db.Model):
     from a specific domain to either appear content warned or minimized.
     """
     __tablename__ = 'domain_censors'
-    
+
     id = db.Column(db.Integer(), primary_key=True)
     domain = db.Column(db.String())
     created = db.Column(db.DateTime())
     created_by_account_id = db.Column(
         db.Integer(),
         db.ForeignKey('accounts.id', ondelete='SET NULL'),
-        nullable=True
-    )
-    
-    
+        nullable=True)
+
+
 class DomainMute(db.Model):
     """A domain mute is a moderate server to server moderation action. 
     
@@ -209,7 +205,7 @@ class DomainMute(db.Model):
     activities from the federated timeline or minimizes them.
     """
     __tablename__ = 'domain_mutes'
-    
+
     id = db.Column(db.Integer(), primary_key=True)
     domain = db.Column(db.String())
     created = db.Column(db.DateTime())
@@ -218,9 +214,8 @@ class DomainMute(db.Model):
     created_by_account_id = db.Column(
         db.Integer(),
         db.ForeignKey('accounts.id', ondelete='SET NULL'),
-        nullable=True
-    )
-    
+        nullable=True)
+
 
 class DomainBlock(db.Model):
     """A domain block is a severe server to client moderation action.
@@ -230,30 +225,26 @@ class DomainBlock(db.Model):
     follows between actors on this instance and the instance that is blocked.
     """
     __tablename__ = 'domain_blocks'
-    
+
     id = db.Column(db.Integer(), primary_key=True)
     domain = db.Column(db.String())
     created = db.Column(db.DateTime())
     created_by_account_id = db.Column(
         db.Integer(),
         db.ForeignKey('accounts.id', ondelete='SET NULL'),
-        nullable=True
-    )
-    
+        nullable=True)
+
 
 class DomainEmailBlock(db.Model):
     """Email domain blocks prevent harmful registrations and registrations 
     from spammers.
     """
     __tablename__ = 'domain_email_block'
-    
+
     id = db.Column(db.Integer(), primary_key=True)
     domain = db.Column(db.String())
     created = db.Column(db.DateTime())
     created_by_account_id = db.Column(
         db.Integer(),
         db.ForeignKey('accounts.id', ondelete='SET NULL'),
-        nullable=True
-    )
-    
-    
+        nullable=True)
