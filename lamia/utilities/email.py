@@ -4,7 +4,7 @@ import logging
 from email.mime.text import MIMEText
 
 import aiosmtplib as smtp
-import aiosmtplib.status as status 
+import aiosmtplib.status as status
 from starlette.datastructures import URL
 
 
@@ -43,15 +43,18 @@ class Email(object):
                      "Please set this option before attempting to run again.")
 
         if self.STUBBED:
-            logging.info("Email has been stubbed according to settings in the config file. No emails will be sent.")
+            logging.info("Email has been stubbed according to settings in the config file. No emails can be sent.")
         else:
             self.dsn = self.config('MAIL_DSN', cast=URL)
 
         await self.send_email("Server has started up!")
 
-    async def send_email(self, message) -> bool:
+    async def send_email(self, subject, message, to) -> bool:
         """
         Returns true if the message sent without issue.
+        subject: str - subject of the email
+        Message: str - Content of the message
+        To: list of str - list of email addresses to send to
         """
         if self.STUBBED:
             logging.info("Email send attempt was stubbed")
@@ -59,16 +62,20 @@ class Email(object):
 
         async with smtp.SMTP(hostname=self.dsn.hostname, port=self.dsn.port) as conn:
             if self.dsn.password:
-                response = conn.login(self.dsn.username, self.dsn.password)
+                response = await conn.login(self.dsn.username, self.dsn.password)
                 if response.code != status.SMTPStatus.auth_successful:
                     logging.info(("Email authorisation failure. Server response: {}\n".format(response)+
                              "Please check the username and password provided in the config "+
                              "and ensure that it is correct."))
+
             message = MIMEText(message)
-            message['From'] = self.dsn.username + "@"+self.dsn.hostname
-            message['To'] = "test@mail.com"
-            message['Subject'] = "hello world!"
-            await conn.send_message(message)
+            message['From'] = self.dsn.username + "@" + self.dsn.hostname
+            message['To'] = to
+            message['Subject'] = subject
+            try:
+                await conn.send_message(message)
+            except ValueError, SMTPRecepientsRefused, SMTPResponseException:
+                pass
 
 
     async def shutdown(self) -> None:
