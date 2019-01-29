@@ -1,3 +1,7 @@
+import asyncio
+import logging
+import sys
+
 from sqlalchemy.engine.url import URL
 from gino.api import Gino as _Gino, GinoExecutor as _Executor
 from gino.engine import GinoConnection as _Connection, GinoEngine as _Engine
@@ -5,9 +9,9 @@ from gino.strategies import GinoStrategy
 from asyncpg.exceptions import InvalidAuthorizationSpecificationError
 from starlette.datastructures import CommaSeparatedStrings, DatabaseURL, Secret
 from starlette.exceptions import HTTPException
-import asyncio
-import logging
-import sys
+
+# pylint: disable=too-few-public-methods
+# Escaping because these are all subclasses
 
 
 class StarletteModelMixin:
@@ -118,22 +122,22 @@ class Gino(_Gino):
         except InvalidAuthorizationSpecificationError:
             sys.exit("""
                 InvalidAuthorizationSpecificationError:
-            
+
                 Your database username or password is invalid. Please
                 check your config and try again.
-            
+
                 If you did not configure a database, then add a database
                 configuration line to your lamia.config file.
                 """)
         except ConnectionRefusedError:
             sys.exit("""
                 ConnectionRefusedError:
-            
+
                 Check that your database details are in the lamia.config
                 file and can actually connect to the database.
-            
+
                 If the database username and password look right, then check
-                that your postgreSQL database is online and accepting 
+                that your postgreSQL database is online and accepting
                 connections at the right port and address.
                 """)
 
