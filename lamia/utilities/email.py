@@ -34,9 +34,8 @@ class Email(object):
 
         # Using a url might not be the *best* way to do this but it cant be the worst
         # Server must be properly setup if STUBBED is false
-        self.STUBBED = self.config(
-            'DEBUG', cast=bool, default=False) and (not self.config(
-                'DEV_EMAIL', cast=bool, default=False))
+        self.STUBBED = (self.config('DEBUG', cast=bool, default=False)
+                       and (not self.config('DEV_EMAIL', cast=bool, default=False)))
 
         if not self.config('MAIL_DSN', default=False) and not self.STUBBED:
             sys.exit(
@@ -51,16 +50,53 @@ class Email(object):
             )
         else:
             self.dsn = self.config('MAIL_DSN', cast=URL)
+            self.mail_queue = asyncio.Queue() # No max size, we dont want to drop emails
+            self.workers = [asyncio.create_task(self.send_mail_worker()) for _ in range(self.config('MAIL_WORKER_COUNT', default=10))]
 
         await self.send_plain_email(
             "Hello World!", "Server has started up!",
             self.config('ADMIN_EMAIL')
         )  #TODO: Only here for testing, do not allow into master.
 
+    async def send_mail_catch_error(self, client, message):
+        try:
+                r = await client.connect()
+                if r.code == status.SMTPStatus.ready:
+                    if self.dsn.password: # Authenticate if password provided
+                        response = await conn.login(self.dsn.username,
+                                                    self.dsn.password)
+                        if response.code != status.SMTPStatus.auth_successful:
+                            logging.error((
+                                "Email authorisation failure. Server response: %s\n"
+                                "Please check the username and password provided in the config "
+                                "and ensure that it is correct."), response)
+                    await client.send_message(message)
+
+        except smtp.errors.SMTPRecipientsRefused as e:
+                logging.error("EMAIL: Email send attempt failed to users %s", e)
+
+        except smtp.errors.SMTPConnectError as e:
+                logging.error("EMAIL: Email connection attempt to SMTP server failed.\n\t%s", e)
+
+        client.close()
+
+    async def send_mail_worker(self):
+        client = smtp.SMTP(hostname=self.dsn.hostname, port=self.dsn.port)
+        try:
+            while True:
+                message = await self.mail_queue.get()
+                await asyncio.shield(self.send_mail_catch_error(client, message))
+        except asyncio.CancelledError:
+            while not self.mail_queue.empty():
+                message = await self.mail_queue.get()
+                raise 
+        finally:
+            pass
+
     async def send_plain_email(self, subject, message, to) -> bool:
         """
         Sends a plain text email.
-        Returns true if the message sent without issue.
+
         subject: str - subject of the email
         Message: str - Content of the message
         To: list of str - list of email addresses to send to
@@ -69,29 +105,20 @@ class Email(object):
             logging.info("Email send attempt was stubbed")
             return True
 
-        async with smtp.SMTP(
-                hostname=self.dsn.hostname, port=self.dsn.port) as conn:
-            if self.dsn.password:
-                response = await conn.login(self.dsn.username,
-                                            self.dsn.password)
-                if response.code != status.SMTPStatus.auth_successful:
-                    logging.info((
-                        "Email authorisation failure. Server response: {}\n".
-                        format(response) +
-                        "Please check the username and password provided in the config "
-                        + "and ensure that it is correct."))
 
-            message = MIMEText(message)
-            message['From'] = self.dsn.username + "@" + self.dsn.hostname
-            message['To'] = to
-            message['Subject'] = subject
-            try:
-                await conn.send_message(message)
-            except (ValueError, SMTPRecepientsRefused,
-                    SMTPResponseException) as e:
-                pass
+        message = MIMEText(message)
+        message['From'] = self.dsn.username + "@" + self.dsn.hostname
+        message['To'] = to
+        message['Subject'] = subject
+
+        await self.mail_queue.put(message)
+
 
     async def shutdown(self) -> None:
         # we want to make sure that any emails that still need to be sent are either
         # preserved or sent properly.
-        pass
+        if not self.STUBBED: # No need to shut down workers that never got made.
+            logging.info("EMAIL: Shutting down email workers")
+            for worker in self.workers:
+                worker.cancel()
+                await worker
