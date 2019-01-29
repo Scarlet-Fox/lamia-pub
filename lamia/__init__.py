@@ -26,6 +26,10 @@ app = Starlette(debug=config('DEBUG', cast=bool, default=False))
 db.init_app(app, config)
 # pylint: enable=invalid-name
 
+# Debug messages only when in debug mode
+if config('DEBUG', cast=bool, default=False):
+    logging.getLogger().setLevel(logging.DEBUG)
+
 # Some config loading
 app.instance_name = config(
     'INSTANCE_NAME', cast=str, default='A Lamia Community')
