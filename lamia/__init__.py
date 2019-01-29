@@ -2,6 +2,7 @@ from starlette.applications import Starlette
 from starlette.staticfiles import StaticFiles
 from starlette.config import Config
 from .middleware.gino import Gino
+from .utilities.email import Email
 import jinja2
 import inspect
 
@@ -16,10 +17,11 @@ logging.getLogger('gino').setLevel(logging.WARN)
 
 # Initialize the app, including the database connection.
 db = Gino()
+mail = Email()
 config = Config('lamia.config')
 app = Starlette(debug=config('DEBUG', cast=bool, default=False))
 db.init_app(app, config)
-
+mail.init_app(app, config)
 
 # Some config loading
 app.instance_name = config(
