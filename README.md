@@ -28,6 +28,7 @@ Current Team
 
 * [scarly](https://computerfairi.es/@scarly) - project manager, lead developer
 * [Nuclear Baked Potato](https://cybre.space/@TheHottestPotato) - general co-conspirator, developer, tasty root vegetable
+* [maple](https://computerfairi.es/@maple) - layouts, css, admin insights
 * [Chel](https://computerfairi.es/@Chel) - interface design, user experience, project secretary
 
 Installation Instructions
