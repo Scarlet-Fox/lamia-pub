@@ -21,7 +21,7 @@ class Account(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True)
     primary_identity_id = db.Column(
-        db.Column(),
+        db.Integer(),
         db.ForeignKey('identities.id', ondelete='SET NULL'),
         nullable=True,
     )
@@ -57,7 +57,7 @@ class Identity(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True)
     actor_id = db.Column(
-        db.Column(),
+        db.Integer(),
         db.ForeignKey('actors.id', ondelete='CASCADE'),
     )
 
@@ -89,7 +89,7 @@ class Blog(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True)
     actor_id = db.Column(
-        db.Column(),
+        db.Integer(),
         db.ForeignKey('actors.id', ondelete='CASCADE'),
     )
 
@@ -256,7 +256,7 @@ class ObjectTag(db.Model):
 
 class FeedTag(db.Model):
     """A single tag watched by a feed."""
-    __tablename__ == 'feed_tags'
+    __tablename__ = 'feed_tags'
 
     id = db.Column(db.Integer(), primary_key=True)
     feed_id = db.Column(
@@ -292,7 +292,7 @@ class Attachments(db.Model):
     created = db.Column(db.DateTime())
 
 
-class BookmarkGroup(db.Models):
+class BookmarkGroup(db.Model):
     """Bookmark groups can be implicitly created to organize bookmarks"""
     __tablename__ = 'bookmark_groups'
 
@@ -302,7 +302,7 @@ class BookmarkGroup(db.Models):
     created = db.Column(db.DateTime())
 
 
-class Bookmark(db.Models):
+class Bookmark(db.Model):
     """A bookmark is a "saved" link to an ActivityPub object that is not
     an actor."""
     __tablename__ = 'boookmarks'
@@ -318,7 +318,7 @@ class Bookmark(db.Models):
     created = db.Column(db.DateTime())
 
 
-class Notification(db.Models):
+class Notification(db.Model):
     """Our fancy notification class."""
     id = db.Column(db.Integer(), primary_key=True)
 
@@ -330,12 +330,12 @@ class Notification(db.Models):
     acknowledged = db.Column(db.Boolean())
 
     created_by_actor_id = db.Column(
-        db.Column(),
+        db.Integer(),
         db.ForeignKey('actors.id', ondelete='SET NULL'),
         nullable=True,
     )
     for_identity_id = db.Column(
-        db.Column(),
+        db.Integer(),
         db.ForeignKey('identities.id', ondelete='CASCADE'),
     )
     created = db.Column(db.DateTime())

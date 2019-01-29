@@ -41,8 +41,8 @@ class Import(db.Model):
     request_for_identity_id = db.Column(
         db.Integer(),
         db.ForeignKey('identities.id', ondelete='CASCADE'),
-JSONB()
-    data_to_import = db.Column(db.JSONB())
+    )
+    data_to_import = db.Column(JSONB())
 
     created = db.Column(db.DateTime())
     last_updated = db.Column(db.DateTime())
