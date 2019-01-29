@@ -312,8 +312,7 @@ class Bookmark(db.Model):
     description = db.Column(db.String())
 
     bookmark_group_id = db.Column(
-        db.Integer(), db.ForeignKey('bookmark_groups.id',
-                                    ondelete='CASCADE'))
+        db.Integer(), db.ForeignKey('bookmark_groups.id', ondelete='CASCADE'))
 
     created = db.Column(db.DateTime())
 

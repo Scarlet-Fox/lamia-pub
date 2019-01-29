@@ -1,3 +1,7 @@
+"""Lamia is an ActivityPub federating social network instance server that
+supports blogs, status updates, and polls.
+"""
+
 import logging
 import inspect
 import jinja2
@@ -49,7 +53,7 @@ def setup_jinja2(template_dirs, auto_reload):
 TEMPLATES_DIRS = ['templates']
 try:
     # I feel like this may not be cool, but it uh works.
-    import lamia
+    import lamia  # pylint: disable=W0406
     # Damn, I love neat tricks, this looks up the lamia module path.
     MODULE_TEMPLATE_DIR = inspect.getfile(lamia)
     # The path includes __init__.py so you have to drop it.
@@ -77,4 +81,4 @@ app.mount('/static', StaticFiles(directory='statics'), name='static')
 # TODO: Setup redis here
 
 # There's probably a more graceful way to do this (a la blueprints)
-from .views import general
+from .views import general  # pylint: disable=C0413
