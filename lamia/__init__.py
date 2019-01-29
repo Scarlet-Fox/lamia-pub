@@ -10,8 +10,6 @@ from starlette.staticfiles import StaticFiles
 from starlette.config import Config
 from .middleware.gino import Gino
 from .utilities.email import Email
-import jinja2
-import inspect
 
 # TODO : mypy
 
