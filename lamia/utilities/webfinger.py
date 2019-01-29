@@ -32,7 +32,8 @@ def normalize(identifier):
     # examples - http://lamia.social/users/lamia OR http://lamia.social/lamia
     if _identifier.startswith('http'):
         parsed_id = urlparse(_identifier)
-        return (_identifier, f'{parsed_id.scheme}://{parsed_id.netloc}',)
+        return (_identifier.replace('https://', '').replace('http://', ''), 
+            f'{parsed_id.scheme}://{parsed_id.netloc}',)
     
     # If the id is an email address-style thing, split it and return
     # examples - lamia@lamia.social
@@ -41,7 +42,8 @@ def normalize(identifier):
         return (_identifier, f'https://{split_id[1]}',)
     
     # For everything else, assume it's a url sans http and return
-    return (_identifier, f'https://{_identifier}',)
+    parsed_id = urlparse(f'https://{_identifier}')
+    return (_identifier, f'{parsed_id.scheme}://{parsed_id.netloc}',)
 
 async def finger(identifier):
     """When provided with an id, returns the webfinger query for it
