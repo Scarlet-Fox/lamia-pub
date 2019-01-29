@@ -47,7 +47,7 @@ class Email(object):
         else:
             self.dsn = self.config('MAIL_DSN', cast=URL)
 
-        await self.send_email("Server has started up!")
+        await self.send_email("Hello World!", "Server has started up!", self.config('ADMIN_EMAIL'))
 
     async def send_email(self, subject, message, to) -> bool:
         """
@@ -74,7 +74,7 @@ class Email(object):
             message['Subject'] = subject
             try:
                 await conn.send_message(message)
-            except ValueError, SMTPRecepientsRefused, SMTPResponseException:
+            except (ValueError, SMTPRecepientsRefused, SMTPResponseException) as e:
                 pass
 
 
