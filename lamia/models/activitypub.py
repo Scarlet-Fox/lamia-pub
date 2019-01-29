@@ -3,6 +3,7 @@ ActivityPub. They may be referenced by other models but probably shouldn't
 depend on them.
 """
 from .. import db
+from gino.dialects.asyncpg import JSONB
 
 
 class Actor(db.Model):
@@ -24,7 +25,7 @@ class Actor(db.Model):
     avatar = db.Column(db.String())
     header = db.Column(db.String())
     summary = db.Column(db.String())
-    parameters = db.Column(db.JSONB())
+    parameters = db.Column(JSONB())
 
     display_name = db.Column(db.String())
     uri = db.Column(db.String())
@@ -33,7 +34,7 @@ class Actor(db.Model):
     created = db.Column(db.DateTime())
     last_updated = db.Column(db.DateTime())
 
-    data = db.Column(db.JSONB())
+    data = db.Column(JSONB())
 
     # Convenience fields for local actors.
     identity_id = db.Column(
@@ -61,7 +62,7 @@ class Activity(db.Model):
     object_uri = db.Column(db.String())
 
     datetime = db.Column(db.DateTime())
-    data = db.Column(db.JSONB())
+    data = db.Column(JSONB())
 
 
 class Object(db.Model):
@@ -78,12 +79,11 @@ class Object(db.Model):
     created = db.Column(db.DateTime())
     created_by_actor_id = db.Column(
         db.Column(),
-        db.ForeignKey('actors.id', ondelete='SET NULL'),
-        nullable=True,
+        db.ForeignKey('actors.id', ondelete='SET NULL', nullable=True),
     )
     last_updated = db.Column(db.DateTime())
 
-    data = db.Column(db.JSONB())
+    data = db.Column(JSONB())
 
 
 class Follow(db.Model):

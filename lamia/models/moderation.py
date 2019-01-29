@@ -5,6 +5,7 @@ Moderators should ban nazis, by the way. This shouldn't need to be said, but
 it is being said right here. Get rid of them.
 """
 from .. import db
+from gino.dialects.asyncpg import JSONB
 
 
 class ModerationLog(db.Model):
@@ -40,7 +41,7 @@ class Import(db.Model):
     request_for_identity_id = db.Column(
         db.Integer(),
         db.ForeignKey('identities.id', ondelete='CASCADE'),
-    )
+JSONB()
     data_to_import = db.Column(db.JSONB())
 
     created = db.Column(db.DateTime())

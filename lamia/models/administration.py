@@ -1,4 +1,5 @@
 from .. import db
+from gino.dialects.asyncpg import JSONB
 
 
 class Emoji(db.Model):
@@ -31,7 +32,7 @@ class Setting(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True)
     key = db.Column(db.String())
-    value = db.Column(db.JSONB())
+    value = db.Column(JSONB())
 
 
 # TODO: relay support
