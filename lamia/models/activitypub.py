@@ -1,19 +1,23 @@
-"""Models in this module are directly related to the specifications for 
+"""Models in this module are directly related to the specifications for
 ActivityPub. They may be referenced by other models but probably shouldn't
 depend on them.
 """
-from .. import db
 from gino.dialects.asyncpg import JSONB
+
+from .. import db
+
+# pylint: disable=too-few-public-methods
+# Escaping because these are all subclasses
 
 
 class Actor(db.Model):
     """Actually, actors are objects (or ActivityStreams), but I call them out
-    explicitly, because they are a key component in how lamia sees the 
+    explicitly, because they are a key component in how lamia sees the
     fediverse.
-    
-    From the ActivityPub specifications: 
+
+    From the ActivityPub specifications:
     https://www.w3.org/TR/activitypub/#actors
-    
+
     All the world’s a stage,
     And all the identities and blogs merely actors
     - Snakespeare, As You Lamia It
@@ -51,8 +55,8 @@ class Actor(db.Model):
 
 class Activity(db.Model):
     """Activities are things that happen to other things on the fediverse.
-    
-    From the ActivityPub specifications: 
+
+    From the ActivityPub specifications:
     * https://www.w3.org/TR/activitypub/#client-to-server-interactions
     * https://www.w3.org/TR/activitypub/#server-to-server-interactions
     """
@@ -67,8 +71,8 @@ class Activity(db.Model):
 
 class Object(db.Model):
     """Objects are the Things in the fediverse.
-    
-    From the ActivityPub specifications: 
+
+    From the ActivityPub specifications:
     https://www.w3.org/TR/activitypub/#obj
     """
     __tablename__ = 'objects'
@@ -90,8 +94,8 @@ class Object(db.Model):
 class Follow(db.Model):
     """Subscriptions are a link between actors. When you subscribe, you are
     saying, "yes, please, show me the things that you create."
-    
-    This activity is explicitly supported by ActivityPub, but I call it out 
+
+    This activity is explicitly supported by ActivityPub, but I call it out
     explicitly for convenience. Explicitly..
     """
     __tablename__ = 'follows'

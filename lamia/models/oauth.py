@@ -1,5 +1,8 @@
 from .. import db
 
+# pylint: disable=too-few-public-methods
+# Escaping because these are all subclasses
+
 
 class OauthToken(db.Model):
     """A token created for our lovely API."""

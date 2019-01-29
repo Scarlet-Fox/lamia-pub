@@ -1,5 +1,9 @@
-from .. import db
 from gino.dialects.asyncpg import JSONB
+
+from .. import db
+
+# pylint: disable=too-few-public-methods
+# Escaping because these are all subclasses
 
 
 class Emoji(db.Model):
@@ -21,11 +25,11 @@ class Emoji(db.Model):
 
 class Setting(db.Model):
     """A basic key and value storage for settings.
-    
+
     Note: From a philosophical standpoint, settings should all be optional, and
     built around non-essential functionality. The installation of lamia should
     require as little gymnastics as possible and should be, dare I say, Fun.
-    
+
     TODO: figure out settings we may need here.
     """
     __tablename__ = 'settings'
