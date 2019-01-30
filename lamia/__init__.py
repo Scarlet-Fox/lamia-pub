@@ -70,7 +70,6 @@ except NameError:
     # All is well, just use the ./templates folder
     pass
 
-
 # pylint: disable=invalid-name
 # same rational as above
 jinja = setup_jinja2(
