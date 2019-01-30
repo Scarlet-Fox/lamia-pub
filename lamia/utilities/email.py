@@ -1,4 +1,20 @@
-"""Lamia wrapper around aiosmtplib"""
+"""Lamia wrapper around aiosmtplib
+
+Adds the following configuration settings:
+
+DEV_EMAIL: A development setting.
+    Emails are not send in debug mode unless this is enabled.
+
+MAIL_DSN: A fully qualified URL of the following shape:
+    smtp://username[:password]@hostname:port
+    username must be a valid account to send emails from on the hostname smtp server.
+
+ADMIN_EMAIL: Email address to send administrative emails to.
+
+MAIL_WORKER_COUNT: Integer number of mail worker's to have running at once.
+    This should normally not need changing. Defaults to 10.
+
+"""
 import asyncio
 import sys
 import logging
@@ -11,9 +27,6 @@ import starlette
 from starlette.datastructures import URL
 
 import lamia
-
-
-
 
 class Email():
     """
