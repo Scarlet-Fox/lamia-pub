@@ -7,7 +7,8 @@ import jinja2
 from starlette.applications import Starlette
 from starlette.staticfiles import StaticFiles
 from starlette.config import Config
-from .middleware.gino import Gino
+import lamia.middleware.gino as gino
+import lamia.utilities.email as email
 
 # TODO : mypy
 
@@ -19,10 +20,12 @@ logging.getLogger('gino').setLevel(logging.WARN)
 # Initialize the app, including the database connection.
 # disabling pylint warning, as this is conventional for these packages
 # pylint: disable=invalid-name
-db = Gino()
+db = gino.Gino()
+mail = email.Email()
 config = Config('lamia.config')
 app = Starlette(debug=config('DEBUG', cast=bool, default=False))
 db.init_app(app, config)
+mail.init_app(app, config)
 # pylint: enable=invalid-name
 
 # Debug messages only when in debug mode
@@ -71,7 +74,6 @@ jinja = setup_jinja2(
     ),
 )
 # pylint: enable=invalid-name
-
 # Static content loading
 app.mount('/static', StaticFiles(directory='statics'), name='static')
 
