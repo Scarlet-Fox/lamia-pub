@@ -1,4 +1,6 @@
-"""Lamia wrapper around aiosmtplib
+"""Lamia wrapper around aiosmtplib and jinja.
+
+Allows sending plain-text and jinja templatted emails.
 
 Adds the following configuration settings:
 
@@ -14,6 +16,10 @@ ADMIN_EMAIL: Email address to send administrative emails to.
 MAIL_WORKER_COUNT: Integer number of mail worker's to have running at once.
     This should normally not need changing. Defaults to 10.
 
+MAIL_JINJA_DIR: A directory to find template overrides, so that default templates do
+not have to be used.
+    If not specified, only default templates stored at the module root will be used.
+
 """
 import asyncio
 import sys
@@ -25,8 +31,8 @@ import aiosmtplib as smtp
 import aiosmtplib.status as status
 import starlette
 from starlette.datastructures import URL
+import jinja2
 
-import lamia
 
 class Email():
     """
@@ -37,7 +43,7 @@ class Email():
     app: the starlette app to register to Email
     config: The starlette configuration object
 
-    raises: Value error if app or config are provided but not both
+    raises: Value error if only app is provided an argument.
     """
 
     def init_app(self, app: starlette.applications.Starlette,
@@ -57,12 +63,18 @@ class Email():
     def __init__(self,
                  app: starlette.applications.Starlette = None,
                  config: starlette.config.Config = None):
-        if (app is not None) != (
-                config is not None):  # We were provided one but not both
+        self.stubs = []  #
+        if (app is not None) and (
+                config is
+                None):  # We were provided an app with no configuration
             raise ValueError(
-                "A starlette app or configuration was provided, but not both.")
+                "A starlette app was provided, but no configuration.")
         if app is not None:
             self.init_app(app, config)
+        if config is not None:
+            self.config = config
+
+        self.stubs = []  # a list of stubbed emails, if needed.
 
     async def _startup(self) -> None:
         """
@@ -100,10 +112,14 @@ class Email():
                 for _ in range(self.config('MAIL_WORKER_COUNT', default=10))
             ]
 
-        await self.send_html_template_email(
-            "Hello World!", "mail_generic.html",
-            {"message": "Hello World Too!"}, self.config('ADMIN_EMAIL')
-        )  #TODO: Only here for testing, do not allow into master.
+        jinja_template = []
+        if self.config('MAIL_JINJA_DIR', default=False):
+            jinja_template = self.config('MAIL_JINJA_DIR', cast=str)
+        self.jinja = jinja2.Environment(
+            loader=jinja2.ChoiceLoader([
+                jinja2.FileSystemLoader(jinja_template),
+                jinja2.PackageLoader('email', 'templates')
+            ]))
 
     async def _send_mail_catch_error(self, client, message):
         """
@@ -181,6 +197,12 @@ class Email():
         This returns nothing.
         """
         if self.STUBBED:
+            self.stubs.append({
+                "Type": "plain",
+                "Subject": subject,
+                "Message": message,
+                "To": to
+            })
             logging.debug("Email send attempt was stubbed")
             return
 
@@ -192,7 +214,8 @@ class Email():
         await self.mail_queue.put(message)
 
     async def send_html_template_email(self, subject: str, template: str,
-                                       content: typing.Dict[str, typing.Any], to):
+                                       content: typing.Dict[str, typing.Any],
+                                       to):
         """
         Generates and sends an HTML email from a template.
 
@@ -204,10 +227,17 @@ class Email():
         This returns nothing.
         """
         if self.STUBBED:
+            self.stubs.append({
+                "Type": "html",
+                "Subject": subject,
+                "Template": template,
+                "Content": content,
+                "To": to
+            })
             logging.debug("Email send attempt was stubbed")
             return
 
-        template = lamia.jinja.get_template(template)
+        template = self.jinja.get_template(template)
         message = MIMEText(template.render(content), "html")
         message['To'] = to
         message['Subject'] = subject
