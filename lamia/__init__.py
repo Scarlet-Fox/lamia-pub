@@ -57,7 +57,7 @@ def setup_jinja2(template_dirs, auto_reload):
     return env
 
 
-TEMPLATES_DIRS = ['templates']
+TEMPLATES_DIRS = ['templates', 'lamia/templates']
 try:
     # I feel like this may not be cool, but it uh works.
     import lamia  # pylint: disable=W0406
@@ -69,6 +69,7 @@ try:
 except NameError:
     # All is well, just use the ./templates folder
     pass
+
 
 # pylint: disable=invalid-name
 # same rational as above
