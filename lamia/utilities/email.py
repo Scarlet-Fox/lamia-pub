@@ -7,6 +7,7 @@ import aiosmtplib as smtp
 import aiosmtplib.status as status
 from starlette.datastructures import URL
 
+import lamia
 
 class Email(object):
     """
@@ -53,8 +54,9 @@ class Email(object):
             self.mail_queue = asyncio.Queue() # No max size, we dont want to drop emails
             self.workers = [asyncio.create_task(self.send_mail_worker()) for _ in range(self.config('MAIL_WORKER_COUNT', default=10))]
 
-        await self.send_plain_email(
-            "Hello World!", "Server has started up!",
+        await self.send_html_template_email(
+            "Hello World!", "mail_generic.html",
+            {"message":"Hello World Too!"},
             self.config('ADMIN_EMAIL')
         )  #TODO: Only here for testing, do not allow into master.
 
@@ -86,24 +88,31 @@ class Email(object):
             while True:
                 message = await self.mail_queue.get()
                 await asyncio.shield(self.send_mail_catch_error(client, message))
+                self.mail_queue.task_done()
         except asyncio.CancelledError:
+            # Before we allow the cancelation to take effect, clear out emails that still need sending
             while not self.mail_queue.empty():
                 message = await self.mail_queue.get()
-                raise 
+                await asyncio.shield(self.send_mail_catch_error(client, message))
+                self.mail_queue.task_done()
+            raise
         finally:
             pass
 
-    async def send_plain_email(self, subject, message, to) -> bool:
+    async def send_plain_email(self, subject, message, to):
         """
         Sends a plain text email.
 
         subject: str - subject of the email
         Message: str - Content of the message
         To: list of str - list of email addresses to send to
+
+        As emails are sent using a pool, there is no way to confirm that the email sent.
+        This returns nothing.
         """
         if self.STUBBED:
-            logging.info("Email send attempt was stubbed")
-            return True
+            logging.debug("Email send attempt was stubbed")
+            return
 
 
         message = MIMEText(message)
@@ -113,6 +122,27 @@ class Email(object):
 
         await self.mail_queue.put(message)
 
+    async def send_html_template_email(self, subject, template, content, to):
+        """
+        Generates and sends an HTML email from a template.
+
+        subject: str - subject of the email
+        template: valid jinja template
+        content: the dictionary to pass on to the jinja template handler.
+
+        As emails are sent using a pool, there is no way to confirm that the email sent.
+        This returns nothing.
+        """
+        if self.STUBBED:
+            logging.debug("Email send attempt was stubbed")
+            return
+
+        template = lamia.jinja.get_template(template)
+        message = MIMEText(template.render(content), "html")
+        message['To'] = to
+        message['Subject'] = subject
+
+        await self.mail_queue.put(message)
 
     async def shutdown(self) -> None:
         # we want to make sure that any emails that still need to be sent are either
@@ -121,4 +151,8 @@ class Email(object):
             logging.info("EMAIL: Shutting down email workers")
             for worker in self.workers:
                 worker.cancel()
-                await worker
+                try:
+                    await worker
+                except asyncio.CancelledError:
+                    logging.debug("EMAIL: Worker cancelled")
+                    pass
