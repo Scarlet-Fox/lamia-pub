@@ -1,0 +1,26 @@
+/* Lamia standard theme css */
+
+.lm-section-spacing {
+	margin-top: 15px;
+}
+
+.lm-introduction-join-link {
+	font-weight: bold;
+	color: #31632f !important;
+}
+
+.lm-introduction-container {
+	max-width: 830px;
+	margin-bottom: 20px;
+}
+
+.lm-introduction-stat {
+	margin-top: 5px;
+}
+
+.lm-introduction-number {
+	font-weight: bold;
+	font-size: 110%;
+	color: #31632f !important;
+}
+

@@ -9,20 +9,22 @@ https://github.com/w3c/activitypub/issues/194
 TODO: tests for this using our own webfinger endpoints
 """
 import asyncio
+import re
 from urllib.parse import urlparse
-
 from aiohttp import ClientSession
 
 from lamia.version import __version__
 
+
+port_re = re.compile(r'\:\d+')
 
 def normalize(identifier):
     """Given an id, returns a tuple of (resource, address,) to contact
 
     A rough, heuristic approximation of:
     https://openid.net/specs/openid-connect-discovery-1_0.html#NormalizationSteps
-
-    TODO: No like really, we need tests for this, lmfao"""
+    
+    Note: We assume that we will never call for details over http."""
 
     _identifier = identifier
 
@@ -30,14 +32,20 @@ def normalize(identifier):
     # examples - acct:lamia@lamia.social OR acct:lamia.social/@lamia
     if _identifier.startswith('acct:'):
         _identifier = _identifier[5:]
-
+        
+    # # Drop the port portion of an identifier
+    # # Because, we can never be certain that it is encrypted (prob not tbh)
+    # # So, we'll force this to https
+    if ':' in _identifier.replace('://', ''):
+        _identifier = port_re.sub('', _identifier)
+            
     # If the id is an address, then we're done here, parse and return
     # examples - http://lamia.social/users/lamia OR http://lamia.social/lamia
     if _identifier.startswith('http'):
         parsed_id = urlparse(_identifier)
         return (
             _identifier.replace('https://', '').replace('http://', ''),
-            f'{parsed_id.scheme}://{parsed_id.netloc}',
+            f'https://{parsed_id.netloc}',
         )
 
     # If the id is an email address-style thing, split it and return
@@ -53,7 +61,7 @@ def normalize(identifier):
     parsed_id = urlparse(f'https://{_identifier}')
     return (
         _identifier,
-        f'{parsed_id.scheme}://{parsed_id.netloc}',
+        f'https://{parsed_id.netloc}',
     )
 
 
@@ -77,3 +85,4 @@ async def finger(identifier):
         async with async_session.get(
                 url, headers=headers, params=params) as response:
             return await json.loads(response.read())
+

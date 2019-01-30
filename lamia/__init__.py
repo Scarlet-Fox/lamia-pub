@@ -3,7 +3,6 @@ supports blogs, status updates, and polls.
 """
 
 import logging
-import inspect
 import jinja2
 from starlette.applications import Starlette
 from starlette.staticfiles import StaticFiles
@@ -47,7 +46,12 @@ def setup_jinja2(template_dirs, auto_reload):
         request = context['request']
         return request.url_for(name, **path_params)
 
-    loader = jinja2.FileSystemLoader(template_dirs)
+    # first check for template overrides on the same level above the modual.
+    # check lamia defaults if nothing is found
+    loader = jinja2.ChoiceLoader([
+        jinja2.FileSystemLoader(template_dirs),
+        jinja2.PackageLoader('lamia')
+    ])
     env = jinja2.Environment(
         loader=loader,
         autoescape=True,
@@ -57,18 +61,7 @@ def setup_jinja2(template_dirs, auto_reload):
     return env
 
 
-TEMPLATES_DIRS = ['templates', 'lamia/templates']
-try:
-    # I feel like this may not be cool, but it uh works.
-    import lamia  # pylint: disable=W0406
-    # Damn, I love neat tricks, this looks up the lamia module path.
-    MODULE_TEMPLATE_DIR = inspect.getfile(lamia)
-    # The path includes __init__.py so you have to drop it.
-    templates_dirs.append(
-        '/'.join(MODULE_TEMPLATE_DIR.split("/")[:-1] + ['templates']))
-except NameError:
-    # All is well, just use the ./templates folder
-    pass
+TEMPLATES_DIRS = ['templates']
 
 # pylint: disable=invalid-name
 # same rational as above
