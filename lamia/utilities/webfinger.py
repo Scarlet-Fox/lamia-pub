@@ -1,8 +1,8 @@
-"""This module contains a basic (skeletal) implementation of the webfinger 
-protocol. Webfinger is used to discover information about actors in 
+"""This module contains a basic (skeletal) implementation of the webfinger
+protocol. Webfinger is used to discover information about actors in
 ActivityPub using regular HTTP methods (i.e. no RESTful api here).
 
-There's some useful discussion here about the intersection of 
+There's some useful discussion here about the intersection of
 webfinger and ActivityPub:
 https://github.com/w3c/activitypub/issues/194
 
@@ -10,22 +10,21 @@ TODO: tests for this using our own webfinger endpoints
 """
 import asyncio
 import re
-from aiohttp import ClientSession
-from lamia.version import __version__
 from urllib.parse import urlparse
+from aiohttp import ClientSession
+
+from lamia.version import __version__
 
 
 port_re = re.compile(r'\:\d+')
 
 def normalize(identifier):
     """Given an id, returns a tuple of (resource, address,) to contact
-    
+
     A rough, heuristic approximation of:
     https://openid.net/specs/openid-connect-discovery-1_0.html#NormalizationSteps
     
-    Note: We assume that we will never call for details over http.
-    
-    TODO: No like really, we need tests for this, lmfao"""
+    Note: We assume that we will never call for details over http."""
 
     _identifier = identifier
 
@@ -68,7 +67,7 @@ def normalize(identifier):
 
 async def finger(identifier):
     """When provided with an id, returns the webfinger query for it
-    
+
     https://tools.ietf.org/html/rfc7033"""
     headers = {
         # We aren't going to be accepting anything other than json

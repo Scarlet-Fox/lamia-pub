@@ -1,16 +1,20 @@
-"""Models that pertain directly to the messy business of keeping an online 
+"""Models that pertain directly to the messy business of keeping an online
 environment safe from harmful intentions are in this module.
 
 Moderators should ban nazis, by the way. This shouldn't need to be said, but
 it is being said right here. Get rid of them.
 """
-from .. import db
 from gino.dialects.asyncpg import JSONB
+
+from .. import db
+
+# pylint: disable=too-few-public-methods
+# Escaping because these are all subclasses
 
 
 class ModerationLog(db.Model):
     """Quis custodiet ipsos custodes?
-    
+
     Instance admins and other moderators should keep an eye on log entries
     and log entries should result in notifications, in theory.
     """
@@ -23,11 +27,11 @@ class ModerationLog(db.Model):
 
 
 class Import(db.Model):
-    """Followed, muted, and blocked actors can be imported from ActivityPub 
-    files. 
-    
-    These imports should not run automatically because of the potential 
-    for abuse, particularly from "follow" actions. Instead, they are stored here 
+    """Followed, muted, and blocked actors can be imported from ActivityPub
+    files.
+
+    These imports should not run automatically because of the potential
+    for abuse, particularly from "follow" actions. Instead, they are stored here
     and can be selectively authorized to move forward by moderators.
     """
     __tablename__ = 'imports'
@@ -63,9 +67,9 @@ REPORT_STATUSES = {
 
 
 class Report(db.Model):
-    """Reports are a necessary part of any online social environment. They are 
-    a way to flag local content for moderators on a local instance, and they 
-    can be created and sent to this instance from other instances. 
+    """Reports are a necessary part of any online social environment. They are
+    a way to flag local content for moderators on a local instance, and they
+    can be created and sent to this instance from other instances.
     """
     __tablename__ = 'reports'
 
@@ -120,8 +124,8 @@ class ReportComment(db.Model):
 
 class ActorCensor(db.Model):
     """An actor censor is a light server to client moderation action.
-    
-    An actor censor is a created at the server level, and forces an actors' 
+
+    An actor censor is a created at the server level, and forces an actors'
     activities to either appear content warned or minimized.
     """
     __tablename__ = 'actor_censors'
@@ -140,7 +144,7 @@ class ActorCensor(db.Model):
 
 class ActorMute(db.Model):
     """An actor block is a moderate server to client moderation action.
-    
+
     An actor mute is a created at the server level, and either hides the actor's
     activities from the federated timeline or minimizes them.
     """
@@ -162,9 +166,9 @@ class ActorMute(db.Model):
 
 class ActorBlock(db.Model):
     """An actor block is a severe server to client moderation action.
-    
-    An actor block is a created at the server level, and probits the blocked 
-    actor from interacting with the instance. It also breaks follows between 
+
+    An actor block is a created at the server level, and probits the blocked
+    actor from interacting with the instance. It also breaks follows between
     actors on this instance and the actor that is blocked.
     """
     __tablename__ = 'actor_blocks'
@@ -182,8 +186,8 @@ class ActorBlock(db.Model):
 
 
 class DomainCensor(db.Model):
-    """A domain censor is a light server to server moderation action. 
-    
+    """A domain censor is a light server to server moderation action.
+
     An domain censor is a created at the server level, and forces all activities
     from a specific domain to either appear content warned or minimized.
     """
@@ -199,8 +203,8 @@ class DomainCensor(db.Model):
 
 
 class DomainMute(db.Model):
-    """A domain mute is a moderate server to server moderation action. 
-    
+    """A domain mute is a moderate server to server moderation action.
+
     A domain mute is a created at the server level, and either hides the domains'
     activities from the federated timeline or minimizes them.
     """
@@ -219,9 +223,9 @@ class DomainMute(db.Model):
 
 class DomainBlock(db.Model):
     """A domain block is a severe server to client moderation action.
-    
+
     A domain block is a created at the server level, and probits all actors on
-    a blocked instance from interacting with the local instance. It also breaks 
+    a blocked instance from interacting with the local instance. It also breaks
     follows between actors on this instance and the instance that is blocked.
     """
     __tablename__ = 'domain_blocks'
@@ -236,7 +240,7 @@ class DomainBlock(db.Model):
 
 
 class DomainEmailBlock(db.Model):
-    """Email domain blocks prevent harmful registrations and registrations 
+    """Email domain blocks prevent harmful registrations and registrations
     from spammers.
     """
     __tablename__ = 'domain_email_block'
