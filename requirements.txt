@@ -20,3 +20,4 @@ uvloop==0.12.0
 websockets==7.0
 yarl==1.3.0
 pycryptodome==3.7.3
+ujson==1.35
