@@ -41,14 +41,16 @@ def sign(private_key, key_id, headers, path):
     headers - should be a dictionary of request headers
     path - the relative url that we're requesting
     """
+    # We should probably avoid accidentally changing our headers
+    headers=headers.copy()
     # Import the key
     private_key = RSA.import_key(private_key)
-    # Take the headers and build a digest for signing
-    signed_header_keys = headers.keys()
     # Note: we assume that this outgoing request is a POST
     headers.update({
         '(request-target)': f'post {path}',
     })
+    # Take the headers and build a digest for signing
+    signed_header_keys = headers.keys()
     signed_header_text = ''
     for header_key in signed_header_keys:
         signed_header_text += f'{header_key}: {headers[header_key]}\n'
