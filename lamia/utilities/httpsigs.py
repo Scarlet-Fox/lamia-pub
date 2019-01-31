@@ -41,31 +41,32 @@ def sign(private_key, key_id, headers, path):
     headers - should be a dictionary of request headers
     path - the relative url that we're requesting
     """
+    # Import the key
+    private_key = RSA.import_key(private_key)
     # Take the headers and build a digest for signing
-    signed_headers = headers.keys()
+    signed_header_keys = headers.keys()
     # Note: we assume that this outgoing request is a POST
-    signed_headers.update({
+    headers.update({
         '(request-target)': f'post {path}',
     })
     signed_header_text = ''
-    signed_header_keys = signed_headers.keys()
-    for header in signed_header_keys:
-        signed_header_text.append(f'{header}: {signed_headers[{header}]}')
+    for header_key in signed_header_keys:
+        signed_header_text += f'{header_key}: {headers[header_key]}\n'
     signed_header_text = signed_header_text.strip()
-    header_digest = SHA256.new(signed_header_text.encode()).digest()
+    header_digest = SHA256.new(signed_header_text.encode('ascii'))
     
     # Sign the digest
-    raw_signature = pkcs1_15.new(key).sign(header_digest)
-    signature = base64.b64encode(raw_signature)
+    raw_signature = pkcs1_15.new(private_key).sign(header_digest)
+    signature = base64.b64encode(raw_signature).decode('ascii')
     
     # Put it into a valid HTTP signature format and return
     signature_dict = {
         'keyId': key_id,
         'algorithm': 'rsa-sha256',
         'headers': ' '.join(signed_header_keys),
-        'signature': signature.decode()
+        'signature': signature
     }
-    signature_header = ','.join([f'{k}="{v}"' for k, v in signature_dict])
+    signature_header = ','.join([f'{k}="{v}"' for k, v in signature_dict.items()])
     return signature_header
     
 
@@ -82,14 +83,16 @@ def verify(public_key, headers, method, path, body):
     I'm kind of starting to enjoy this. It's a pity the crypto portion
     of this should be coming to an end soon. Actually, no, no it isn't.
     """
+    # Import the key
+    public_key = RSA.import_key(public_key)
     # Build a dictionary of the signature values
     signature_header = headers['signature']
-    signature_dict = {k: v for k, v in [i.split() for i in signature_header.split(',')]}
+    signature_dict = {k: v[1:-1] for k, v in [i.split('=', 1) for i in signature_header.split(',')]}
     
     # Unpack the signed headers and set values based on current headers and
     # body (if a digest was included)
     signed_header_list = []
-    for signed_header in signature_dict['headers']:
+    for signed_header in signature_dict['headers'].split(' '):
         if signed_header == '(request-target)':
             signed_header_list.append(f'(request-target): {method.lower()} {path}')
         elif signed_header == 'digest':
@@ -100,11 +103,16 @@ def verify(public_key, headers, method, path, body):
     
     # Now we have our header data digest
     signed_header_text = '\n'.join(signed_header_list)
-    header_digest = SHA256.new(signed_header_text.encode()).digest()
+    header_digest = SHA256.new(signed_header_text.encode('ascii'))
     
     # Get the signature, verify with public key, return result
-    signature = base64.b64decode(signature_header['signature'])
-    return PKCS1_v1_5.new(public_key).verify(header_digest, signature)        
+    signature = base64.b64decode(signature_dict['signature'])
+    
+    try:
+        pkcs1_15.new(public_key).verify(header_digest, signature)
+        return True
+    except(ValueError, TypeError):
+        return False
     
     # TODO: Uh, what other algorithms are used in the wild? Mastodon 
     # uses rsa-sha256 but it isn't the only thing out there.
