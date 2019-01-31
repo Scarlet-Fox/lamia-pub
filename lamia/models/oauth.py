@@ -1,3 +1,5 @@
+"""Oauth2 implementation for lamias everywhere."""
+
 from .. import db
 
 # pylint: disable=too-few-public-methods
