@@ -35,12 +35,17 @@ def sign(private_key, key_id, headers, path):
     because mastodon does it this way.
     
     It also makes sense, I suppose.
-    """
     
+    private_key - the private key from an rsa key pair
+    key_id - the lookup for the key to validate
+    headers - should be a dictionary of request headers
+    path - the relative url that we're requesting
+    """
     # Take the headers and build a digest for signing
     signed_headers = headers.keys()
+    # Note: we assume that this outgoing request is a POST
     signed_headers.update({
-        '(request-target)': f' {path}',
+        '(request-target)': f'post {path}',
     })
     signed_header_text = ''
     signed_header_keys = signed_headers.keys()
@@ -62,3 +67,46 @@ def sign(private_key, key_id, headers, path):
     }
     signature_header = ','.join([f'{k}="{v}"' for k, v in signature_dict])
     return signature_header
+    
+
+def verify(public_key, headers, method, path, body):
+    """Returns true or false depending on if the key that we plugged in here
+    validates against the headers, method, and path.
+    
+    publiuc_key - the public key from an rsa key pair
+    headers - should be a dictionary of request headers
+    method - the method that was used to make the request
+    path - the relative url that was requested from this instance
+    body - the received request body (used for digest)
+    
+    I'm kind of starting to enjoy this. It's a pity the crypto portion
+    of this should be coming to an end soon. Actually, no, no it isn't.
+    """
+    # Build a dictionary of the signature values
+    signature_header = headers['signature']
+    signature_dict = {k: v for k, v in [i.split() for i in signature_header.split(',')]}
+    
+    # Unpack the signed headers and set values based on current headers and
+    # body (if a digest was included)
+    signed_header_list = []
+    for signed_header in signature_dict['headers']:
+        if signed_header == '(request-target)':
+            signed_header_list.append(f'(request-target): {method.lower()} {path}')
+        elif signed_header == 'digest':
+            body_digest = base64.b64encode(SHA256.new(body.encode()).digest())
+            signed_header_list.append(f'digest: SHA-256={body_digest}')
+        else:
+            signed_header_list.append(f'{signed_header}: {headers[signed_header]}')
+    
+    # Now we have our header data digest
+    signed_header_text = '\n'.join(signed_header_list)
+    header_digest = SHA256.new(signed_header_text.encode()).digest()
+    
+    # Get the signature, verify with public key, return result
+    signature = base64.b64decode(signature_header['signature'])
+    return PKCS1_v1_5.new(public_key).verify(header_digest, signature)        
+    
+    # TODO: Uh, what other algorithms are used in the wild? Mastodon 
+    # uses rsa-sha256 but it isn't the only thing out there.
+    # I guess we'll find out soon.
+    
