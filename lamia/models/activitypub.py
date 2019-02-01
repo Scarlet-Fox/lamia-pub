@@ -106,7 +106,7 @@ class Actor(db.Model):
         nullable=True,
     )
 
-    def build_from_json(self, local=False, json_ld):
+    def build_from_json(self, json_ld, local=False):
         """Receives a python dict and then populates the other fields in the
         model; with the goal being to be ready to saving to the database.
         """
