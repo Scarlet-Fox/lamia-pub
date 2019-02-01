@@ -8,6 +8,7 @@ Python
 * Lists and tuple elements that are not single line should have a trailing comma.
 * Comments should be used to help explain code or for notes of some kind related to the code.
 * Comments can be used for terrible jokes.
+* We now use yapf and pylint, make sure to run your code through them before commit using the config files we include.
 
 JavaScript
 ----------
