@@ -42,7 +42,7 @@ def sign(private_key, key_id, headers, path):
     path - the relative url that we're requesting
     """
     # We should probably avoid accidentally changing our headers
-    headers=headers.copy()
+    headers = headers.copy()
     # Import the key
     private_key = RSA.import_key(private_key)
     # Note: we assume that this outgoing request is a POST
