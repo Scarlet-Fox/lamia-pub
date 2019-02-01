@@ -81,9 +81,11 @@ class Actor(db.Model):
     avatar = db.Column(db.String())
     header = db.Column(db.String())
     summary = db.Column(db.String())
-    parameters = db.Column(JSONB())
+    actor_type = db.Column(db.String())
+    private_key = db.Column(db.String())
 
     display_name = db.Column(db.String())
+    user_name = db.Column(db.String())
     uri = db.Column(db.String())
     local = db.Column(db.Boolean())
 
@@ -104,6 +106,87 @@ class Actor(db.Model):
         nullable=True,
     )
 
+    def build_from_json(self, local=False, json_ld):
+        """Receives a python dict and then populates the other fields in the
+        model; with the goal being to be ready to saving to the database.
+        """
+        self.avatar = json_ld['icon']['url']
+        self.header = json_ld['image']['url']
+        self.summary = json_ld['summary']
+        self.display_name = json_ld['name']
+        self.uri = json_ld['id']
+        self.actor_type = json_ld['type']
+        self.user_name = json_ld['preferredUsername']
+        self.local = local
+        self.created = pendulum.now()
+        self.last_updated = pendulum.now()
+        self.data = json_ld
+
+    def build_from_params(
+            self,
+            local=False,
+            private_key='',
+            avatar={},
+            header={},
+            endpoints={},
+            attachment=[],
+            tag=[],
+            featured=[],
+            manually_approves=False,
+            public_key,
+            key_id,
+            key_owner,
+            _id,
+            _type,
+            following,
+            followers,
+            inbox,
+            outbox,
+            user_name,
+            display_name,
+            summary,
+            url,
+    ):
+        """Receives a number of parameters and populates the internal fields in
+        this models; with the goal being to be ready to saving to the database.
+        """
+
+        data = {
+            'id': _id,
+            'type': _type,
+            'following': following,
+            'followers': followers,
+            'inbox': inbox,
+            'outbox': outbox,
+            'featured': featured,
+            'preferredUsername': user_name,
+            'name': display_name,
+            'summary': summary,
+            'url': url,
+            'manuallyApprovesFollowers': manually_approves,
+            'publicKey': {
+                'id': key_id,
+                'owner': key_owner,
+                'publicKeyPem': public_key,
+            },
+            'tag': tag,
+            'attachment': attachment,
+            'endpoints': endpoints,
+            'icon': avatar,
+            'image': header,
+        }
+        self.avatar = avatar['url']
+        self.header = header['url']
+        self.summary = summary
+        self.display_name = display_name
+        self.uri = _id
+        self.actor_type = _type
+        self.user_name = user_name
+        self.local = local
+        self.created = pendulum.now()
+        self.last_updated = pendulum.now()
+        self.data = data
+
 
 class Activity(db.Model):
     """Activities are things that happen to other things on the fediverse.
@@ -123,7 +206,7 @@ class Activity(db.Model):
     created = db.Column(db.DateTime())
     data = db.Column(JSONB())
 
-    def build_from_json(self, json):
+    def build_from_json(self, json_ld):
         """Receives a python dict and then populates the other fields in the
         model; with the goal being to be ready to saving to the database.
         """
@@ -132,10 +215,11 @@ class Activity(db.Model):
         self.uri = json_ld['id']
         self.actor_uri = json_ld['actor']
         self.activity_type = json_ld['type']
+        self.last_updated = pendulum.now()
 
     def build_from_params(self, _id, _type, actor_uri, published, to, cc,
                           _object):
-        """Receives a list of parameters and populates the internal fields in
+        """Receives a number of parameters and populates the internal fields in
         this models; with the goal being to be ready to saving to the database.
         """
 
@@ -148,6 +232,12 @@ class Activity(db.Model):
             'cc': cc,
             'object': _object,
         }
+        self.data = data
+        self.created = published
+        self.uri = json_ld['id']
+        self.actor_uri = json_ld['actor']
+        self.activity_type = json_ld['type']
+        self.last_updated = pendulum.now()
 
 
 class Object(db.Model):
@@ -183,6 +273,7 @@ class Object(db.Model):
         self.uri = json_ld['id']
         self.actor_uri = json_ld['attributedTo']
         self.object_type = json_ld['type']
+        self.last_updated = pendulum.now()
 
     def build_from_params(self,
                           attachment=[],
@@ -200,7 +291,7 @@ class Object(db.Model):
                           content,
                           content_map,
                           _object):
-        """Receives a list of parameters and populates the internal fields in
+        """Receives a number of parameters and populates the internal fields in
         this models; with the goal being to be ready to saving to the database.
         """
 
@@ -220,6 +311,12 @@ class Object(db.Model):
             'inReplyTo': reply_to_uri,
             'sensitive': sensitive,
         }
+        self.data = data
+        self.created = published
+        self.uri = _id
+        self.actor_uri = actor
+        self.object_type = _type
+        self.last_updated = pendulum.now()
 
 
 class Follow(db.Model):
