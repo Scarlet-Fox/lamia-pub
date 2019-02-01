@@ -124,15 +124,6 @@ class Actor(db.Model):
 
     def build_from_params(
             self,
-            local=False,
-            private_key='',
-            avatar={},
-            header={},
-            endpoints={},
-            attachment=[],
-            tag=[],
-            featured=[],
-            manually_approves=False,
             public_key,
             key_id,
             key_owner,
@@ -146,6 +137,15 @@ class Actor(db.Model):
             display_name,
             summary,
             url,
+            local=False,
+            private_key='',
+            avatar={},
+            header={},
+            endpoints={},
+            attachment=[],
+            tag=[],
+            featured=[],
+            manually_approves=False,
     ):
         """Receives a number of parameters and populates the internal fields in
         this models; with the goal being to be ready to saving to the database.
@@ -276,11 +276,6 @@ class Object(db.Model):
         self.last_updated = pendulum.now()
 
     def build_from_params(self,
-                          attachment=[],
-                          tag=[],
-                          summary=None,
-                          reply_to_uri=None,
-                          sensitive=False,
                           _id,
                           _type,
                           published,
@@ -290,7 +285,13 @@ class Object(db.Model):
                           cc,
                           content,
                           content_map,
-                          _object):
+                          _object,
+                          attachment=[],
+                          tag=[],
+                          summary=None,
+                          reply_to_uri=None,
+                          sensitive=False,
+                          ):
         """Receives a number of parameters and populates the internal fields in
         this models; with the goal being to be ready to saving to the database.
         """
