@@ -4,8 +4,8 @@ depend on them.
 
 
 """
+import pendulum
 from gino.dialects.asyncpg import JSONB
-
 from .. import db
 
 # pylint: disable=too-few-public-methods
@@ -50,7 +50,7 @@ LAMIA_CONTEXT = [
         # We will be using the PropertyValue vocabulary for the actor
         # properties displayed as key-value pairs
         'schema': 'http://schema.org#',
-        #   Example of Usage (as attachment) 
+        #   Example of Usage (as attachment)
         #   {
         #       "type": "PropertyValue",
         #       "name": "Pronouns",
@@ -115,10 +115,39 @@ class Activity(db.Model):
     __tablename__ = 'activities'
 
     id = db.Column(db.Integer(), primary_key=True)
+    uri = db.Column(db.String())
     object_uri = db.Column(db.String())
+    actor_uri = db.Column(db.String())
+    activity_type = db.Column(db.String())
 
-    datetime = db.Column(db.DateTime())
+    created = db.Column(db.DateTime())
     data = db.Column(JSONB())
+
+    def build_from_json(self, json):
+        """Receives a python dict and then populates the other fields in the
+        model; with the goal being to be ready to saving to the database.
+        """
+        self.data = json_ld
+        self.created = pendulum.parse(json_ld['published'])
+        self.uri = json_ld['id']
+        self.actor_uri = json_ld['actor']
+        self.activity_type = json_ld['type']
+
+    def build_from_params(self, _id, _type, actor_uri, published, to, cc,
+                          _object):
+        """Receives a list of parameters and populates the internal fields in
+        this models; with the goal being to be ready to saving to the database.
+        """
+
+        data = {
+            'id': _id,
+            'type': _type,
+            'actor': actor_uri,
+            'published': published,  # Should be a pendulum DateTime
+            'to': to,
+            'cc': cc,
+            'object': _object,
+        }
 
 
 class Object(db.Model):
@@ -131,6 +160,9 @@ class Object(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True)
     uri = db.Column(db.String())
+    actor_uri = db.Column(db.String())
+    reply_to_uri = db.Column(db.String())
+    object_type = db.Column(db.String())
 
     created = db.Column(db.DateTime())
     created_by_actor_id = db.Column(
@@ -141,6 +173,53 @@ class Object(db.Model):
     last_updated = db.Column(db.DateTime())
 
     data = db.Column(JSONB())
+
+    def build_from_json(self, json_ld):
+        """Receives a python dict and then populates the other fields in the
+        model; with the goal being to be ready to saving to the database.
+        """
+        self.data = json_ld
+        self.created = pendulum.parse('published')
+        self.uri = json_ld['id']
+        self.actor_uri = json_ld['attributedTo']
+        self.object_type = json_ld['type']
+
+    def build_from_params(self,
+                          attachment=[],
+                          tag=[],
+                          summary=None,
+                          reply_to_uri=None,
+                          sensitive=False,
+                          _id,
+                          _type,
+                          published,
+                          url,
+                          actor,
+                          to,
+                          cc,
+                          content,
+                          content_map,
+                          _object):
+        """Receives a list of parameters and populates the internal fields in
+        this models; with the goal being to be ready to saving to the database.
+        """
+
+        data = {
+            'id': _id,
+            'type': _type,
+            'published': published,  # Should be a pendulum DateTime
+            'url': url,
+            'attributedTo': actor,
+            'to': to,
+            'cc': cc,
+            'content': content,
+            'contentMap': content_map,
+            'attachment': attachment,
+            'tag': tag,
+            'summary': summary,
+            'inReplyTo': reply_to_uri,
+            'sensitive': sensitive,
+        }
 
 
 class Follow(db.Model):
