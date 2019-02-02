@@ -10,8 +10,8 @@ TODO: tests for this using our own webfinger endpoints
 """
 import re
 from urllib.parse import urlparse
-from aiohttp import ClientSession
 from typing import Tuple
+from aiohttp import ClientSession
 import ujson as json
 
 from lamia.version import __version__

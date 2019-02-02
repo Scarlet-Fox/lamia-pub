@@ -1,8 +1,6 @@
 """Models in this module are directly related to the specifications for
 ActivityPub. They may be referenced by other models but probably shouldn't
 depend on them.
-
-
 """
 import pendulum
 from gino.dialects.asyncpg import JSONB

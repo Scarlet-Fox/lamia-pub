@@ -80,4 +80,6 @@ app.mount('/static', StaticFiles(directory='statics'), name='static')
 # TODO: Setup redis here
 
 # There's probably a more graceful way to do this (a la blueprints)
+# Note: the pylint disable address the fact that these imports are not in the
+# pythonic place for them (normally, at the top of a file).
 from .views import general  # pylint: disable=C0413
