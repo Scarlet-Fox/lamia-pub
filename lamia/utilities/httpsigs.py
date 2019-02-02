@@ -27,7 +27,7 @@ from Crypto.Hash import SHA256
 from Crypto.PublicKey import RSA
 
 
-def sign(private_key, key_id, headers, path):
+def sign(private_key: str, key_id: str, headers: dict, path: str) -> str:
     """Returns a raw signature string that can be plugged into a header and
     used to verify the authenticity of an HTTP transmission.
 
@@ -73,7 +73,8 @@ def sign(private_key, key_id, headers, path):
     return signature_header
 
 
-def verify(public_key, headers, method, path, body):
+def verify(public_key: str, headers: dict, method: str, path: str,
+           body: str) -> bool:
     """Returns true or false depending on if the key that we plugged in here
     validates against the headers, method, and path.
 

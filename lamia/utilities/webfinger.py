@@ -11,6 +11,7 @@ TODO: tests for this using our own webfinger endpoints
 import re
 from urllib.parse import urlparse
 from aiohttp import ClientSession
+from typing import Tuple
 import ujson as json
 
 from lamia.version import __version__
@@ -18,7 +19,7 @@ from lamia.version import __version__
 PORT_RE = re.compile(r'\:\d+')
 
 
-def normalize(identifier):
+def normalize(identifier: str) -> Tuple[str, str]:
     """Given an id, returns a tuple of (resource, address,) to contact
 
     A rough, heuristic approximation of:
@@ -65,7 +66,7 @@ def normalize(identifier):
     )
 
 
-async def finger(identifier):
+async def finger(identifier: str) -> dict:
     """When provided with an id, returns the webfinger query for it
 
     https://tools.ietf.org/html/rfc7033"""
