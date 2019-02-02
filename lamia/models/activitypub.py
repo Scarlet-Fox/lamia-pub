@@ -275,23 +275,24 @@ class Object(db.Model):
         self.object_type = json_ld['type']
         self.last_updated = pendulum.now()
 
-    def build_from_params(self,
-                          _id,
-                          _type,
-                          published,
-                          url,
-                          actor,
-                          to,
-                          cc,
-                          content,
-                          content_map,
-                          _object,
-                          attachment=[],
-                          tag=[],
-                          summary=None,
-                          reply_to_uri=None,
-                          sensitive=False,
-                          ):
+    def build_from_params(
+            self,
+            _id,
+            _type,
+            published,
+            url,
+            actor,
+            to,
+            cc,
+            content,
+            content_map,
+            _object,
+            attachment=[],
+            tag=[],
+            summary=None,
+            reply_to_uri=None,
+            sensitive=False,
+    ):
         """Receives a number of parameters and populates the internal fields in
         this models; with the goal being to be ready to saving to the database.
         """
