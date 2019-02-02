@@ -7,7 +7,7 @@ import jinja2
 from starlette.applications import Starlette
 from starlette.staticfiles import StaticFiles
 from starlette.config import Config
-import lamia.middleware.gino as gino
+import lamia.utilities.gino as gino
 import lamia.utilities.email as email
 
 # TODO : mypy

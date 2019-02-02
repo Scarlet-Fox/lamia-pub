@@ -59,8 +59,8 @@ class Gino(_Gino):
     The common usage looks like this::
         from starlette.applications import Starlette
         from starlette.config import Config
-        from .middleware.gino import Gino
-        db = Gino()
+        import lamia.utilities.gino as gino
+        db = gino()
         config = Config('.env')
         app = Starlette()
         db.init_app(app, config)
