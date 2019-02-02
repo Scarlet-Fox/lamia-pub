@@ -1,5 +1,12 @@
+"""This is a quick-and-dirty module for tying Gino to Starlette so that the
+database connections can be cleaned up at the end of a Starlette lifecycle.
+
+This module also implements a get_or_404 method that is Starlette compatible
+for all of the primary gino classes. If any of these classes will be
+instantiated for a Starlette project, then use the variants in this file
+in order to have a working get_or_404 method.
+"""
 import asyncio
-import logging
 import sys
 
 from sqlalchemy.engine.url import URL
@@ -7,7 +14,7 @@ from gino.api import Gino as _Gino, GinoExecutor as _Executor
 from gino.engine import GinoConnection as _Connection, GinoEngine as _Engine
 from gino.strategies import GinoStrategy
 from asyncpg.exceptions import InvalidAuthorizationSpecificationError
-from starlette.datastructures import CommaSeparatedStrings, DatabaseURL, Secret
+from starlette.datastructures import DatabaseURL, Secret
 from starlette.exceptions import HTTPException
 
 # pylint: disable=too-few-public-methods
@@ -15,43 +22,72 @@ from starlette.exceptions import HTTPException
 
 
 class StarletteModelMixin:
+    """This model mixin will be applied to gino models, giving us an easy way
+    to call get_or_404.
+    """
+
     @classmethod
     async def get_or_404(cls, *args, **kwargs):
-        rv = await cls.get(*args, **kwargs)
-        if rv is None:
+        """Adds a get_or_404 function using Starlette's 404 exception class."""
+        initial_query = await cls.get(*args, **kwargs)
+        if initial_query is None:
             raise HTTPException(404)
-        return rv
+        return initial_query
 
 
 class GinoExecutor(_Executor):
+    """The GinoExecutor is the default extension for implicit execution
+    (query chaining from a Gino model). Great place for a first_or_404.
+    """
+
     async def first_or_404(self, *args, **kwargs):
-        rv = await self.first(*args, **kwargs)
-        if rv is None:
+        """Adds a get_or_404 function using Starlette's 404 exception class."""
+        initial_query = await self.first(*args, **kwargs)
+        if initial_query is None:
             raise HTTPException(404)
-        return rv
+        return initial_query
 
 
 class GinoConnection(_Connection):
+    """Just a gino connection. We probably want ours to have some slice of
+    life stuff here.
+    """
+
     async def first_or_404(self, *args, **kwargs):
-        rv = await self.first(*args, **kwargs)
-        if rv is None:
+        """Adds a get_or_404 function using Starlette's 404 exception class."""
+        initial_query = await self.first(*args, **kwargs)
+        if initial_query is None:
             raise HTTPException(404)
-        return rv
+        return initial_query
 
 
 class GinoEngine(_Engine):
+    """The database engine used by gino, we're making our own Starlette
+    compatible changes here. Again.
+    """
     connection_cls = GinoConnection
 
     async def first_or_404(self, *args, **kwargs):
-        rv = await self.first(*args, **kwargs)
-        if rv is None:
+        """Adds a get_or_404 function using Starlette's 404 exception class."""
+        initial_query = await self.first(*args, **kwargs)
+        if initial_query is None:
             raise HTTPException(404)
-        return rv
+        return initial_query
 
 
 class StarletteStrategy(GinoStrategy):
+    """An adaptor that processes arguments and creates a new sqlalchemy
+    engine.
+
+    Note: for more information, the following sqlalchemy class can be examined:
+        sqlalchemy.engine.strategies.EngineStrategy
+    """
     name = 'starlette'
     engine_cls = GinoEngine
+
+
+# Yes, so, it is actually important to execute the strategy
+StarletteStrategy()
 
 
 class Gino(_Gino):
@@ -85,16 +121,20 @@ class Gino(_Gino):
     query_executor = GinoExecutor
 
     def init_app(self, app, config):
+        """Register our startup and shutdown handlers with the Starlette
+        lifecycle middleware."""
         self.config = config
         app.add_event_handler('startup', self.startup)
         app.add_event_handler('shutdown', self.shutdown)
 
-    def __init__(self, app=None, *args, **kwargs):
+    def __init__(self, *args, app=None, config=None, **kwargs):
+        """Optionally: tie to an app on instantiation."""
         super().__init__(*args, **kwargs)
         if app is not None:
-            self.init_app(app)
+            self.init_app(app, config)
 
     async def startup(self):
+        """Bind a pile of async threads to the database when Starlette starts."""
         if self.config('DB_DSN', default=False):
             dsn = str(self.config('DB_DSN', cast=DatabaseURL))
         else:
@@ -142,4 +182,6 @@ class Gino(_Gino):
                 """)
 
     async def shutdown(self):
+        """When Starlette is shutdown, go ahead and close all database
+        connections and wait for the close."""
         await self.pop_bind().close()
