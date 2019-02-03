@@ -85,11 +85,11 @@ ACTIVTY_FIELDS = {
     # when was this activity made available for federation?
     'published': Field((str, ), True,
                        None),  # actually a time in iso8601 format
+    # lists of actors/collections that should receive this object
+    'to': Field((list, str), True, None),
+    'cc': Field((list, str), True, None),
     # is there an object associated with this activity?
     'object': Field((str, dict), False, None),
-    # lists of actors/collections that should receive this object
-    'to': Field((list, str), False, None),
-    'cc': Field((list, str), False, None),
 }
 
 OBJECT_FIELDS = {
@@ -104,8 +104,8 @@ OBJECT_FIELDS = {
     'published': Field((str, ), True,
                        None),  # actually a time in iso8601 format
     # lists of actors/collections that should receive this object
-    'to': Field((list, str), False, None),
-    'cc': Field((list, str), False, None),
+    'to': Field((list, str), True, None),
+    'cc': Field((list, str), True, None),
     # the text content for this object
     'content': Field((str, ), False, None),
     # can contain a list of all replies to this object
@@ -163,3 +163,36 @@ ACTOR_FIELDS = {
     # an actor's header
     'image': Field((dict, ), False, None),
 }
+
+
+class Schema(object):
+    fields = {}
+    representation = {}
+    
+    def validate(self) -> bool:
+        for field, meta in self.fields.items():
+            # Does our internal representation contain this key
+            field_in_representation = representation.has_key(field)
+            
+            # If we should have a field but we do not, then return false
+            if meta[FIELD_REQUIRED] and not field_in_representation:
+                return False
+            
+            if field_in_representation:
+                # Is the internal value a valid type? If not, return false
+                local_value = representation[field]
+                
+                valid_type = False
+                for _type in meta[FIELD_TYPE]:
+                    valid_type = isinstance(local_value, _type)
+                    break if valid_type == True
+                
+                return False if not valid_type
+                
+                
+                
+                
+    
+    
+    
+    
