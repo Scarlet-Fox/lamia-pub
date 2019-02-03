@@ -8,9 +8,6 @@ from gino.dialects.asyncpg import JSONB
 
 from .. import db
 
-# pylint: disable=too-few-public-methods
-# Escaping because these are all subclasses
-
 
 class ModerationLog(db.Model):
     """Quis custodiet ipsos custodes?

@@ -4,9 +4,6 @@ user-level things that make ActivityPub taste better.
 """
 from .. import db
 
-# pylint: disable=too-few-public-methods
-# Escaping because these are all subclasses
-
 
 class Account(db.Model):
     """Login details for user actors are stored here. Accounts in lamia are

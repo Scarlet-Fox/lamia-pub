@@ -5,9 +5,6 @@ depend on them.
 from gino.dialects.asyncpg import JSONB
 from .. import db
 
-# pylint: disable=too-few-public-methods
-# Escaping because these are all subclasses
-
 
 class Actor(db.Model):
     """Actually, actors are objects (or ActivityStreams), but I call them out

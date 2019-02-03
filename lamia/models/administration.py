@@ -3,9 +3,6 @@ from gino.dialects.asyncpg import JSONB
 
 from .. import db
 
-# pylint: disable=too-few-public-methods
-# Escaping because these are all subclasses
-
 
 class Emoji(db.Model):
     """A mapping of images, replacement text, and description text all of which
