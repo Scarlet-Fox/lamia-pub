@@ -35,11 +35,11 @@ Things on this list should be ~struck through~ when they're completed.
 * Accessibility helpers in the interface
 * Cutesy installer with Lamilia walking through setup because
 * More lamia pictures
-* Local timeline posting (to local instance and followers)
+* Local timeline posting (to local site and followers)
 * Privacy settings for identities and blogs
 * Profile customization so that profiles can be pretty
 * Built-in blocking for IP addresses
-* More advanced instance blocking tools that use the built-in IP blocking
+* More advanced site blocking tools that use the built-in IP blocking
 * Filtering for users
 * Admin level filtering
 * Multiple storage backends for files

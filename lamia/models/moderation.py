@@ -65,8 +65,8 @@ REPORT_STATUSES = {
 
 class Report(db.Model):
     """Reports are a necessary part of any online social environment. They are
-    a way to flag local content for moderators on a local instance, and they
-    can be created and sent to this instance from other instances.
+    a way to flag local content for moderators on a local site, and they
+    can be created and sent to this site from other sites.
     """
     __tablename__ = 'reports'
 
@@ -165,8 +165,8 @@ class ActorBlock(db.Model):
     """An actor block is a severe server to client moderation action.
 
     An actor block is a created at the server level, and probits the blocked
-    actor from interacting with the instance. It also breaks follows between
-    actors on this instance and the actor that is blocked.
+    actor from interacting with the site. It also breaks follows between
+    actors on this site and the actor that is blocked.
     """
     __tablename__ = 'actor_blocks'
 
@@ -222,8 +222,8 @@ class DomainBlock(db.Model):
     """A domain block is a severe server to client moderation action.
 
     A domain block is a created at the server level, and probits all actors on
-    a blocked instance from interacting with the local instance. It also breaks
-    follows between actors on this instance and the instance that is blocked.
+    a blocked site from interacting with the local site. It also breaks
+    follows between actors on this site and the site that is blocked.
     """
     __tablename__ = 'domain_blocks'
 

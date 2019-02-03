@@ -48,7 +48,7 @@ This file should be named `lamia.config`. The contents are just environment vari
 ```
 DB_ECHO=False
 DB_DSN="postgresql://user:password@database_address/database_table"
-INSTANCE_NAME="A Lamia Social"
+SITE_NAME="A Lamia Social"
 SECRET_KEY=your_secret_key
 TEMPLATE_RELOAD=True
 ```

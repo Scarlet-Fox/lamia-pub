@@ -81,7 +81,7 @@ def verify(public_key: str, headers: dict, method: str, path: str,
     publiuc_key - the public key from an rsa key pair
     headers - should be a dictionary of request headers
     method - the method that was used to make the request
-    path - the relative url that was requested from this instance
+    path - the relative url that was requested from this site
     body - the received request body (used for digest)
 
     I'm kind of starting to enjoy this. It's a pity the crypto portion

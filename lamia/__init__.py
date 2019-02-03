@@ -1,4 +1,4 @@
-"""Lamia is an ActivityPub federating social network instance server that
+"""Lamia is an ActivityPub federating social network site server that
 supports blogs, status updates, and polls.
 """
 
@@ -42,8 +42,8 @@ if config('DEBUG', cast=bool, default=False):
 
 logging.debug(_("Translation is working: False"))
 # Some config loading
-app.instance_name = config(
-    'INSTANCE_NAME', cast=str, default=_('A Lamia Community'))
+app.site_name = config(
+    'SITE_NAME', cast=str, default=_('A Lamia Community'))
 
 
 # Jinja2 science starts here

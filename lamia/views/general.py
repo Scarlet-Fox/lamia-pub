@@ -12,7 +12,7 @@ from .. import config
 async def introduction(request):
     template = jinja.get_template('index.html')
     content = template.render(
-        request=request, instance_name=f'{app.instance_name}')
+        request=request, site_name=f'{app.site_name}')
     return HTMLResponse(content)
 
 
