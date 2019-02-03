@@ -31,7 +31,7 @@ class Schema:
         """
         for field, meta in self.fields.items():
             # Does our internal representation contain this key
-            field_in_representation = self.representation.has_key(field)
+            field_in_representation = field in self.representation
 
             # If we should have a field but we do not, then return false
             if meta[FIELD_REQUIRED] and not field_in_representation:
