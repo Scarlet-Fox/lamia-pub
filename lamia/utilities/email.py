@@ -25,6 +25,7 @@ import asyncio
 import sys
 import logging
 import typing
+import gettext
 from email.mime.text import MIMEText
 
 import aiosmtplib as smtp
@@ -33,6 +34,7 @@ import starlette
 from starlette.datastructures import URL
 import jinja2
 
+_ = gettext.gettext
 
 class Email():
     """
@@ -100,9 +102,9 @@ class Email():
                 "Please set this option before attempting to run again.")
 
         if self.STUBBED:
-            logging.info(
+            logging.info(_(
                 "Email has been stubbed according to settings in the config file. "
-                "No emails can be sent.")
+                "No emails can be sent."))
         else:
             self.dsn = self.config('MAIL_DSN', cast=URL)
             self.mail_queue = asyncio.Queue(
@@ -135,23 +137,23 @@ class Email():
                     response = await client.login(self.dsn.username,
                                                   self.dsn.password)
                     if response.code != status.SMTPStatus.auth_successful:
-                        logging.error((
+                        logging.error(_(
                             "Email authorisation failure. Server response: %s\n"
                             "Please check the username and password provided in the config "
                             "and ensure that it is correct."), response)
                 await client.send_message(message)
 
         except smtp.errors.SMTPRecipientsRefused as e:
-            logging.error(
-                "EMAIL: Email send attempt failed to users for reason: %s", e)
+            logging.error(_(
+                "EMAIL: Email send attempt failed to users for reason: %s"), e)
 
         except smtp.errors.SMTPConnectError as e:
-            logging.error(
-                "EMAIL: Email connection attempt to SMTP server failed for reason: %s",
+            logging.error(_(
+                "EMAIL: Email connection attempt to SMTP server failed for reason: %s"),
                 e)
         except ValueError as e:
-            logging.error(
-                "EMAIL: Email connection or send attempt failed for reason: %s"
+            logging.error(_(
+                "EMAIL: Email connection or send attempt failed for reason: %s")
             )
 
         client.close()
@@ -203,7 +205,7 @@ class Email():
                 "Message": message,
                 "To": to
             })
-            logging.debug("Email send attempt was stubbed")
+            logging.debug(_("Email send attempt was stubbed"))
             return
 
         message = MIMEText(message)
@@ -234,7 +236,7 @@ class Email():
                 "Content": content,
                 "To": to
             })
-            logging.debug("Email send attempt was stubbed")
+            logging.debug(_("Email send attempt was stubbed"))
             return
 
         template = self.jinja.get_template(template)
@@ -251,10 +253,10 @@ class Email():
         # we want to make sure that any emails that still need to be sent are either
         # preserved or sent properly.
         if not self.STUBBED:  # No need to shut down workers that never got made.
-            logging.info("EMAIL: Shutting down email workers")
+            logging.info(_("EMAIL: Shutting down email workers"))
             for worker in self.workers:
                 worker.cancel()
                 try:
                     await worker
                 except asyncio.CancelledError:
-                    logging.debug("EMAIL: Worker cancelled")
+                    logging.debug(_("EMAIL: Worker cancelled"))

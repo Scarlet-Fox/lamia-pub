@@ -1,0 +1,99 @@
+# English translations for PROJECT.
+# Copyright (C) 2019 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2019-02-03 01:11-0500\n"
+"PO-Revision-Date: 2019-02-03 00:58-0500\n"
+"Last-Translator: CONNER BONDURANT <CONNER.BONDURANT@TRIPTYCH.ME>>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+#: lamia/__init__.py:43
+msgid "Translation is working: False"
+msgstr "Translation is working: True"
+
+#: lamia/__init__.py:46
+msgid "A Lamia Community"
+msgstr "A Lamia Community"
+
+#: lamia/templates/index.html:47
+msgid ""
+"Lorem ipsum dolor sit amet, consectetur adipiscing elit. In luctus, nibh "
+"ut venenatis porta, tellus nulla venenatis risus, ut fringilla erat magna"
+" non nibh. Morbi placerat, erat laoreet posuere laoreet."
+msgstr ""
+
+#: lamia/templates/index.html:66
+msgid "Helpful Instance Information"
+msgstr ""
+
+#: lamia/templates/index.html:71
+msgid ""
+"Vestibulum vitae consequat nisi, vitae placerat turpis. Nam sit amet leo "
+"tellus. Praesent quis efficitur orci. Fusce at accumsan ante."
+msgstr ""
+
+#: lamia/templates/index.html:75
+msgid ""
+"Aliquam dapibus tortor a fermentum euismod. Nulla ut enim vitae ligula "
+"venenatis rutrum. Praesent dictum placerat lobortis. Nulla sed bibendum "
+"nisl. Nunc fermentum ligula nec odio mattis rutrum. Etiam lobortis nec "
+"nisi tincidunt venenatis. Curabitur a magna sit amet enim facilisis "
+"efficitur sit amet eu erat."
+msgstr ""
+
+#: lamia/templates/index.html:83
+msgid "Footer here"
+msgstr ""
+
+#: lamia/utilities/email.py:103
+msgid ""
+"Email has been stubbed according to settings in the config file. No "
+"emails can be sent."
+msgstr ""
+
+#: lamia/utilities/email.py:138
+#, python-format
+msgid ""
+"Email authorisation failure. Server response: %s\n"
+"Please check the username and password provided in the config and ensure "
+"that it is correct."
+msgstr ""
+
+#: lamia/utilities/email.py:145
+#, python-format
+msgid "EMAIL: Email send attempt failed to users for reason: %s"
+msgstr ""
+
+#: lamia/utilities/email.py:149
+#, python-format
+msgid "EMAIL: Email connection attempt to SMTP server failed for reason: %s"
+msgstr ""
+
+#: lamia/utilities/email.py:153
+#, python-format
+msgid "EMAIL: Email connection or send attempt failed for reason: %s"
+msgstr ""
+
+#: lamia/utilities/email.py:206 lamia/utilities/email.py:237
+msgid "Email send attempt was stubbed"
+msgstr ""
+
+#: lamia/utilities/email.py:254
+msgid "EMAIL: Shutting down email workers"
+msgstr ""
+
+#: lamia/utilities/email.py:260
+msgid "EMAIL: Worker cancelled"
+msgstr ""
+

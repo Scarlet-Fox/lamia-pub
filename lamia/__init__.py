@@ -3,6 +3,8 @@ supports blogs, status updates, and polls.
 """
 
 import logging
+import gettext
+import os
 import jinja2
 from starlette.applications import Starlette
 from starlette.staticfiles import StaticFiles
@@ -27,14 +29,21 @@ app = Starlette(debug=config('DEBUG', cast=bool, default=False))
 db.init_app(app, config)
 mail.init_app(app, config)
 # pylint: enable=invalid-name
+locale = os.path.dirname(__file__) + ('/locales')
+gettext.bindtextdomain('lamia', locale)
+gettext.textdomain('lamia')
+en = gettext.translation('lamia', locale, ['en'])
+_ = gettext.gettext
+# This should be translated to true to show that translation is not failing
 
 # Debug messages only when in debug mode
 if config('DEBUG', cast=bool, default=False):
     logging.getLogger().setLevel(logging.DEBUG)
 
+logging.debug(_("Translation is working: False"))
 # Some config loading
 app.instance_name = config(
-    'INSTANCE_NAME', cast=str, default='A Lamia Community')
+    'INSTANCE_NAME', cast=str, default=_('A Lamia Community'))
 
 
 # Jinja2 science starts here
@@ -56,7 +65,9 @@ def setup_jinja2(template_dirs, auto_reload):
         loader=loader,
         autoescape=True,
         auto_reload=auto_reload,
+        extensions=['jinja2.ext.i18n'],
     )
+    env.install_gettext_translations(en)
     env.globals['url_for'] = url_for
     return env
 
