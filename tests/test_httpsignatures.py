@@ -10,8 +10,8 @@ except ModuleNotFoundError:
     
 from Crypto.PublicKey import RSA
 from Crypto.Hash import SHA256
-from lamia.utilities.httpsigs import sign
-from lamia.utilities.httpsigs import verify
+from lamia.activitypub.httpsigs import sign
+from lamia.activitypub.httpsigs import verify
 
 
 key = RSA.generate(2048)

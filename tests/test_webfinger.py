@@ -7,7 +7,7 @@ except ModuleNotFoundError:
     import os
     sys.path.append(os.getcwd())
     
-from lamia.utilities.webfinger import normalize
+from lamia.activitypub.webfinger import normalize
 
 def test_identifier_normalization():
     expected_base_url = "https://lamia.social"
