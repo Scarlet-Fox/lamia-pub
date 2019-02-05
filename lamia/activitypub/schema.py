@@ -11,14 +11,15 @@ through the fediverse.
 """
 import ujson as json
 from lamia.activitypub.fields import FIELD_TYPE, FIELD_REQUIRED, FIELD_VALIDATION
+from lamia.activitypub.fields import ACTIVTY_FIELDS, OBJECT_FIELDS, ACTOR_FIELDS
 
 
 class Schema:
     """The base class for all of our JSON schemata (what a lovely word)."""
 
-    def __init__(self, schema_json: dict = None, fields: dict = None) -> None:
-        if schema_json:
-            self.representation = schema_json
+    def __init__(self, load_json: dict = None, fields: dict = None) -> None:
+        if load_json:
+            self.representation = load_json
         else:
             self.representation = {}
 
@@ -42,12 +43,29 @@ class Schema:
                 local_value = self.representation[field]
 
                 valid_type = False
-                for _type in meta[FIELD_TYPE]:
+                type_idx = None
+                for i, _type in enumerate(meta[FIELD_TYPE]):
                     valid_type = isinstance(local_value, _type)
+
                     if valid_type:
+                        type_idx = i
                         break
 
                 if not valid_type:
                     return False
 
+                # Check the validation function associated with the type
+                validation_function = meta[FIELD_VALIDATION][type_idx]
+
+                if not validation_function(local_value):
+                    return False
+
             return True
+
+class Activity(Schema):
+    
+    def __init__(self, load_json: dict = None):
+        super().__init__(fields=ACTIVTY_FIELDS, load_json=load_json)
+        
+        
+        
