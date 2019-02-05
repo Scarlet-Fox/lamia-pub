@@ -25,6 +25,7 @@ class Schema:
 
         self.fields = fields
 
+
     def validate(self) -> bool:
         """Validate the internal JSON representation.
 
@@ -56,16 +57,17 @@ class Schema:
 
                 # Check the validation function associated with the type
                 validation_function = meta[FIELD_VALIDATION][type_idx]
+                
+                if validation_function:
+                    if not validation_function(local_value):
+                        return False
 
-                if not validation_function(local_value):
-                    return False
+        return True
 
-            return True
 
 class Activity(Schema):
     
-    def __init__(self, load_json: dict = None):
+    def __init__(self, load_json: dict = None) -> None:
         super().__init__(fields=ACTIVTY_FIELDS, load_json=load_json)
         
-        
-        
+    
