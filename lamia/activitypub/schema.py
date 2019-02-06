@@ -8,10 +8,15 @@ JSON formats.
 The reason for doing things in this way is to decrease the probability
 that a lamia installation becomes a bad neighbor due to garbage data flowing
 through the fediverse.
+
+Note: These classes speak JSON but they do so in the form of a Python
+dictionary.
 """
 import ujson as json
+import logging
 from lamia.activitypub.fields import FIELD_TYPE, FIELD_REQUIRED, FIELD_VALIDATION
 from lamia.activitypub.fields import ACTIVTY_FIELDS, OBJECT_FIELDS, ACTOR_FIELDS
+LOGGER = logging.getLogger('lamia')
 
 
 class SchemaValidationError(Exception):
@@ -47,6 +52,7 @@ class Schema:
 
             # If we should have a field but we do not, then return false
             if meta[FIELD_REQUIRED] and not field_in_representation:
+                LOGGER.warning(f'required field {field} is not in schema')
                 return False
 
             if field_in_representation:
@@ -63,6 +69,8 @@ class Schema:
                         break
 
                 if not valid_type:
+                    LOGGER.warning(
+                        f'field {field} is not a valid type in schema')
                     return False
 
                 # Check the validation function associated with the type
@@ -70,25 +78,29 @@ class Schema:
 
                 if validation_function:
                     if not validation_function(local_value):
+                        LOGGER.warning(
+                            f'field {field} failed validation in schema')
                         return False
 
         return True
 
 
-class Activity(Schema):
+class PubActivity(Schema):
     """A schema representing an activitypub activity."""
+
     def __init__(self, json_to_load: dict = None) -> None:
         super().__init__(fields=ACTIVTY_FIELDS, json_to_load=json_to_load)
 
 
-class Object(Schema):
+class PubObject(Schema):
     """A schema representing an activitypub object."""
+
     def __init__(self, json_to_load: dict = None) -> None:
         super().__init__(fields=OBJECT_FIELDS, json_to_load=json_to_load)
 
 
-class Actor(Schema):
+class PubActor(Schema):
     """A schema representing an activitypub actor."""
+
     def __init__(self, json_to_load: dict = None) -> None:
         super().__init__(fields=ACTOR_FIELDS, json_to_load=json_to_load)
-
