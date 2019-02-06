@@ -12,7 +12,6 @@ through the fediverse.
 Note: These classes speak JSON but they do so in the form of a Python
 dictionary.
 """
-import ujson as json
 import logging
 from lamia.activitypub.fields import FIELD_TYPE, FIELD_REQUIRED, FIELD_VALIDATION
 from lamia.activitypub.fields import ACTIVTY_FIELDS, OBJECT_FIELDS, ACTOR_FIELDS
@@ -37,17 +36,15 @@ class Schema:
         This may be replaced by something more durable later on.
         """
         self.representation = json_to_load
-        
-    
+
     def to_json_ld(self) -> None:
         """Adds lamia's context to a copy of the representation and then
         returns.
         """
-        
+
         json_ld = self.representation.copy()
         json_ld['@context'] = LAMIA_CONTEXT
         return json_ld
-        
 
     def validate(self) -> bool:
         """Validate the internal JSON representation.
@@ -109,6 +106,26 @@ class PubObject(Schema):
 
 class PubActor(Schema):
     """A schema representing an activitypub actor."""
+
+    def add_property(self, name: str = None, value: str = None) -> None:
+        """A convenience method for adding a property to an actor."""
+        if 'attachments' not in self.representation:
+            self.representation['attachments'] = []
+
+        property_entry = {
+            'type': 'PropertyValue',
+            'name': name,
+            'value': value,
+        }
+
+        self.representation['attachments'].append(property_entry)
+
+    def del_property(self, idx: int = None) -> None:
+        """A convenience method for removing a property from an actor."""
+        if 'attachments' not in self.representation:
+            return
+
+        del self.representation['attachments'][idx]
 
     def __init__(self, json_to_load: dict = None) -> None:
         super().__init__(fields=ACTOR_FIELDS, json_to_load=json_to_load)
