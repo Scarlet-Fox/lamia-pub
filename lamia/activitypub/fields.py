@@ -2,6 +2,9 @@
 objects. This fieldset data will be used to keep our schemata clean.
 """
 from collections import namedtuple
+from lamia.activitypub.validation import contains_only_strings
+from lamia.activitypub.validation import validate_loose_struct
+from lamia.activitypub.validation import validate_list_of_loose_structs
 
 # For the purpose of clarity and some sanity in a wild world of JSON, we will
 # use this named tuple set to provide meta data on the basic fields that provide
@@ -37,8 +40,8 @@ ACTIVTY_FIELDS = {
     'published': Field((str, ), True,
                        (None, )),  # actually a time in iso8601 format
     # lists of actors/collections that should receive this object
-    'to': Field((list, str), True, (None, None)),
-    'cc': Field((list, str), True, (None, None)),
+    'to': Field((list, str), True, (contains_only_strings, None)),
+    'cc': Field((list, str), True, (contains_only_strings, None)),
     # is there an object associated with this activity?
     'object': Field((str, dict), False, (None, None)),
 }
@@ -55,8 +58,8 @@ OBJECT_FIELDS = {
     'published': Field((str, ), True,
                        (None, )),  # actually a time in iso8601 format
     # lists of actors/collections that should receive this object
-    'to': Field((list, str), True, (None, None)),
-    'cc': Field((list, str), True, (None, None)),
+    'to': Field((list, str), True, (contains_only_strings, None)),
+    'cc': Field((list, str), True, (contains_only_strings, None)),
     # the text content for this object
     'content': Field((str, ), False, (None, )),
     # can contain a list of all replies to this object
@@ -74,43 +77,67 @@ OBJECT_FIELDS = {
     # a dictionary mapping iso language codes to content
     'contentMap': Field((dict, ), False, (None, )),
     # who wrote/created this object
-    'attributedTo': Field((str, list), False, (None, None)),
+    'attributedTo': Field((str, list), False, (None, contains_only_strings)),
 }
 
 ACTOR_FIELDS = {
     # the id for an actor is just a uri that can be used to access it
-    'id': Field((str, ), True, (None, )),
+    'id':
+    Field((str, ), True, (None, )),
     # what type of actor is this? Person/Service
-    'type': Field((str, ), True, (None, )),
+    'type':
+    Field((str, ), True, (None, )),
     # a static url for this actor
-    'url': Field((str, ), True, (None, )),
+    'url':
+    Field((str, ), True, (None, )),
     # urls for collections of followers and following
-    'followers': Field((str, ), True, (None, )),
-    'following': Field((str, ), True, (None, )),
+    'followers':
+    Field((str, ), True, (None, )),
+    'following':
+    Field((str, ), True, (None, )),
     # POSTable url for sending mail^H^H^H^H activities to this actor
-    'inbox': Field((str, ), True, (None, )),
+    'inbox':
+    Field((str, ), True, (None, )),
     # GETable url for a collection of this actor's activities
-    'outbox': Field((str, ), True, (None, )),
+    'outbox':
+    Field((str, ), True, (None, )),
     # a url for a collection of pinned objects
-    'featured': Field((str, ), False, (None, )),
+    'featured':
+    Field((str, ), False, (None, )),
     # the display name associated with an actor
-    'name': Field((str, ), True, (None, )),
+    'name':
+    Field((str, ), True, (None, )),
     # contains the public_key for a user
-    'publicKey': Field((dict, ), True, (None, )),
+    'publicKey':
+    Field((dict, ), True, (validate_loose_struct({
+        'id': str,
+        'owner': str,
+        'publicKeyPem': str
+    }), )),
     # the static username used in a handle
-    'preferredUsername': Field((str, ), False, (None, )),
+    'preferredUsername':
+    Field((str, ), False, (None, )),
     # the text description that appears in this actor's profile
-    'summary': Field((str, ), True, (None, )),
+    'summary':
+    Field((str, ), True, (None, )),
     # whether or not this user allows automatic follows
-    'manuallyApprovesFollowers': Field((bool, ), False, (None, )),
+    'manuallyApprovesFollowers':
+    Field((bool, ), False, (None, )),
     # a list of 'attachments', used by mastodon for propertyValues
-    'attachment': Field((list, ), False, (None, )),
+    'attachment':
+    Field((list, ), False, (validate_list_of_loose_structs({
+        'type': str,
+    }), )),
     # a list of hashtags associated with an actor
-    'tag': Field((list, ), False, (None, )),
+    'tag':
+    Field((list, ), False, (None, )),
     # seems to only contain the optional sharedInbox address
-    'endpoints': Field((dict, ), False, (None, )),
+    'endpoints':
+    Field((dict, ), False, (None, )),
     # an actor's avatar
-    'icon': Field((dict, ), False, (None, )),
+    'icon':
+    Field((dict, ), False, (None, )),
     # an actor's header
-    'image': Field((dict, ), False, (None, )),
+    'image':
+    Field((dict, ), False, (None, )),
 }

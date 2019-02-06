@@ -11,8 +11,7 @@ from .. import config
 @app.route('/')
 async def introduction(request):
     template = jinja.get_template('index.html')
-    content = template.render(
-        request=request, site_name=f'{app.site_name}')
+    content = template.render(request=request, site_name=f'{app.site_name}')
     return HTMLResponse(content)
 
 

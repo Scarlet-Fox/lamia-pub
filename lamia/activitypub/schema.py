@@ -14,17 +14,27 @@ from lamia.activitypub.fields import FIELD_TYPE, FIELD_REQUIRED, FIELD_VALIDATIO
 from lamia.activitypub.fields import ACTIVTY_FIELDS, OBJECT_FIELDS, ACTOR_FIELDS
 
 
+class SchemaValidationError(Exception):
+    """Raised when validation fails for a loaded schema."""
+
+
 class Schema:
     """The base class for all of our JSON schemata (what a lovely word)."""
 
-    def __init__(self, load_json: dict = None, fields: dict = None) -> None:
-        if load_json:
-            self.representation = load_json
+    def __init__(self, json_to_load: dict = None, fields: dict = None) -> None:
+        if json_to_load:
+            self.representation = json_to_load
         else:
             self.representation = {}
 
         self.fields = fields
 
+    def load_json(self, json_to_load: dict = None) -> None:
+        """A convenience method for loading the internal dictionary.
+
+        This may be replaced by something more durable later on.
+        """
+        self.representation = {}
 
     def validate(self) -> bool:
         """Validate the internal JSON representation.
@@ -57,7 +67,7 @@ class Schema:
 
                 # Check the validation function associated with the type
                 validation_function = meta[FIELD_VALIDATION][type_idx]
-                
+
                 if validation_function:
                     if not validation_function(local_value):
                         return False
@@ -66,8 +76,19 @@ class Schema:
 
 
 class Activity(Schema):
-    
-    def __init__(self, load_json: dict = None) -> None:
-        super().__init__(fields=ACTIVTY_FIELDS, load_json=load_json)
-        
-    
+    """A schema representing an activitypub activity."""
+    def __init__(self, json_to_load: dict = None) -> None:
+        super().__init__(fields=ACTIVTY_FIELDS, json_to_load=json_to_load)
+
+
+class Object(Schema):
+    """A schema representing an activitypub object."""
+    def __init__(self, json_to_load: dict = None) -> None:
+        super().__init__(fields=OBJECT_FIELDS, json_to_load=json_to_load)
+
+
+class Actor(Schema):
+    """A schema representing an activitypub actor."""
+    def __init__(self, json_to_load: dict = None) -> None:
+        super().__init__(fields=ACTOR_FIELDS, json_to_load=json_to_load)
+

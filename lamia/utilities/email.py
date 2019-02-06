@@ -36,6 +36,7 @@ import jinja2
 
 _ = gettext.gettext
 
+
 class Email():
     """
     Lamia wrapper around aiosmtplib
@@ -102,9 +103,9 @@ class Email():
                 "Please set this option before attempting to run again.")
 
         if self.STUBBED:
-            logging.info(_(
-                "Email has been stubbed according to settings in the config file. "
-                "No emails can be sent."))
+            logging.info(
+                _("Email has been stubbed according to settings in the config file. "
+                  "No emails can be sent."))
         else:
             self.dsn = self.config('MAIL_DSN', cast=URL)
             self.mail_queue = asyncio.Queue(
@@ -137,24 +138,25 @@ class Email():
                     response = await client.login(self.dsn.username,
                                                   self.dsn.password)
                     if response.code != status.SMTPStatus.auth_successful:
-                        logging.error(_(
-                            "Email authorisation failure. Server response: %s\n"
-                            "Please check the username and password provided in the config "
-                            "and ensure that it is correct."), response)
+                        logging.error(
+                            _("Email authorisation failure. Server response: %s\n"
+                              "Please check the username and password provided in the config "
+                              "and ensure that it is correct."), response)
                 await client.send_message(message)
 
         except smtp.errors.SMTPRecipientsRefused as e:
-            logging.error(_(
-                "EMAIL: Email send attempt failed to users for reason: %s"), e)
+            logging.error(
+                _("EMAIL: Email send attempt failed to users for reason: %s"),
+                e)
 
         except smtp.errors.SMTPConnectError as e:
-            logging.error(_(
-                "EMAIL: Email connection attempt to SMTP server failed for reason: %s"),
-                e)
+            logging.error(
+                _("EMAIL: Email connection attempt to SMTP server failed for reason: %s"
+                  ), e)
         except ValueError as e:
-            logging.error(_(
-                "EMAIL: Email connection or send attempt failed for reason: %s")
-            )
+            logging.error(
+                _("EMAIL: Email connection or send attempt failed for reason: %s"
+                  ))
 
         client.close()
 
