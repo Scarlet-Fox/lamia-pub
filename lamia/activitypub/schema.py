@@ -16,11 +16,8 @@ import ujson as json
 import logging
 from lamia.activitypub.fields import FIELD_TYPE, FIELD_REQUIRED, FIELD_VALIDATION
 from lamia.activitypub.fields import ACTIVTY_FIELDS, OBJECT_FIELDS, ACTOR_FIELDS
+from lamia.activitypub.context import LAMIA_CONTEXT
 LOGGER = logging.getLogger('lamia')
-
-
-class SchemaValidationError(Exception):
-    """Raised when validation fails for a loaded schema."""
 
 
 class Schema:
@@ -34,12 +31,23 @@ class Schema:
 
         self.fields = fields
 
-    def load_json(self, json_to_load: dict = None) -> None:
+    def load_json_ld(self, json_to_load: dict = None) -> None:
         """A convenience method for loading the internal dictionary.
 
         This may be replaced by something more durable later on.
         """
-        self.representation = {}
+        self.representation = json_to_load
+        
+    
+    def to_json_ld(self) -> None:
+        """Adds lamia's context to a copy of the representation and then
+        returns.
+        """
+        
+        json_ld = self.representation.copy()
+        json_ld['@context'] = LAMIA_CONTEXT
+        return json_ld
+        
 
     def validate(self) -> bool:
         """Validate the internal JSON representation.

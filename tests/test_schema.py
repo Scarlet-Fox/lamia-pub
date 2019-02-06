@@ -32,9 +32,11 @@ def test_activity_schema():
     activity = PubActivity(well_formed_activity)
     assert activity.validate() == True
 
-    activity.load_json(badly_formed_activity)
+    activity.load_json_ld(badly_formed_activity)
     assert activity.validate() == False
     
+    assert '@context' in activity.to_json_ld()
+
 
 well_formed_object = {
 	'id': 'https://lamia.social/l/statuses/101014122824442242',
@@ -72,9 +74,10 @@ def test_object_schema():
     _object = PubObject(well_formed_object)
     assert _object.validate() == True
     
-    _object.load_json(badly_formed_object)
+    _object.load_json_ld(badly_formed_object)
     assert _object.validate() == False
 
+    assert '@context' in _object.to_json_ld()
 
 well_formed_actor = {
 	"id": "https://lamia.social/u/scarly",
@@ -126,5 +129,7 @@ def test_actor_schema():
     actor = PubActor(well_formed_actor)
     assert actor.validate() == True
     
-    actor.load_json(badly_formed_actor)
+    actor.load_json_ld(badly_formed_actor)
     assert actor.validate() == False
+    
+    assert '@context' in actor.to_json_ld()
