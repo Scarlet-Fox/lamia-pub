@@ -13,9 +13,9 @@ Note: These classes speak JSON but they do so in the form of a Python
 dictionary.
 """
 import logging
-import pendulum
 from typing import Any
 from collections import namedtuple
+import pendulum
 from lamia.activitypub.fields import FIELD_TYPE, FIELD_REQUIRED, FIELD_VALIDATION
 from lamia.activitypub.fields import ACTIVTY_FIELDS, OBJECT_FIELDS, ACTOR_FIELDS
 from lamia.activitypub.context import LAMIA_CONTEXT
@@ -162,12 +162,12 @@ class Schema:
 
 class ActivitySchema(Schema):
     """A schema representing an activitypub activity."""
-    
+
     def to_model(self) -> Activity:
         """A convenience method for quickly converting an activity schema into
         an actor database model. This should be ran only for dumping things
         into a database as they come in.
-        
+
         Existing objects should have their data loaded with load_json_ld
         and should then have that data assigned directly to their data
         object to preserve the original database metadata.
@@ -177,27 +177,27 @@ class ActivitySchema(Schema):
         model.actor_uri = self.actor
         model.activity_type = self.type
         model.created = pendulum.parse(self.published)
-        
+
         if 'object' in self.representation and isinstance(self.object, str):
             model.object_uri = self.object
-        
+
         if '@context' in self.representation:
             model.data = self.to_json_ld()
         else:
             model.data = self.to_lamia_json_ld()
-                    
+
     def __init__(self, json_to_load: dict = None) -> None:
         super().__init__(fields=ACTIVTY_FIELDS, json_to_load=json_to_load)
 
 
 class ObjectSchema(Schema):
     """A schema representing an activitypub object."""
-    
+
     def to_model(self) -> Object:
         """A convenience method for quickly converting an object schema into
         an actor database model. This should be ran only for dumping things
         into a database as they come in.
-        
+
         Existing objects should have their data loaded with load_json_ld
         and should then have that data assigned directly to their data
         object to preserve the original database metadata.
@@ -211,23 +211,25 @@ class ObjectSchema(Schema):
             model.data = self.to_json_ld()
         else:
             model.data = self.to_lamia_json_ld()
-                    
+
         if 'inReplyTo' in self.representation:
             model.reply_to_uri = self.inReplyTo
 
     def __init__(self, json_to_load: dict = None) -> None:
         super().__init__(fields=OBJECT_FIELDS, json_to_load=json_to_load)
 
+
 ActorProperty = namedtuple('ActorProperty', 'name value idx')
+
 
 class ActorSchema(Schema):
     """A schema representing an activitypub actor."""
-    
+
     def to_model(self) -> Actor:
         """A convenience method for quickly converting an actor schema into
         an actor database model. This should be ran only for dumping things
         into a database as they come in.
-        
+
         Existing objects should have their data loaded with load_json_ld
         and should then have that data assigned directly to their data
         object to preserve the original database metadata.
@@ -243,10 +245,10 @@ class ActorSchema(Schema):
         model.local = False
         model.created = pendulum.now()
         model.last_updated = pendulum.now()
-        
+
         if 'preferredUsername' in self.representation:
             model.display_name = self.preferredUsername
-            
+
         return model
 
     def add_actor_property(self, name: str = None, value: str = None) -> None:
@@ -261,23 +263,19 @@ class ActorSchema(Schema):
         }
 
         self.representation['attachments'].append(property_entry)
-    
+
     def get_actor_properties(self) -> list:
         """A convenience method for getting the properties associated with
         an actor. Returns a list that contains ActorProperty named tuples.
         """
         properties = []
-        
+
         for idx, attachment in enumerate(self.representation['attachments']):
             if attachment['type'] == 'PropertyValue':
                 properties.append(
-                    ActorProperty(
-                        attachment['name'],
-                        attachment['value'],
-                        idx
-                    )
-                )
-        
+                    ActorProperty(attachment['name'], attachment['value'],
+                                  idx))
+
         return properties
 
     def del_actor_property(self, idx: int = None) -> None:
