@@ -28,12 +28,12 @@ config = Config('lamia.config')
 app = Starlette(debug=config('DEBUG', cast=bool, default=False))
 db.init_app(app, config)
 mail.init_app(app, config)
-# pylint: enable=invalid-name
 locale = os.path.dirname(__file__) + ('/locales')
 gettext.bindtextdomain('lamia', locale)
 gettext.textdomain('lamia')
 en = gettext.translation('lamia', locale, ['en'])
 _ = gettext.gettext
+# pylint: enable=invalid-name
 # This should be translated to true to show that translation is not failing
 
 # Debug messages only when in debug mode
@@ -66,7 +66,7 @@ def setup_jinja2(template_dirs, auto_reload):
         auto_reload=auto_reload,
         extensions=['jinja2.ext.i18n'],
     )
-    env.install_gettext_translations(en)
+    env.install_gettext_translations(en)  # pylint: disable=no-member
     env.globals['url_for'] = url_for
     return env
 
