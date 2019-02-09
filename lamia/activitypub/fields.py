@@ -101,9 +101,6 @@ ACTOR_FIELDS = {
     # GETable url for a collection of this actor's activities
     'outbox':
     Field((str, ), True, (None, )),
-    # a url for a collection of pinned objects
-    'featured':
-    Field((str, ), False, (None, )),
     # the display name associated with an actor
     'name':
     Field((str, ), True, (None, )),
@@ -114,12 +111,15 @@ ACTOR_FIELDS = {
         'owner': str,
         'publicKeyPem': str
     }), )),
+    # a url for a collection of pinned objects
+    'featured':
+    Field((str, ), False, (None, )),
     # the static username used in a handle
     'preferredUsername':
     Field((str, ), False, (None, )),
     # the text description that appears in this actor's profile
     'summary':
-    Field((str, ), True, (None, )),
+    Field((str, ), False, (None, )),
     # whether or not this user allows automatic follows
     'manuallyApprovesFollowers':
     Field((bool, ), False, (None, )),

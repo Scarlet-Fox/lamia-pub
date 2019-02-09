@@ -14,6 +14,7 @@ dictionary.
 """
 import logging
 from typing import Any
+from collections import namedtuple
 from lamia.activitypub.fields import FIELD_TYPE, FIELD_REQUIRED, FIELD_VALIDATION
 from lamia.activitypub.fields import ACTIVTY_FIELDS, OBJECT_FIELDS, ACTOR_FIELDS
 from lamia.activitypub.context import LAMIA_CONTEXT
@@ -170,11 +171,12 @@ class ObjectSchema(Schema):
     def __init__(self, json_to_load: dict = None) -> None:
         super().__init__(fields=OBJECT_FIELDS, json_to_load=json_to_load)
 
+ActorProperty = namedtuple('ActorProperty', 'name value idx')
 
 class ActorSchema(Schema):
     """A schema representing an activitypub actor."""
 
-    def add_property(self, name: str = None, value: str = None) -> None:
+    def add_actor_property(self, name: str = None, value: str = None) -> None:
         """A convenience method for adding a property to an actor."""
         if 'attachments' not in self.representation:
             self.representation['attachments'] = []
@@ -186,8 +188,26 @@ class ActorSchema(Schema):
         }
 
         self.representation['attachments'].append(property_entry)
+    
+    def get_actor_properties(self) -> list:
+        """A convenience method for getting the properties associated with
+        an actor. Returns a list that contains ActorProperty named tuples.
+        """
+        properties = []
+        
+        for idx, attachment in enumerate(self.representation['attachments']):
+            if attachment['type'] == 'PropertyValue':
+                properties.append(
+                    ActorProperty(
+                        attachment['name'],
+                        attachment['value'],
+                        idx
+                    )
+                )
+        
+        return properties
 
-    def del_property(self, idx: int = None) -> None:
+    def del_actor_property(self, idx: int = None) -> None:
         """A convenience method for removing a property from an actor."""
         if 'attachments' not in self.representation:
             return

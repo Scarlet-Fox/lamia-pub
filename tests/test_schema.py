@@ -88,45 +88,45 @@ def test_object_schema():
         _object.id = 1
 
 well_formed_actor = {
-	"id": "https://lamia.social/u/scarly",
-	"type": "Person",
-	"following": "https://lamia.social/u/scarly/following",
-	"followers": "https://lamia.social/u/scarly/followers",
-	"inbox": "https://lamia.social/u/scarly/inbox",
-	"outbox": "https://lamia.social/u/scarly/outbox",
-	"featured": "https://lamia.social/u/scarly/collections/featured",
-	"preferredUsername": "scarly",
-	"name": "Scarly Crow",
-	"summary": "<p>a description of an actor</p>",
-	"url": "https://lamia.social/u/scarly",
-	"manuallyApprovesFollowers": False,
-	"publicKey": {
-		"id": "https://lamia.social/u/scarly#main-key",
-		"owner": "https://lamia.social/u/scarly",
-		"publicKeyPem": "-----BEGIN PUBLIC KEY-----this is actually nonsense-----END PUBLIC KEY-----\n"
+	'id': 'https://lamia.social/u/scarly',
+	'type': 'Person',
+	'following': 'https://lamia.social/u/scarly/following',
+	'followers': 'https://lamia.social/u/scarly/followers',
+	'inbox': 'https://lamia.social/u/scarly/inbox',
+	'outbox': 'https://lamia.social/u/scarly/outbox',
+	'featured': 'https://lamia.social/u/scarly/collections/featured',
+	'preferredUsername': 'scarly',
+	'name': 'Scarly Crow',
+	'summary': '<p>a description of an actor</p>',
+	'url': 'https://lamia.social/u/scarly',
+	'manuallyApprovesFollowers': False,
+	'publicKey': {
+		'id': 'https://lamia.social/u/scarly#main-key',
+		'owner': 'https://lamia.social/u/scarly',
+		'publicKeyPem': '-----BEGIN PUBLIC KEY-----this is actually nonsense-----END PUBLIC KEY-----\n'
 	},
-	"tag": [
+	'tag': [
 
 	],
-	"attachment": [
+	'attachment': [
 		{
-			"type": "PropertyValue",
-			"name": "Species",
-			"value": "crow (sometimes a werecat)"
+			'type': 'PropertyValue',
+			'name': 'Species',
+			'value': 'crow (sometimes a werecat)'
 		},
 	],
-	"endpoints": {
-		"sharedInbox": "https://lamia.social/inbox"
+	'endpoints': {
+		'sharedInbox': 'https://lamia.social/inbox'
 	},
-	"icon": {
-		"type": "Image",
-		"mediaType": "image/png",
-		"url": "media/scarly_avatar.png"
+	'icon': {
+		'type': 'Image',
+		'mediaType': 'image/png',
+		'url': 'media/scarly_avatar.png'
 	},
-	"image": {
-		"type": "Image",
-		"mediaType": "image/png",
-		"url": "media/scarly_header.png"
+	'image': {
+		'type': 'Image',
+		'mediaType': 'image/png',
+		'url': 'media/scarly_header.png'
 	},
 }
 
@@ -146,3 +146,29 @@ def test_actor_schema():
     with pytest.raises(SchemaValidationException):
         actor.manuallyApprovesFollowers = 1
 
+
+def test_schema_build():
+    actor = ActorSchema()
+    
+    actor.id = 'https://lamia.social/u/scarly'
+    actor.type = 'Person'
+    actor.url = actor.id
+    actor.followers = 'https://lamia.social/u/scarly/followers'
+    actor.following = 'https://lamia.social/u/scarly/following'
+    actor.inbox = 'https://lamia.social/u/scarly/inbox'
+    actor.outbox = 'https://lamia.social/u/scarly/outbox'
+    actor.name = 'Scarly Crow'
+    actor.publicKey = {
+		'id': 'https://lamia.social/u/scarly#main-key',
+		'owner': 'https://lamia.social/u/scarly',
+		'publicKeyPem': '-----BEGIN PUBLIC KEY-----this is actually nonsense-----END PUBLIC KEY-----\n'
+    }
+    actor.preferredUsername = 'scarly'
+    
+    actor.add_actor_property('Are snake women hot?', 'why yes, yes they are')
+    actor.add_actor_property('Is this a test?', 'probably')
+    all_properties = actor.get_actor_properties()
+    assert len(all_properties) == 2
+    actor.del_actor_property(all_properties[1].idx)
+    assert actor.get_actor_properties()[0].name == 'Are snake women hot?'
+    
