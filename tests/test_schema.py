@@ -8,7 +8,7 @@ except ModuleNotFoundError:
     sys.path.append(os.getcwd())
 
 from lamia.activitypub.schema import ActivitySchema, ObjectSchema, ActorSchema
-
+from lamia.activitypub.schema import SchemaValidationException
 
 well_formed_activity = {
 	'id': 'https://lamia.social/l/activities/101016339929195685',
@@ -36,6 +36,9 @@ def test_activity_schema():
     assert activity.validate() == False
     
     assert '@context' in activity.to_lamia_json_ld()
+    
+    with pytest.raises(SchemaValidationException):
+        activity.type = 1
 
 
 well_formed_object = {
@@ -78,6 +81,9 @@ def test_object_schema():
     assert _object.validate() == False
 
     assert '@context' in _object.to_lamia_json_ld()
+    
+    with pytest.raises(SchemaValidationException):
+        _object.id = 1
 
 well_formed_actor = {
 	"id": "https://lamia.social/u/scarly",
@@ -133,3 +139,7 @@ def test_actor_schema():
     assert actor.validate() == False
     
     assert '@context' in actor.to_lamia_json_ld()
+    
+    with pytest.raises(SchemaValidationException):
+        actor.manuallyApprovesFollowers = 1
+
