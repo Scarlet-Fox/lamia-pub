@@ -36,6 +36,7 @@ def test_activity_schema():
     assert activity.validate() == False
     
     assert '@context' in activity.to_lamia_json_ld()
+    assert '@context' not in activity.to_json_ld()
     
     with pytest.raises(SchemaValidationException):
         activity.type = 1
@@ -81,6 +82,7 @@ def test_object_schema():
     assert _object.validate() == False
 
     assert '@context' in _object.to_lamia_json_ld()
+    assert '@context' not in _object.to_json_ld()
     
     with pytest.raises(SchemaValidationException):
         _object.id = 1
@@ -139,6 +141,7 @@ def test_actor_schema():
     assert actor.validate() == False
     
     assert '@context' in actor.to_lamia_json_ld()
+    assert '@context' not in actor.to_json_ld()
     
     with pytest.raises(SchemaValidationException):
         actor.manuallyApprovesFollowers = 1

@@ -3,3 +3,4 @@ pytest==4.1.1
 yapf==0.25.0
 aiosmtpd=1.2
 babel=2.6.0
+pytest-cov==2.6.1
