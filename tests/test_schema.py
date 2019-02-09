@@ -158,12 +158,23 @@ def test_schema_build():
     actor.inbox = 'https://lamia.social/u/scarly/inbox'
     actor.outbox = 'https://lamia.social/u/scarly/outbox'
     actor.name = 'Scarly Crow'
+    actor.customField = 'custom value'
+    actor.preferredUsername = 'scarly'
+    
+    with pytest.raises(SchemaValidationException):
+        actor.publicKey = {
+    		'id': 'https://lamia.social/u/scarly#main-key',
+    		'owner': 'https://lamia.social/u/scarly',
+        }
+    
     actor.publicKey = {
 		'id': 'https://lamia.social/u/scarly#main-key',
 		'owner': 'https://lamia.social/u/scarly',
 		'publicKeyPem': '-----BEGIN PUBLIC KEY-----this is actually nonsense-----END PUBLIC KEY-----\n'
     }
-    actor.preferredUsername = 'scarly'
+    
+    with pytest.raises(IndexError):
+        actor.del_actor_property(1)
     
     actor.add_actor_property('Are snake women hot?', 'why yes, yes they are')
     actor.add_actor_property('Is this a test?', 'probably')

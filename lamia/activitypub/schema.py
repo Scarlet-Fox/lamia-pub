@@ -210,7 +210,7 @@ class ActorSchema(Schema):
     def del_actor_property(self, idx: int = None) -> None:
         """A convenience method for removing a property from an actor."""
         if 'attachments' not in self.representation:
-            return
+            raise IndexError
 
         del self.representation['attachments'][idx]
 
