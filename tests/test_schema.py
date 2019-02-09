@@ -7,7 +7,7 @@ except ModuleNotFoundError:
     import os
     sys.path.append(os.getcwd())
 
-from lamia.activitypub.schema import PubActivity, PubObject, PubActor
+from lamia.activitypub.schema import ActivitySchema, ObjectSchema, ActorSchema
 
 
 well_formed_activity = {
@@ -29,13 +29,13 @@ well_formed_activity = {
 badly_formed_activity = {}
 
 def test_activity_schema():
-    activity = PubActivity(well_formed_activity)
+    activity = ActivitySchema(well_formed_activity)
     assert activity.validate() == True
 
     activity.load_json_ld(badly_formed_activity)
     assert activity.validate() == False
     
-    assert '@context' in activity.to_json_ld()
+    assert '@context' in activity.to_lamia_json_ld()
 
 
 well_formed_object = {
@@ -71,13 +71,13 @@ badly_formed_object = {}
 
 
 def test_object_schema():
-    _object = PubObject(well_formed_object)
+    _object = ObjectSchema(well_formed_object)
     assert _object.validate() == True
     
     _object.load_json_ld(badly_formed_object)
     assert _object.validate() == False
 
-    assert '@context' in _object.to_json_ld()
+    assert '@context' in _object.to_lamia_json_ld()
 
 well_formed_actor = {
 	"id": "https://lamia.social/u/scarly",
@@ -126,10 +126,10 @@ badly_formed_actor = {}
 
 
 def test_actor_schema():
-    actor = PubActor(well_formed_actor)
+    actor = ActorSchema(well_formed_actor)
     assert actor.validate() == True
     
     actor.load_json_ld(badly_formed_actor)
     assert actor.validate() == False
     
-    assert '@context' in actor.to_json_ld()
+    assert '@context' in actor.to_lamia_json_ld()

@@ -157,21 +157,21 @@ class Schema:
         return True
 
 
-class PubActivity(Schema):
+class ActivitySchema(Schema):
     """A schema representing an activitypub activity."""
 
     def __init__(self, json_to_load: dict = None) -> None:
         super().__init__(fields=ACTIVTY_FIELDS, json_to_load=json_to_load)
 
 
-class PubObject(Schema):
+class ObjectSchema(Schema):
     """A schema representing an activitypub object."""
 
     def __init__(self, json_to_load: dict = None) -> None:
         super().__init__(fields=OBJECT_FIELDS, json_to_load=json_to_load)
 
 
-class PubActor(Schema):
+class ActorSchema(Schema):
     """A schema representing an activitypub actor."""
 
     def add_property(self, name: str = None, value: str = None) -> None:
