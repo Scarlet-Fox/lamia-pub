@@ -21,12 +21,8 @@ class Actor(db.Model):
     __tablename__ = 'actors'
 
     id = db.Column(db.Integer(), primary_key=True)
-
-    avatar = db.Column(db.String())
-    header = db.Column(db.String())
-    summary = db.Column(db.String())
     actor_type = db.Column(db.String())
-    private_key = db.Column(db.String())
+    private_key = db.Column(db.String(), nullable=True)
 
     display_name = db.Column(db.String())
     user_name = db.Column(db.String())
@@ -93,33 +89,3 @@ class Object(db.Model):
     last_updated = db.Column(db.DateTime())
 
     data = db.Column(JSONB())
-
-
-class Follow(db.Model):
-    """Subscriptions are a link between actors. When you subscribe, you are
-    saying, "yes, please, show me the things that you create."
-
-    This activity is explicitly supported by ActivityPub, but I call it out
-    explicitly for convenience. Explicitly..
-    """
-    __tablename__ = 'follows'
-
-    id = db.Column(db.Integer(), primary_key=True)
-    actor_id = db.Column(
-        db.Integer(),
-        db.ForeignKey('actors.id', ondelete='CASCADE'),
-    )
-    target_actor_id = db.Column(
-        db.Integer(),
-        db.ForeignKey('actors.id', ondelete='CASCADE'),
-    )
-
-    # Waiting for account review
-    pending_review = db.Column(db.Boolean())
-    # Approved by actor owner
-    approved = db.Column(db.Boolean())
-    # Hard rejected by owner, all future requests will also be blocked
-    blocked = db.Column(db.Boolean())
-
-    created = db.Column(db.DateTime())
-    last_updated = db.Column(db.DateTime())

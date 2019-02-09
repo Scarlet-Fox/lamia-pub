@@ -13,11 +13,13 @@ Note: These classes speak JSON but they do so in the form of a Python
 dictionary.
 """
 import logging
+import pendulum
 from typing import Any
 from collections import namedtuple
 from lamia.activitypub.fields import FIELD_TYPE, FIELD_REQUIRED, FIELD_VALIDATION
 from lamia.activitypub.fields import ACTIVTY_FIELDS, OBJECT_FIELDS, ACTOR_FIELDS
 from lamia.activitypub.context import LAMIA_CONTEXT
+from lamia.models.activitypub import Actor, Object, Activity
 LOGGER = logging.getLogger('lamia')
 
 
@@ -41,7 +43,7 @@ class Schema:
 
         # Only fields and representation are set directly everything
         # else is assumed to be in the internal json ld representation.
-        if name in ('fields', 'representation'):
+        if name in ('fields', 'representation', 'db_id'):
             object.__setattr__(self, name, value)
         else:
             if self.validate_field(name, value):
@@ -160,13 +162,58 @@ class Schema:
 
 class ActivitySchema(Schema):
     """A schema representing an activitypub activity."""
-
+    
+    def to_model(self) -> Activity:
+        """A convenience method for quickly converting an activity schema into
+        an actor database model. This should be ran only for dumping things
+        into a database as they come in.
+        
+        Existing objects should have their data loaded with load_json_ld
+        and should then have that data assigned directly to their data
+        object to preserve the original database metadata.
+        """
+        model = Activity()
+        model.uri = self.id
+        model.actor_uri = self.actor
+        model.activity_type = self.type
+        model.created = pendulum.parse(self.published)
+        
+        if 'object' in self.representation and isinstance(self.object, str):
+            model.object_uri = self.object
+        
+        if '@context' in self.representation:
+            model.data = self.to_json_ld()
+        else:
+            model.data = self.to_lamia_json_ld()
+                    
     def __init__(self, json_to_load: dict = None) -> None:
         super().__init__(fields=ACTIVTY_FIELDS, json_to_load=json_to_load)
 
 
 class ObjectSchema(Schema):
     """A schema representing an activitypub object."""
+    
+    def to_model(self) -> Object:
+        """A convenience method for quickly converting an object schema into
+        an actor database model. This should be ran only for dumping things
+        into a database as they come in.
+        
+        Existing objects should have their data loaded with load_json_ld
+        and should then have that data assigned directly to their data
+        object to preserve the original database metadata.
+        """
+        model = Object()
+        model.uri = self.id
+        model.object_type = self.type
+        model.created = pendulum.parse(self.published)
+        model.last_updated = pendulum.now()
+        if '@context' in self.representation:
+            model.data = self.to_json_ld()
+        else:
+            model.data = self.to_lamia_json_ld()
+                    
+        if 'inReplyTo' in self.representation:
+            model.reply_to_uri = self.inReplyTo
 
     def __init__(self, json_to_load: dict = None) -> None:
         super().__init__(fields=OBJECT_FIELDS, json_to_load=json_to_load)
@@ -175,6 +222,32 @@ ActorProperty = namedtuple('ActorProperty', 'name value idx')
 
 class ActorSchema(Schema):
     """A schema representing an activitypub actor."""
+    
+    def to_model(self) -> Actor:
+        """A convenience method for quickly converting an actor schema into
+        an actor database model. This should be ran only for dumping things
+        into a database as they come in.
+        
+        Existing objects should have their data loaded with load_json_ld
+        and should then have that data assigned directly to their data
+        object to preserve the original database metadata.
+        """
+        model = Actor()
+        if '@context' in self.representation:
+            model.data = self.to_json_ld()
+        else:
+            model.data = self.to_lamia_json_ld()
+        model.actor_type = self.type
+        model.user_name = self.name
+        model.uri = self.id
+        model.local = False
+        model.created = pendulum.now()
+        model.last_updated = pendulum.now()
+        
+        if 'preferredUsername' in self.representation:
+            model.display_name = self.preferredUsername
+            
+        return model
 
     def add_actor_property(self, name: str = None, value: str = None) -> None:
         """A convenience method for adding a property to an actor."""

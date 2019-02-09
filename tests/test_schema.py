@@ -31,6 +31,7 @@ badly_formed_activity = {}
 def test_activity_schema():
     activity = ActivitySchema(well_formed_activity)
     assert activity.validate() == True
+    activity.to_model()
 
     activity.load_json_ld(badly_formed_activity)
     assert activity.validate() == False
@@ -77,6 +78,7 @@ badly_formed_object = {}
 def test_object_schema():
     _object = ObjectSchema(well_formed_object)
     assert _object.validate() == True
+    _object.to_model()
     
     _object.load_json_ld(badly_formed_object)
     assert _object.validate() == False
@@ -136,6 +138,7 @@ badly_formed_actor = {}
 def test_actor_schema():
     actor = ActorSchema(well_formed_actor)
     assert actor.validate() == True
+    model = actor.to_model()
     
     actor.load_json_ld(badly_formed_actor)
     assert actor.validate() == False
@@ -182,4 +185,4 @@ def test_schema_build():
     assert len(all_properties) == 2
     actor.del_actor_property(all_properties[1].idx)
     assert actor.get_actor_properties()[0].name == 'Are snake women hot?'
-    
+    assert actor.validate() == True
