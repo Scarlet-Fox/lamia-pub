@@ -1,6 +1,5 @@
 """Oauth2 implementation for lamias everywhere."""
-
-from .. import db
+from lamia.database import db
 
 
 class OauthToken(db.Model):

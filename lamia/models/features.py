@@ -2,7 +2,7 @@
 just a plain federator. They're directly or indirectly associated with the
 user-level things that make ActivityPub taste better.
 """
-from .. import db
+from lamia.database import db
 
 
 class Account(db.Model):

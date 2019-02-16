@@ -5,8 +5,7 @@ Moderators should ban nazis, by the way. This shouldn't need to be said, but
 it is being said right here. Get rid of them.
 """
 from gino.dialects.asyncpg import JSONB
-
-from .. import db
+from lamia.database import db
 
 
 class ModerationLog(db.Model):

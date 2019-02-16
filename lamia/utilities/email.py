@@ -23,18 +23,19 @@ not have to be used.
 """
 import asyncio
 import sys
-import logging
 import typing
 import gettext
 from email.mime.text import MIMEText
 
 import aiosmtplib as smtp
 import aiosmtplib.status as status
-import starlette
+from starlette.applications import Starlette
+from starlette.config import Config
 from starlette.datastructures import URL
 import jinja2
 
-_ = gettext.gettext
+from lamia.logging import logging
+from lamia.translation import _
 
 
 class Email():
@@ -49,8 +50,8 @@ class Email():
     raises: Value error if only app is provided an argument.
     """
 
-    def init_app(self, app: starlette.applications.Starlette,
-                 config: starlette.config.Config) -> None:
+    def init_app(self, app: Starlette,
+                 config: Config) -> None:
         """
         Register the starlette app with the email manager.
 
@@ -64,8 +65,8 @@ class Email():
         app.add_event_handler('shutdown', self._shutdown)
 
     def __init__(self,
-                 app: starlette.applications.Starlette = None,
-                 config: starlette.config.Config = None):
+                 app: Starlette = None,
+                 config: Config = None):
         self.stubs = []  #
         if (app is not None) and (
                 config is

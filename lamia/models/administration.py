@@ -1,7 +1,6 @@
 """This module contains the models for the admin-only interface."""
 from gino.dialects.asyncpg import JSONB
-
-from .. import db
+from lamia.database import db
 
 
 class Emoji(db.Model):

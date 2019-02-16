@@ -12,7 +12,6 @@ through the fediverse.
 Note: These classes speak JSON but they do so in the form of a Python
 dictionary.
 """
-import logging
 from typing import Any
 from collections import namedtuple
 import pendulum
@@ -20,6 +19,8 @@ from lamia.activitypub.fields import FIELD_TYPE, FIELD_REQUIRED, FIELD_VALIDATIO
 from lamia.activitypub.fields import ACTIVTY_FIELDS, OBJECT_FIELDS, ACTOR_FIELDS
 from lamia.activitypub.context import LAMIA_CONTEXT
 from lamia.models.activitypub import Actor, Object, Activity
+from lamia.logging import logging
+
 LOGGER = logging.getLogger('lamia')
 
 
