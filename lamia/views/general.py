@@ -2,13 +2,11 @@
 # pylint: skip-file
 from starlette.responses import JSONResponse
 from starlette.responses import HTMLResponse
-from lamia import app
 from lamia.database import db
 from lamia.templating import jinja
 from lamia.config import SITE_NAME
 
 
-@app.route('/')
 async def introduction(request):
     template = jinja.get_template('index.html')
     content = template.render(request=request, site_name=f'{SITE_NAME}')
