@@ -3,14 +3,15 @@ supports blogs, status updates, and polls.
 """
 
 import logging
-import gettext
-import os
 import jinja2
 from starlette.applications import Starlette
 from starlette.staticfiles import StaticFiles
-from starlette.config import Config
+import lamia
 import lamia.utilities.gino as gino
 import lamia.utilities.email as email
+import lamia.config as CONFIG
+from lamia.translation import gettext as _
+from lamia.translation import en as EN
 
 # TODO : mypy
 
@@ -24,25 +25,19 @@ logging.getLogger('gino').setLevel(logging.WARN)
 # pylint: disable=invalid-name
 db = gino.Gino()
 mail = email.Email()
-config = Config('lamia.config')
-app = Starlette(debug=config('DEBUG', cast=bool, default=False))
-db.init_app(app, config)
-mail.init_app(app, config)
-locale = os.path.dirname(__file__) + ('/locales')
-gettext.bindtextdomain('lamia', locale)
-gettext.textdomain('lamia')
-en = gettext.translation('lamia', locale, ['en'])
-_ = gettext.gettext
+app = Starlette(debug=CONFIG.DEBUG)
+db.init_app(app, CONFIG.config)
+mail.init_app(app, CONFIG.config)
 # pylint: enable=invalid-name
 # This should be translated to true to show that translation is not failing
 
 # Debug messages only when in debug mode
-if config('DEBUG', cast=bool, default=False):
-    logging.getLogger().setLevel(logging.DEBUG)
+if CONFIG.DEBUG:
+    logging.getLogger().setLevel(CONFIG.DEBUG)
 
 logging.debug(_("Translation is working: False"))
 # Some config loading
-app.site_name = config('SITE_NAME', cast=str, default=_('A Lamia Community'))
+app.site_name = CONFIG.SITE_NAME
 
 
 # Jinja2 science starts here
@@ -66,7 +61,7 @@ def setup_jinja2(template_dirs, auto_reload):
         auto_reload=auto_reload,
         extensions=['jinja2.ext.i18n'],
     )
-    env.install_gettext_translations(en)  # pylint: disable=no-member
+    env.install_gettext_translations(EN)  # pylint: disable=no-member
     env.globals['url_for'] = url_for
     return env
 
@@ -77,11 +72,7 @@ TEMPLATES_DIRS = ['templates']
 # same rational as above
 jinja = setup_jinja2(
     TEMPLATES_DIRS,
-    config(
-        "TEMPLATE_RELOAD",
-        cast=bool,
-        default=False,
-    ),
+    CONFIG.TEMPLATE_RELOAD
 )
 # pylint: enable=invalid-name
 # Static content loading
