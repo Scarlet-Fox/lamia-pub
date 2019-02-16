@@ -4,7 +4,7 @@ from starlette.responses import JSONResponse
 from starlette.responses import HTMLResponse
 from .. import app
 from .. import db
-from .. import jinja
+from lamia.templating import jinja
 from .. import config
 
 
