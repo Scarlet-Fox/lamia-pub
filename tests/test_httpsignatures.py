@@ -1,12 +1,9 @@
+import sys
+import os
+sys.path.append(os.getcwd())
+
 import pytest
 import base64
-# Import lamia either from pythonpath or a relative parent dir
-try:
-    import lamia
-except ModuleNotFoundError:
-    import sys
-    import os
-    sys.path.append(os.getcwd())
     
 from Crypto.PublicKey import RSA
 from Crypto.Hash import SHA256

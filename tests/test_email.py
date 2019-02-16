@@ -1,19 +1,14 @@
+import sys
+import os
+sys.path.append(os.getcwd())
+
 import tempfile
 import asyncio
 import mailbox
-
 import aiosmtpd.controller
 import aiosmtpd.handlers
 import starlette.config
 import pytest
-
-try:
-    import lamia
-except ModuleNotFoundError:
-    import sys
-    import os
-    sys.path.append(os.getcwd())
-
 import lamia.utilities.email
 
 TEST_PORT = 12345

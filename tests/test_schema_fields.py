@@ -1,11 +1,8 @@
+import sys
+import os
+sys.path.append(os.getcwd())
+
 import pytest
-# Import lamia either from pythonpath or a relative parent dir
-try:
-    import lamia
-except ModuleNotFoundError:
-    import sys
-    import os
-    sys.path.append(os.getcwd())
 
 from lamia.activitypub.fields import ACTIVTY_FIELDS, OBJECT_FIELDS, ACTOR_FIELDS
 from lamia.activitypub.validation import contains_only_strings

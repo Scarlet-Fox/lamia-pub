@@ -1,12 +1,9 @@
+import sys
+import os
+sys.path.append(os.getcwd())
+
 import pytest
-# Import lamia either from pythonpath or a relative parent dir
-try:
-    import lamia
-except ModuleNotFoundError:
-    import sys
-    import os
-    sys.path.append(os.getcwd())
-    
+
 from lamia.activitypub.webfinger import normalize
 
 def test_identifier_normalization():
