@@ -24,7 +24,6 @@ not have to be used.
 import asyncio
 import sys
 import typing
-import gettext
 from email.mime.text import MIMEText
 
 import aiosmtplib as smtp
@@ -50,8 +49,7 @@ class Email():
     raises: Value error if only app is provided an argument.
     """
 
-    def init_app(self, app: Starlette,
-                 config: Config) -> None:
+    def init_app(self, app: Starlette, config: Config) -> None:
         """
         Register the starlette app with the email manager.
 
@@ -64,9 +62,7 @@ class Email():
         app.add_event_handler('startup', self._startup)
         app.add_event_handler('shutdown', self._shutdown)
 
-    def __init__(self,
-                 app: Starlette = None,
-                 config: Config = None):
+    def __init__(self, app: Starlette = None, config: Config = None):
         self.stubs = []  #
         if (app is not None) and (
                 config is

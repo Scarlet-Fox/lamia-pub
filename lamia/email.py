@@ -5,6 +5,7 @@ import lamia.config as CONFIG
 
 mail = email.Email()
 
+
 def setup_email(app) -> None:
+    """Sets up lifecycle functions."""
     mail.init_app(app, CONFIG.config)
-    

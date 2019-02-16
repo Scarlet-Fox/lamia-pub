@@ -5,6 +5,7 @@ import lamia.config as CONFIG
 
 db = gino.Gino()
 
+
 def setup_db(app) -> None:
+    """Sets up lifecycle functions."""
     db.init_app(app, CONFIG.config)
-    

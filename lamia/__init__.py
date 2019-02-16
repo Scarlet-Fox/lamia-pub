@@ -9,7 +9,7 @@ from lamia.database import setup_db
 from lamia.email import setup_email
 from lamia.logging import logging
 
-app = Starlette(debug=CONFIG.DEBUG)
+app = Starlette(debug=CONFIG.DEBUG)  # pylint: disable=invalid-name
 setup_db(app)
 setup_email(app)
 # TODO: Setup redis here
