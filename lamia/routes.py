@@ -10,14 +10,15 @@ from starlette.applications import Starlette
 from starlette.staticfiles import StaticFiles
 import lamia.views.general as lamia_general
 
+
 def setup_routes(app: Starlette) -> None:
     """Add all of lamia's default routes.
-    
+
     TODO: A different setup function should be added to do the same for
     routes associated with extensions.
     """
     # Static content loading
     app.mount('/static', StaticFiles(directory='statics'), name='static')
-    
+
     # Just a boring test route
     app.add_route('/', lamia_general.introduction, ['GET'])
