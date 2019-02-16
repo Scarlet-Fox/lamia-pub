@@ -14,9 +14,6 @@ setup_db(app)
 setup_email(app)
 # TODO: Setup redis here
 
-# Some config loading
-app.site_name = CONFIG.SITE_NAME
-
 # Static content loading
 app.mount('/static', StaticFiles(directory='statics'), name='static')
 
