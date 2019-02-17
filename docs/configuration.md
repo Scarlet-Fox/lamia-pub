@@ -6,7 +6,7 @@ This is a complete list of all settings that are used when defined in `lamia.con
 
 These settings are required to configure core features, none should be left unset when running in production.
 
-###`DB_DSN`
+### `DB_DSN`
 
 A fully qualified URL of the following shape:
 `postgresql://username:password@hostname/database[:port]`
