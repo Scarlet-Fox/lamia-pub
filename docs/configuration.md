@@ -6,6 +6,13 @@ This is a complete list of all settings that are used when defined in `lamia.con
 
 These settings are required to configure core features, none should be left unset when running in production.
 
+### `BASE_URL`
+
+A fully qualified URL in the following form:
+`http(s)://hostname[:port]`
+
+The fully qualified URL for this lamia server. This url will be used to build URLs for locally hosted content. If a port is used, then the port should be included as well. The trailing `/` should be omitted.
+
 ### `DB_DSN`
 
 A fully qualified URL of the following shape:
