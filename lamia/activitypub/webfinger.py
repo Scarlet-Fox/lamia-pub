@@ -28,7 +28,6 @@ def normalize(identifier: str, allow_port: bool = False) -> Tuple[str, str]:
     Note: We assume that we will never call for details over http."""
 
     _identifier = identifier
-    port = ''
 
     # Drop the acct: portion
     # examples - acct:lamia@lamia.social OR acct:lamia.social/@lamia

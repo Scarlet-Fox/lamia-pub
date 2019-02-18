@@ -9,6 +9,7 @@ programmatically.
 from starlette.applications import Starlette
 from starlette.staticfiles import StaticFiles
 import lamia.views.general as lamia_general
+import lamia.views.activitypub.nodeinfo as lamia_nodeinfo
 
 
 def setup_routes(app: Starlette) -> None:
@@ -22,3 +23,9 @@ def setup_routes(app: Starlette) -> None:
 
     # Just a boring test route
     app.add_route('/', lamia_general.introduction, ['GET'])
+
+    # Nodeinfo routes
+    app.add_route('/.well-known/nodeinfo', lamia_nodeinfo.nodeinfo_index,
+                  ['GET'])
+    app.add_route('/nodeinfo/2.0.json', lamia_nodeinfo.nodeinfo_schema_20,
+                  ['GET'])
