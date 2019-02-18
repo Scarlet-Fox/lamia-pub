@@ -27,7 +27,7 @@ Current Team
 ------------
 
 * [scarly](https://computerfairi.es/@scarly) - project manager, lead developer
-* [Nuclear Baked Potato](https://cybre.space/@TheHottestPotato) - general co-conspirator, developer, tasty root vegetable
+* [Nuclear Baked Potato](https://cybre.space/@TheHottestPotato) - general co-conspirator, developer, tasty root vegetable, documentation wrangler
 * [maple](https://computerfairi.es/@maple) - layouts, css, admin insights
 * [Chel](https://computerfairi.es/@Chel) - interface design, user experience, project secretary
 
@@ -44,10 +44,11 @@ We'll clean these up later on, but for now this is as good as it gets.
 ### Create a config file
 
 This file should be named `lamia.config`. The contents are just environment variables.
+[Click here](docs/configuration.md) if you want to know more about these options, or the other options that can be set.
 
 ```
 DB_ECHO=False
-DB_DSN="postgresql://user:password@database_address/database_table"
+DB_DSN="postgresql://user:password@hostname/database"
 SITE_NAME="A Lamia Social"
 SECRET_KEY=your_secret_key
 TEMPLATE_RELOAD=True

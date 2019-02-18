@@ -28,18 +28,5 @@ If we don't think the code is quite ready to be added to master, don't get disco
 
 ### Documentation Contributions
 
-## Style and Structure Guidelines
+We do not at this time have a formalized guideline to documentation, maybe you can help contribute to that as well! Documentation contributions can either be commenting the code with good method and class docstrings, or describing and organizing the information about how to use lamia.
 
-### Code
-
-### Commits and Pull Requests
-
-### Documentation
-
-### Issues
-
-#### Features
-
-#### Bugs
-
-#### Project Meta
