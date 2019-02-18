@@ -13,3 +13,4 @@ TEMPLATE_RELOAD = config(
     cast=bool,
     default=False,
 )
+BASE_URL = config('BASE_URL', cast=str)
