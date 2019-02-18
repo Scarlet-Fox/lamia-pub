@@ -42,3 +42,4 @@ def test_nodeinfo_schema_20():
     assert isinstance(response_body['openRegistrations'], bool)
     assert isinstance(response_body['usage']['users']['total'], int)
     assert isinstance(response_body['usage']['localPosts'], int)
+    assert response.headers['content-type'] == 'application/json; profile="http://nodeinfo.diaspora.software/ns/schema/2.0#"'
