@@ -16,10 +16,10 @@ import ujson as json
 
 from lamia.version import __version__
 
-PORT_RE = re.compile(r'\:\d+')
+PORT_RE = re.compile(r'(\:\d+)')
 
 
-def normalize(identifier: str) -> Tuple[str, str]:
+def normalize(identifier: str, allow_port: bool = False) -> Tuple[str, str]:
     """Given an id, returns a tuple of (resource, address,) to contact
 
     A rough, heuristic approximation of:
@@ -28,6 +28,7 @@ def normalize(identifier: str) -> Tuple[str, str]:
     Note: We assume that we will never call for details over http."""
 
     _identifier = identifier
+    port = ''
 
     # Drop the acct: portion
     # examples - acct:lamia@lamia.social OR acct:lamia.social/@lamia
@@ -35,10 +36,9 @@ def normalize(identifier: str) -> Tuple[str, str]:
         _identifier = _identifier[5:]
 
     # # Drop the port portion of an identifier
-    # # Because, we can never be certain that it is encrypted (prob not tbh)
-    # # So, we'll force this to https
-    if ':' in _identifier.replace('://', ''):
-        _identifier = PORT_RE.sub('', _identifier)
+    if not allow_port:
+        if ':' in _identifier.replace('://', ''):
+            _identifier = PORT_RE.sub('', _identifier)
 
     # If the id is an address, then we're done here, parse and return
     # examples - http://lamia.social/users/lamia OR http://lamia.social/lamia
