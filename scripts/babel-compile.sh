@@ -1,2 +1,2 @@
 #!/bin/bash
-pybabel compile -f -i lamia/locales/lamia.pot -l en -d lamia/locales/ -D lamia
+pybabel compile -f -i lamia/locales/en/LC_MESSAGES/lamia.po -l en -d lamia/locales/ -D lamia
