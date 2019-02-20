@@ -37,13 +37,13 @@ class Actor(db.Model):
     # Convenience fields for local actors.
     identity_id = db.Column(
         db.Integer(),
-        db.ForeignKey('identities.id', ondelete='SET NULL'),
-        nullable=True,
+        db.ForeignKey('identities.id', ondelete='SET NULL',name='fk_actor_identity'),
+        nullable=True
     )
     blog_id = db.Column(
         db.Integer(),
-        db.ForeignKey('blogs.id', ondelete='SET NULL'),
-        nullable=True,
+        db.ForeignKey('blogs.id', ondelete='SET NULL',name='fk_actor_blog'),
+        nullable=True
     )
 
 
@@ -83,7 +83,7 @@ class Object(db.Model):
     created = db.Column(db.DateTime())
     created_by_actor_id = db.Column(
         db.Integer(),
-        db.ForeignKey('actors.id', ondelete='SET NULL'),
+        db.ForeignKey('actors.id', ondelete='SET NULL', name='fk_object_created_by_actor'),
         nullable=True,
     )
     last_updated = db.Column(db.DateTime())

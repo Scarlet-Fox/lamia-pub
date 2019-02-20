@@ -22,7 +22,7 @@ class Account(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     primary_identity_id = db.Column(
         db.Integer(),
-        db.ForeignKey('identities.id', ondelete='SET NULL'),
+        db.ForeignKey('identities.id', ondelete='SET NULL', name='fk_actor_primary_identity'),
         nullable=True,
     )
     email_address = db.Column(db.String())
@@ -58,7 +58,7 @@ class Identity(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     actor_id = db.Column(
         db.Integer(),
-        db.ForeignKey('actors.id', ondelete='CASCADE'),
+        db.ForeignKey('actors.id', ondelete='CASCADE', name='fk_identity_actor'),
     )
 
     # Non-standard profile customizations
@@ -90,7 +90,7 @@ class Blog(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     actor_id = db.Column(
         db.Integer(),
-        db.ForeignKey('actors.id', ondelete='CASCADE'),
+        db.ForeignKey('actors.id', ondelete='CASCADE', name='fk_blog_actor'),
     )
 
     # Non-standard profile customizations
@@ -123,11 +123,11 @@ class Interest(db.Model):
 
     actor_id = db.Column(
         db.Integer(),
-        db.ForeignKey('actors.id', ondelete='CASCADE'),
+        db.ForeignKey('actors.id', ondelete='CASCADE', name='fk_interest_map_actor'),
     )
     tag_id = db.Column(
         db.Integer(),
-        db.ForeignKey('tags.id', ondelete='CASCADE'),
+        db.ForeignKey('tags.id', ondelete='CASCADE', name='fk_interest_map_tag'),
     )
 
 
@@ -146,8 +146,8 @@ class Block(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True)
     account_id = db.Column(db.Integer(),
-                           db.ForeignKey('accounts.id', ondelete='CASCADE'))
-    target_actor_id = db.Column(db.Integer(), db.ForeignKey('actors.id'))
+                           db.ForeignKey('accounts.id', ondelete='CASCADE', name='fk_block_account'))
+    target_actor_id = db.Column(db.Integer(), db.ForeignKey('accounts.id', ondelete='CASCADE', name='fk_block_actor'))
     created = db.Column(db.DateTime())
 
 
@@ -166,11 +166,11 @@ class Mute(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     account_id = db.Column(
         db.Integer(),
-        db.ForeignKey('accounts.id', ondelete='CASCADE'),
+        db.ForeignKey('accounts.id', ondelete='CASCADE', name='fk_mute_account'),
     )
     target_actor_id = db.Column(
         db.Integer(),
-        db.ForeignKey('actors.id', ondelete='CASCADE'),
+        db.ForeignKey('actors.id', ondelete='CASCADE', name='fk_mute_actor'),
     )
     created = db.Column(db.DateTime())
 
@@ -185,7 +185,7 @@ class Filter(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     account_id = db.Column(
         db.Integer(),
-        db.ForeignKey('accounts.id', ondelete='CASCADE'),
+        db.ForeignKey('accounts.id', ondelete='CASCADE', name='fk_filter_account'),
     )
 
     query = db.Column(db.String)
@@ -193,7 +193,7 @@ class Filter(db.Model):
     minimize = db.Column(db.Boolean)
     filter_actor_id = db.Column(
         db.Integer(),
-        db.ForeignKey('actors.id', ondelete='CASCADE'),
+        db.ForeignKey('actors.id', ondelete='CASCADE', name='fk_filter_applied_to_actor'),
     )
 
     created = db.Column(db.DateTime())
@@ -214,7 +214,7 @@ class Feed(db.Model):
     name = db.Column(db.String())
     identity_id = db.Column(
         db.Integer(),
-        db.ForeignKey('identities.id', ondelete='CASCADE'),
+        db.ForeignKey('identities.id', ondelete='CASCADE', name='fk_feed_identity'),
     )
     created = db.Column(db.DateTime())
 
@@ -226,9 +226,9 @@ class FeedActor(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     feed_id = db.Column(
         db.Integer(),
-        db.ForeignKey('feeds.id', ondelete='CASCADE'),
+        db.ForeignKey('feeds.id', ondelete='CASCADE', name='fk_feedactor_feed'),
     )
-    target_actor_id = db.Column(db.Integer(), db.ForeignKey('actors.id'))
+    target_actor_id = db.Column(db.Integer(), db.ForeignKey('actors.id', ondelete='CASCADE', name='fk_feedactor_actor'))
     created = db.Column(db.DateTime())
 
 
@@ -248,9 +248,9 @@ class ObjectTag(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     tag_id = db.Column(
         db.Integer(),
-        db.ForeignKey('tags.id', ondelete='CASCADE'),
+        db.ForeignKey('tags.id', ondelete='CASCADE', name='fk_objecttag_tag'),
     )
-    object_id = db.Column(db.Integer(), db.ForeignKey('objects.id'))
+    object_id = db.Column(db.Integer(), db.ForeignKey('objects.id', ondelete='CASCADE', name='fk_objecttag_object'))
     created = db.Column(db.DateTime())
 
 
@@ -261,11 +261,11 @@ class FeedTag(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     feed_id = db.Column(
         db.Integer(),
-        db.ForeignKey('feeds.id', ondelete='CASCADE'),
+        db.ForeignKey('feeds.id', ondelete='CASCADE', name='fk_feedtag_feed'),
     )
     target_tag_id = db.Column(
         db.Integer(),
-        db.ForeignKey('tags.id', ondelete='CASCADE'),
+        db.ForeignKey('tags.id', ondelete='CASCADE', name='fk_feedtag_tag'),
     )
     created = db.Column(db.DateTime())
 
@@ -308,11 +308,16 @@ class Bookmark(db.Model):
     __tablename__ = 'boookmarks'
 
     id = db.Column(db.Integer(), primary_key=True)
-    object_id = db.Column(db.String())
     description = db.Column(db.String())
-
-    bookmark_group_id = db.Column(
-        db.Integer(), db.ForeignKey('bookmark_groups.id', ondelete='CASCADE'))
+    
+    object_id = db.Column(
+        db.Integer(), db.ForeignKey('objects.id', ondelete='CASCADE', name='fk_bookmark_object'))
+    
+    actor_id = db.Column(
+        db.Integer(), db.ForeignKey('actors.id', ondelete='CASCADE', name='fk_bookmark_actor'))
+    
+    group_id = db.Column(
+        db.Integer(), db.ForeignKey('bookmark_groups.id', ondelete='SET NULL', name='fk_bookmark_group'), nullable=True)
 
     created = db.Column(db.DateTime())
 
@@ -330,12 +335,12 @@ class Notification(db.Model):
 
     created_by_actor_id = db.Column(
         db.Integer(),
-        db.ForeignKey('actors.id', ondelete='SET NULL'),
+        db.ForeignKey('actors.id', ondelete='SET NULL', name='fk_notification_by_actor'),
         nullable=True,
     )
     for_identity_id = db.Column(
         db.Integer(),
-        db.ForeignKey('identities.id', ondelete='CASCADE'),
+        db.ForeignKey('identities.id', ondelete='CASCADE', name='fk_notification_for_identity'),
     )
     created = db.Column(db.DateTime())
 
@@ -352,11 +357,11 @@ class Follow(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     actor_id = db.Column(
         db.Integer(),
-        db.ForeignKey('actors.id', ondelete='CASCADE'),
+        db.ForeignKey('actors.id', ondelete='CASCADE', name='fk_follow_actor'),
     )
     target_actor_id = db.Column(
         db.Integer(),
-        db.ForeignKey('actors.id', ondelete='CASCADE'),
+        db.ForeignKey('actors.id', ondelete='CASCADE', name='fk_follow_target_actor'),
     )
 
     # Waiting for account review

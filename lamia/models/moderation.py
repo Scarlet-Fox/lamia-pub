@@ -19,7 +19,7 @@ class ModerationLog(db.Model):
 
     created = db.Column(db.DateTime())
     created_by_account_id = db.Column(db.Integer(),
-                                      db.ForeignKey('accounts.id'))
+                                      db.ForeignKey('accounts.id', ondelete='SET NULL', name='fk_moderationlog_account'))
 
 
 class Import(db.Model):
@@ -36,11 +36,11 @@ class Import(db.Model):
 
     request_by_account_id = db.Column(
         db.Integer(),
-        db.ForeignKey('accounts.id', ondelete='CASCADE'),
+        db.ForeignKey('accounts.id', ondelete='CASCADE', name='fk_import_requested_by'),
     )
     request_for_identity_id = db.Column(
         db.Integer(),
-        db.ForeignKey('identities.id', ondelete='CASCADE'),
+        db.ForeignKey('identities.id', ondelete='CASCADE', name='fk_import_for_identity'),
     )
     data_to_import = db.Column(JSONB())
 
@@ -74,19 +74,19 @@ class Report(db.Model):
     content_uri = db.Column(db.String())
     target_actor_id = db.Column(
         db.Integer(),
-        db.ForeignKey('actors.id', ondelete='SET NULL'),
+        db.ForeignKey('actors.id', ondelete='SET NULL', name='fk_report_target_actor'),
         nullable=True,
     )
 
     report_by_actor_id = db.Column(
         db.Integer(),
-        db.ForeignKey('actors.id', ondelete='SET NULL'),
+        db.ForeignKey('actors.id', ondelete='SET NULL', name='fk_report_created_by_actor'),
         nullable=True,
     )
     current_status = db.Column(db.String())
     assigned_to_account_id = db.Column(
         db.Integer(),
-        db.ForeignKey('accounts.id', ondelete='SET NULL'),
+        db.ForeignKey('accounts.id', ondelete='SET NULL', name='fk_report_assigned_to_account'),
         nullable=True,
     )
     comment_count = db.Column(db.Integer())
@@ -96,7 +96,7 @@ class Report(db.Model):
     resolved = db.Column(db.Boolean())
     marked_resolved_by_account_id = db.Column(
         db.Integer(),
-        db.ForeignKey('accounts.id', ondelete='SET NULL'),
+        db.ForeignKey('accounts.id', ondelete='SET NULL', name='fk_report_marked_resolved_by_actor'),
         nullable=True)
 
 
@@ -108,11 +108,11 @@ class ReportComment(db.Model):
     message = db.Column(db.String())
     created_by_account_id = db.Column(
         db.Integer(),
-        db.ForeignKey('accounts.id', ondelete='SET NULL'),
+        db.ForeignKey('accounts.id', ondelete='SET NULL', name='fk_reportcomment_created_by_account'),
         nullable=True)
     created = db.Column(db.DateTime())
 
-    report_id = db.Column(db.Integer(), db.ForeignKey('reports.id'))
+    report_id = db.Column(db.Integer(), db.ForeignKey('reports.id', ondelete='CASCADE', name='fk_reportcomment_report'))
     # Changing the status of a report should create a comment where the message
     # is something like 'changed status from ignored to open'.
     status_change = db.Column(db.Boolean())
@@ -129,12 +129,12 @@ class ActorCensor(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     target_actor_id = db.Column(
         db.Integer(),
-        db.ForeignKey('actors.id', ondelete='CASCADE'),
+        db.ForeignKey('actors.id', ondelete='CASCADE', name='fk_actorcensor_target_actor'),
     )
     created = db.Column(db.DateTime())
     created_by_account_id = db.Column(
         db.Integer(),
-        db.ForeignKey('accounts.id', ondelete='SET NULL'),
+        db.ForeignKey('accounts.id', ondelete='SET NULL', name='fk_actorcensor_created_by_account'),
         nullable=True)
 
 
@@ -149,14 +149,14 @@ class ActorMute(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     target_actor_id = db.Column(
         db.Integer(),
-        db.ForeignKey('actors.id', ondelete='CASCADE'),
+        db.ForeignKey('actors.id', ondelete='CASCADE', name='fk_actormute_target_actor'),
     )
     created = db.Column(db.DateTime())
     duration = db.Column(db.Interval())
     forever = db.Column(db.Boolean())
     created_by_account_id = db.Column(
         db.Integer(),
-        db.ForeignKey('accounts.id', ondelete='SET NULL'),
+        db.ForeignKey('accounts.id', ondelete='SET NULL', name='fk_actormute_created_by_account'),
         nullable=True)
 
 
@@ -172,12 +172,12 @@ class ActorBlock(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     target_actor_id = db.Column(
         db.Integer(),
-        db.ForeignKey('actors.id', ondelete='CASCADE'),
+        db.ForeignKey('actors.id', ondelete='CASCADE', name='fk_actorblock_target_actor'),
     )
     created = db.Column(db.DateTime())
     created_by_account_id = db.Column(
         db.Integer(),
-        db.ForeignKey('accounts.id', ondelete='SET NULL'),
+        db.ForeignKey('accounts.id', ondelete='SET NULL', name='fk_actorblock_created_by_account'),
         nullable=True)
 
 
@@ -194,7 +194,7 @@ class DomainCensor(db.Model):
     created = db.Column(db.DateTime())
     created_by_account_id = db.Column(
         db.Integer(),
-        db.ForeignKey('accounts.id', ondelete='SET NULL'),
+        db.ForeignKey('accounts.id', ondelete='SET NULL', name='fk_domaincensor_created_by_account'),
         nullable=True)
 
 
@@ -213,7 +213,7 @@ class DomainMute(db.Model):
     forever = db.Column(db.Boolean())
     created_by_account_id = db.Column(
         db.Integer(),
-        db.ForeignKey('accounts.id', ondelete='SET NULL'),
+        db.ForeignKey('accounts.id', ondelete='SET NULL', name='fk_domainmute_created_by_account'),
         nullable=True)
 
 
@@ -231,7 +231,7 @@ class DomainBlock(db.Model):
     created = db.Column(db.DateTime())
     created_by_account_id = db.Column(
         db.Integer(),
-        db.ForeignKey('accounts.id', ondelete='SET NULL'),
+        db.ForeignKey('accounts.id', ondelete='SET NULL', name='fk_domainblock_created_by_account'),
         nullable=True)
 
 
@@ -246,5 +246,5 @@ class DomainEmailBlock(db.Model):
     created = db.Column(db.DateTime())
     created_by_account_id = db.Column(
         db.Integer(),
-        db.ForeignKey('accounts.id', ondelete='SET NULL'),
+        db.ForeignKey('accounts.id', ondelete='SET NULL', name='fk_domainemailblock_created_by_account'),
         nullable=True)
