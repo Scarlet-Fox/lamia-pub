@@ -1,4 +1,4 @@
-**This system is nowhere near production right now. Watch this project for updates.**
+**Progress is being made towards 0.1.0 - if you are interested in contributing, please check out our open issues. Pull requests that pass review are accepted, and work is being done on specific guidelines for contributing, but don't let that stop you.**
 
 lamia
 =====
@@ -7,12 +7,7 @@ Distributed blogging, polls, and status updates powered by activitypub, python, 
 
 **Project Status:** currently in rapid development.
 
-* You may want to hold off on forking or making pull requests
-* Everything is chaos
-* lamia is a moving target
-* Consider - too much activity will not help me finish ^_^;
-
-**Interested in helping? Send a message to [Chel](https://computerfairi.es/@Chel)!**
+**Interested in joining the core team? Show us what you can do.**
 
 Documents
 ---------
