@@ -131,18 +131,14 @@ class Gino(_Gino):
         """Register our startup and shutdown handlers with the Starlette
         lifecycle middleware."""
         self.config = config
-        app.add_event_handler('startup', self.startup)
-        app.add_event_handler('shutdown', self.shutdown)
 
     def __init__(self,
-                 *args,
-                 app: Starlette = None,
                  config: Config = None,
+                 *args,
                  **kwargs) -> None:
         """Optionally: tie to an app on instantiation."""
         super().__init__(*args, **kwargs)
-        if app is not None:
-            self.init_app(app, config)
+        self.config = config
 
     async def startup(self) -> None:
         """Bind a pile of async threads to the database when Starlette starts."""
