@@ -23,11 +23,10 @@ Documents
 * [Code](docs/code.md) - code standards, please read if you want to contribute
 * [Glossary](docs/glossary.md) - dictionary for project terms
 
-Current Team
+Primary Team
 ------------
 
 * [scarly](https://computerfairi.es/@scarly) - project manager, lead developer
-* [Nuclear Baked Potato](https://cybre.space/@TheHottestPotato) - general co-conspirator, developer, tasty root vegetable, documentation wrangler
 * [maple](https://computerfairi.es/@maple) - layouts, css, admin insights
 * [Chel](https://computerfairi.es/@Chel) - interface design, user experience, project secretary
 
@@ -69,4 +68,4 @@ Other Contributors
 ------------------
 
 * [MrsRemi](https://www.deviantart.com/mrsremi) - created the first drawing of [Lamilia](docs/Lamilia.png)
-
+* [Nuclear Baked Potato](https://cybre.space/@TheHottestPotato) - general co-conspirator, developer, tasty root vegetable, documentation wrangler
