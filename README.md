@@ -50,6 +50,7 @@ This file should be named `lamia.config`. The contents are just environment vari
 DB_ECHO=False
 DB_DSN="postgresql://user:password@hostname/database"
 SITE_NAME="A Lamia Social"
+BASE_URL="http://your_hostname"
 SECRET_KEY=your_secret_key
 TEMPLATE_RELOAD=True
 ```
