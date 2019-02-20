@@ -18,7 +18,7 @@ if not DEV_CONFIG:
     raise Exception('Please create a lamia.dev.config file before running tests.')
 
 @pytest.fixture(scope='module')
-def sa_engine():
+def gino_db():
     asyncio.get_event_loop().run_until_complete(db.gino.create_all())
     yield db
     asyncio.get_event_loop().run_until_complete(db.gino.drop_all())
