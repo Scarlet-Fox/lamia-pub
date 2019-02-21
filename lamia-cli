@@ -1,0 +1,80 @@
+#!/usr/bin/env python
+
+import click
+import os
+
+@click.group()
+def main():
+    pass
+
+
+@main.command()
+@click.option('-c', '--changed-only', 'changed', is_flag=True, default=False,
+              help='If set, uses git to discover and lint only uncommitted files.')
+@click.argument('path', type=click.Path(exists=True), default='./lamia')
+def lint(changed, path):
+    """
+    Tool for running all linting operations at once in PATH.
+
+    PATH defaults to './lamia'
+
+    Runs yapf in place on the codebase. Then fails out if pylint gives a score
+    below a set threshold.
+    """
+    from pylint import lint
+    import yapf.yapflib.yapf_api as yapf
+
+    filepaths = []
+    for directory, _, files in os.walk(path):
+        filepaths.extend([
+            os.path.join(directory, file) for file in files
+            if file[-3:] == ".py"
+        ])
+
+    if changed:
+        # Disgusting but im not adding a depends for this
+        filepaths = subprocess.run(
+            ["git", "diff", "--name-only"],
+            capture_output=True).stdout.decode().split()
+    # Have to manually get each file to format, as the batch formatter in yapf
+    # requires line numbers
+    for filepath in filepaths:
+        yapf.FormatFile(filepath, in_place=True, style_config=".yapfrc")
+
+    pylint_results = lint.Run(
+        ['--rcfile', '.pylintrc'] + filepaths, do_exit=False)
+    if pylint_results.linter.stats['global_note'] < 7:
+        click.echo(
+            "Your pylint score was below a rating of 7.\n"
+            "Be advised that this will likely cause any contrbutions that "
+            "you have made to be delayed until the score can be raised. "
+            "Possible changes that you can make include:\n\n"
+            "Specify areas in the code where the lint errors can be ignored "
+            "using `pylint: disable` comments.\n"
+            "Correcting small mistakes that are hard to notice without linting, "
+            "such as trailing whitespace.")
+
+@main.command()
+def build_babel():
+    """
+    Fully build's the translation files for lamia from scratch.
+    """
+    import os
+    # Sadly babel is not intended to be used in python for this task, so we are just calling exec.
+    # I apologise for how disgusting this is.
+
+    os.spawnlp(os.P_WAIT, 'pybabel', 'pybabel', 'extract', '-F', '.babel', '-o', 'lamia/locales/lamia.pot', '-k', '_', 'lamia/')
+    os.spawnlp(os.P_WAIT, 'pybabel', 'pybabel', 'init', '-i', 'lamia/locales/lamia.pot', '-l', 'en', '-d', 'lamia/locales/', '-D', 'lamia')
+    os.spawnlp(os.P_WAIT, 'pybabel', 'pybabel', 'compile', '-f', '-i', 'lamia/locales/en/LC_MESSAGES/lamia.po', '-l', 'en', '-d', 'lamia/locales/', '-D', 'lamia')
+
+@main.command()
+def update_babel():
+    """
+    Updates existing translation files for lamia.
+    """
+    import os
+
+    os.spawnlp(os.P_WAIT, 'pybabel', 'pybabel', 'update', '-i', 'lamia/locales/lamia.pot', '-l', 'en', '-d', 'lamia/locales/', '-D', 'lamia')
+
+if __name__ == "__main__":
+    main()
