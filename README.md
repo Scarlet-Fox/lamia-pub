@@ -56,8 +56,9 @@ TEMPLATE_RELOAD=True
 3. Enter the lamia directory: `cd lamia`
 4. Grab the requirements (may be pip3 depending on your python version): `pip install requirements.txt`
 5. Hopefully the above works.
-6. `pip install uvicorn`
-7. `uvicorn lamia:app`
+6. Run `./lamia-cli build-babel` to initalize the translations system
+7. `pip install uvicorn`
+8. `uvicorn lamia:app`
 
 Other Contributors
 ------------------
