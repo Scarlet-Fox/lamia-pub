@@ -64,4 +64,4 @@ class RegisterUser(graphene.Mutation):
 
 class Mutations(graphene.ObjectType):
     """Container class for all lamia authentication mutations."""
-    register_user = RegisterUser.Field()
+    register_user = RegisterUser.Field(description=RegisterUser.mutate.__doc__.replace('\n',''))
