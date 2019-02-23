@@ -11,3 +11,4 @@ pycryptodome==3.7.3
 starlette==0.10.0
 ujson==1.35
 uvicorn==0.4.1
+graphene==2.1.3

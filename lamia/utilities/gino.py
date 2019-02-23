@@ -132,10 +132,7 @@ class Gino(_Gino):
         lifecycle middleware."""
         self.config = config
 
-    def __init__(self,
-                 config: Config = None,
-                 *args,
-                 **kwargs) -> None:
+    def __init__(self, config: Config = None, *args, **kwargs) -> None:
         """Optionally: tie to an app on instantiation."""
         super().__init__(*args, **kwargs)
         self.config = config

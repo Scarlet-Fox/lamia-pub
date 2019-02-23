@@ -9,7 +9,9 @@ import lamia.config as CONFIG
 db = gino.Gino(CONFIG.config)
 asyncio.get_event_loop().run_until_complete(db.startup())
 
+
 def shutdown_db() -> None:
     asyncio.run_coroutine_threadsafe(db.shutdown(), asyncio.get_event_loop())
+
 
 atexit.register(shutdown_db)

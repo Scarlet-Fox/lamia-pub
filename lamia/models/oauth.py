@@ -10,8 +10,10 @@ class OauthToken(db.Model):
     app_id = db.Column(
         db.Integer(), db.ForeignKey(
             'oauth_applications.id', ondelete='CASCADE'))
-    account_id = db.Column(db.Integer(),
-                           db.ForeignKey('accounts.id', ondelete='CASCADE', name='fk_oauthtoken_account'))
+    account_id = db.Column(
+        db.Integer(),
+        db.ForeignKey(
+            'accounts.id', ondelete='CASCADE', name='fk_oauthtoken_account'))
 
     access_token = db.Column(db.String())
     refresh_token = db.Column(db.String())

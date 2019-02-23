@@ -6,8 +6,13 @@ route.
 TODO: This file should look for extensions with routes and add them
 programmatically.
 """
+import graphene
+from graphql.execution.executors.asyncio import AsyncioExecutor
 from starlette.applications import Starlette
 from starlette.staticfiles import StaticFiles
+from starlette.graphql import GraphQLApp
+from lamia.views.graph import Queries
+from lamia.views.graph import Mutations
 import lamia.views.general as lamia_general
 import lamia.views.activitypub.nodeinfo as lamia_nodeinfo
 
@@ -29,3 +34,10 @@ def setup_routes(app: Starlette) -> None:
                   ['GET'])
     app.add_route('/nodeinfo/2.0.json', lamia_nodeinfo.nodeinfo_schema_20,
                   ['GET'])
+
+    # Graph QL endpoint
+    app.add_route(
+        '/graphql',
+        GraphQLApp(
+            schema=graphene.Schema(query=Queries, mutation=Mutations),
+            executor_class=AsyncioExecutor))
