@@ -21,7 +21,6 @@ from gino.strategies import GinoStrategy
 from asyncpg.exceptions import InvalidAuthorizationSpecificationError
 from starlette.datastructures import DatabaseURL, Secret
 from starlette.exceptions import HTTPException
-from starlette.applications import Starlette
 from starlette.config import Config
 
 # pylint: disable=too-few-public-methods
@@ -127,12 +126,7 @@ class Gino(_Gino):
     model_base_classes = _Gino.model_base_classes + (StarletteModelMixin, )
     query_executor = GinoExecutor
 
-    def init_app(self, app: Starlette, config: Config) -> None:
-        """Register our startup and shutdown handlers with the Starlette
-        lifecycle middleware."""
-        self.config = config
-
-    def __init__(self, config: Config = None, *args, **kwargs) -> None:
+    def __init__(self, config: Config = None, *args, **kwargs) -> None:  # pylint: disable=keyword-arg-before-vararg
         """Optionally: tie to an app on instantiation."""
         super().__init__(*args, **kwargs)
         self.config = config

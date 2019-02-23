@@ -1,7 +1,8 @@
 """Mutations associated with lamia authentication."""
+# pylint: disable=unused-argument
+import re
 import graphene
 import pendulum
-import re
 from graphql import GraphQLError
 from lamia.translation import _
 from lamia.config import BASE_URL
@@ -16,11 +17,15 @@ class RegisterUser(graphene.Mutation):
     identity = graphene.Field(lambda: IdentityObjectType)
 
     class Arguments:
+        """Graphene arguments meta class."""
         user_name = graphene.String()
         email_address = graphene.String()
         password = graphene.String()
 
     async def mutate(self, info, user_name, email_address, password):
+        """Creates a user account using the given user name, email address,
+        and password.
+        """
         password = password.strip()
         if len(password) < 5:
             raise GraphQLError(
@@ -38,7 +43,9 @@ class RegisterUser(graphene.Mutation):
                 _('This email address is already in use for another account.'))
 
         user_name_used_by = await Identity.select('id') \
-            .where((Identity.user_name == user_name) | (Identity.display_name == user_name)).gino.scalar()
+            .where(
+                (Identity.user_name == user_name) | (Identity.display_name == user_name)
+            ).gino.scalar()
         if not user_name_used_by is None:
             raise GraphQLError(
                 _('This user name is already in use. User names must be unique.'
