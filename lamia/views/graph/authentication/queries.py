@@ -1,7 +1,6 @@
 """Queries associated with lamia authentication."""
 # pylint: disable=unused-argument
 import graphene
-import pendulum
 from graphql import GraphQLError
 from lamia.views.graph.objecttypes import IdentityObjectType
 from lamia.models.features import Identity
@@ -11,13 +10,16 @@ from lamia.config import BASE_URL
 
 class IdentityQuery(graphene.ObjectType):
     """Returns an identity."""
-    identity = graphene.Field(lambda: IdentityObjectType)
+    identity = graphene.Field(
+        lambda: IdentityObjectType,
+        name=graphene.String(
+            'The "handle" name of the identity that you would like to find.'))
 
-    async def resolve_identity(self, info, user_name):
+    async def resolve_identity(self, info, name):
         """Looks up and returns an identity object based on the given user name."""
         query = Identity.join(Actor,
                               Actor.id == Identity.actor_id).select().where(
-                                  Identity.user_name == user_name)
+                                  Identity.user_name == name)
         identity_ = await query.gino.load(
             Identity.distinct(
                 Identity.id).load(actor=Actor.distinct(Actor.id))).first()
@@ -29,8 +31,7 @@ class IdentityQuery(graphene.ObjectType):
             display_name=identity_.display_name,
             user_name=identity_.user_name,
             uri=f'{BASE_URL}/u/{identity_.user_name}',
-            created=pendulum.now()  # TODO: Get this from the model.
-        )
+            created=identity_.created)
 
         return identity_object
 
