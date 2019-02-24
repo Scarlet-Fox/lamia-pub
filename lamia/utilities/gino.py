@@ -19,7 +19,7 @@ from gino.api import Gino as _Gino, GinoExecutor as _Executor
 from gino.engine import GinoConnection as _Connection, GinoEngine as _Engine
 from gino.strategies import GinoStrategy
 from asyncpg.exceptions import InvalidAuthorizationSpecificationError
-from starlette.datastructures import DatabaseURL, Secret
+from starlette.datastructures import URL, Secret
 from starlette.exceptions import HTTPException
 from starlette.config import Config
 
@@ -134,7 +134,7 @@ class Gino(_Gino):
     async def startup(self) -> None:
         """Bind a pile of async threads to the database when Starlette starts."""
         if self.config('DB_DSN', default=False):
-            dsn = str(self.config('DB_DSN', cast=DatabaseURL))
+            dsn = str(self.config('DB_DSN', cast=URL))
         else:
             dsn = URL(
                 drivername=self.config(
