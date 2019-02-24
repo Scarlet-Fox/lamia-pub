@@ -1,3 +1,11 @@
+<a href="https://travis-ci.org/Scarly-Cat/lamia">
+  <img src="https://api.travis-ci.org/Scarly-Cat/lamia.svg?branch=master">
+</a>
+
+<a href="https://coveralls.io/github/Scarly-Cat/lamia?branch=master">
+  <img src="https://coveralls.io/repos/github/Scarly-Cat/lamia/badge.svg?branch=master">
+</a>
+
 **Progress is being made towards 0.1.0 - if you are interested in contributing, please check out our open issues. Pull requests that pass review are accepted, and work is being done on specific guidelines for contributing, but don't let that stop you.**
 
 lamia
