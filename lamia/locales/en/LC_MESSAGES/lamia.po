@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-02-03 01:11-0500\n"
-"PO-Revision-Date: 2019-02-03 00:58-0500\n"
-"Last-Translator: CONNER BONDURANT <CONNER.BONDURANT@TRIPTYCH.ME>>\n"
+"POT-Creation-Date: 2019-02-24 10:49-0800\n"
+"PO-Revision-Date: 2019-02-24 10:49-0800\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -18,13 +18,13 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.6.0\n"
 
-#: lamia/__init__.py:43
-msgid "Translation is working: False"
-msgstr "Translation is working: True"
-
-#: lamia/__init__.py:46
+#: lamia/config.py:16
 msgid "A Lamia Community"
-msgstr "A Lamia Community"
+msgstr ""
+
+#: lamia/logging.py:16
+msgid "Translation is working: False"
+msgstr ""
 
 #: lamia/templates/index.html:47
 msgid ""
@@ -56,13 +56,13 @@ msgstr ""
 msgid "Footer here"
 msgstr ""
 
-#: lamia/utilities/email.py:103
+#: lamia/utilities/email.py:104
 msgid ""
 "Email has been stubbed according to settings in the config file. No "
 "emails can be sent."
 msgstr ""
 
-#: lamia/utilities/email.py:138
+#: lamia/utilities/email.py:139
 #, python-format
 msgid ""
 "Email authorisation failure. Server response: %s\n"
@@ -70,30 +70,46 @@ msgid ""
 "that it is correct."
 msgstr ""
 
-#: lamia/utilities/email.py:145
+#: lamia/utilities/email.py:146
 #, python-format
 msgid "EMAIL: Email send attempt failed to users for reason: %s"
 msgstr ""
 
-#: lamia/utilities/email.py:149
+#: lamia/utilities/email.py:151
 #, python-format
 msgid "EMAIL: Email connection attempt to SMTP server failed for reason: %s"
 msgstr ""
 
-#: lamia/utilities/email.py:153
+#: lamia/utilities/email.py:155
 #, python-format
 msgid "EMAIL: Email connection or send attempt failed for reason: %s"
 msgstr ""
 
-#: lamia/utilities/email.py:206 lamia/utilities/email.py:237
+#: lamia/utilities/email.py:207 lamia/utilities/email.py:238
 msgid "Email send attempt was stubbed"
 msgstr ""
 
-#: lamia/utilities/email.py:254
+#: lamia/utilities/email.py:255
 msgid "EMAIL: Shutting down email workers"
 msgstr ""
 
-#: lamia/utilities/email.py:260
+#: lamia/utilities/email.py:261
 msgid "EMAIL: Worker cancelled"
+msgstr ""
+
+#: lamia/views/graph/authentication/mutations.py:38
+msgid "Password is too short! Should be at least five characters in length."
+msgstr ""
+
+#: lamia/views/graph/authentication/mutations.py:43
+msgid "Invalid user name. Characters allowed are a-z and _."
+msgstr ""
+
+#: lamia/views/graph/authentication/mutations.py:49
+msgid "This email address is already in use for another account."
+msgstr ""
+
+#: lamia/views/graph/authentication/mutations.py:57
+msgid "This user name is already in use. User names must be unique."
 msgstr ""
 

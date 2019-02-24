@@ -30,7 +30,7 @@ async def email_server_outdir(): # Only used for testing.
     # make a folder to store caught emails in 
     with tempfile.TemporaryDirectory() as tempdir:
         maildir = os.path.join(tempdir, 'maildir')
-        controller = aiosmtpd.controller.Controller(aiosmtpd.handlers.Mailbox(maildir), port=TEST_PORT)
+        controller = aiosmtpd.controller.Controller(aiosmtpd.handlers.Mailbox(maildir), hostname='localhost', port=TEST_PORT)
         controller.start()
         yield maildir
 

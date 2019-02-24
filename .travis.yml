@@ -1,0 +1,16 @@
+language: python
+dist: xenial
+python:
+  - "3.7"
+install:
+  - pip install -r requirements.txt
+  - pip install -r requirements-dev.txt
+services:
+  - postgresql
+env:
+  - DB_ECHO=False DB_DSN="postgresql://postgres:@localhost/lamia_test" SITE_NAME="Some Lamia Tests" BASE_URL="http://localhost:8000" SECRET_KEY="2b4a5648a26bbd9d669886dc912876ecfc167e7f1d603607" TEMPLATE_RELOAD=True DEBUG=True
+before_script:
+  - psql -c 'create database lamia_test;' -U postgres
+  - ./scripts/lamia-cli build-babel
+script:
+  - pytest

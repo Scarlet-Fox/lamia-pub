@@ -5,7 +5,7 @@ import os
 from starlette.config import Config
 from lamia.translation import gettext as _
 
-if os.path.exists('lamia.dev.config'):
+if os.path.exists('lamia.dev.config') or os.environ.get('DEBUG', False):
     DEV_CONFIG = True
     config = Config('lamia.dev.config')  # pylint: disable=invalid-name
 else:

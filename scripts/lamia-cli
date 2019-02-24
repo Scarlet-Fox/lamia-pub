@@ -1,43 +1,15 @@
 #!/usr/bin/env python
+import sys
+import os
+sys.path.append(os.getcwd())
 
 import click
 import os
 import asyncio
 
-from lamia.models.activitypub import *
-from lamia.models.administration import *
-from lamia.models.features import *
-from lamia.models.moderation import *
-from lamia.models.oauth import *
-from lamia.database import db
-
 @click.group()
 def main():
     pass
-
-@main.command()
-def init_db():
-    """Initializes the lamia database from scratch."""
-    asyncio.get_event_loop().run_until_complete(db.gino.create_all())
-
-@main.command()
-@click.option('-y', '--skip-confirm', 'skip_confirm', is_flag=True, default=False,
-    help='If set, skips the confirmation and immediately clears the configured database.')
-def clear_db(skip_confirm):
-    """Completely wipes lamia's database, dropping all tables."""
-    confirmation = False
-    if skip_confirm:
-        confirmation = True
-    else:
-        print('Are you certain that you want to clear your database?\n')
-        user_input = input('To confirm this action, please type CONFIRM: ')
-        if user_input == 'CONFIRM':
-            confirmation = True
-        else:
-            print('Operation canceled.')
-    
-    if confirmation:
-        asyncio.get_event_loop().run_until_complete(db.gino.drop_all())
 
 @main.command()
 @click.option('-c', '--changed-only', 'changed', is_flag=True, default=False,
