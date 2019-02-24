@@ -3,6 +3,7 @@
 import re
 import graphene
 import pendulum
+from email_validator import validate_email, EmailSyntaxError, EmailUndeliverableError
 from graphql import GraphQLError
 from lamia.translation import _
 from lamia.config import BASE_URL
@@ -13,25 +14,51 @@ from lamia.activitypub.schema import ActorSchema
 ALLOWED_NAME_CHARACTERS_RE = re.compile(r'^[a-zA-Z_]+$')
 
 
+class LoginUser(graphene.Mutation):
+    """Log a user in and return an api token."""
+    token = graphene.String()
+
+    class Arguments:
+        """Graphene arguments meta class."""
+        email_address = graphene.String(
+            description=_('The email address for the account to login as.'))
+        password = graphene.String(
+            description=_('Password to use for this login attempt.'))
+
+    async def mutate(self, info, email_address, password):
+        """Attempts to log a user in using a given email address and
+        password.
+        """
+
+
 class RegisterUser(graphene.Mutation):
-    """Register a user account."""
+    """Register a user account and then return the identity details."""
     identity = graphene.Field(lambda: IdentityObjectType)
 
     class Arguments:
         """Graphene arguments meta class."""
         user_name = graphene.String(
             description=
-            'The user name for this new account. Should include only a-z and underscore characters.'
-        )
+            _('The user name for this new account.' + \
+            'Should include only a-z and underscore characters.'
+              ))
         email_address = graphene.String(
-            description='An email address associated with this account.')
+            description=_('An email address associated with this account.'))
         password = graphene.String(
-            description='A password with at least 5 characters.')
+            description=_('A password with at least 5 characters.'))
 
     async def mutate(self, info, user_name, email_address, password):
         """Creates a user account using the given user name, email address,
         and password.
         """
+        try:
+            validate_email(email_address)
+        except EmailSyntaxError:
+            raise GraphQLError(
+                _('Email address as entered is not a valid email address.'))
+        except EmailUndeliverableError:
+            pass
+
         password = password.strip()
         if len(password) < 5:
             raise GraphQLError(

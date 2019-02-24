@@ -9,6 +9,8 @@ from graphene.test import Client
 import ujson as json
 from lamia import app
 from graphql.error.located_error import GraphQLLocatedError
+from lamia.translation import _
+from lamia.utilities import response_contains_graphql_error
 
 def test_registration(gino_db):
     client = TestClient(app)
@@ -40,8 +42,8 @@ def test_registration(gino_db):
             """
         }
     ), headers={'Accept': 'application/json', 'content-type': 'application/json'})
-    response_body = json.loads(response.content)
-    assert response_body['errors'][0]['message'] == 'Password is too short! Should be at least five characters in length.'
+    assert response_contains_graphql_error(json.loads(response.content),
+        'Password is too short! Should be at least five characters in length.')
     
     # This should raise a graphql error due to the duplicate name
     response = client.post('/graphql', data=json.dumps({
@@ -52,8 +54,8 @@ def test_registration(gino_db):
             """
         }
     ), headers={'Accept': 'application/json', 'content-type': 'application/json'})
-    response_body = json.loads(response.content)
-    assert response_body['errors'][0]['message'] == 'This user name is already in use. User names must be unique.'
+    assert response_contains_graphql_error(json.loads(response.content),
+        'This user name is already in use. User names must be unique.')
 
     # This should raise a graphql error due to the duplicate email
     response = client.post('/graphql', data=json.dumps({
@@ -64,8 +66,8 @@ def test_registration(gino_db):
             """
         }
     ), headers={'Accept': 'application/json', 'content-type': 'application/json'})
-    response_body = json.loads(response.content)
-    assert response_body['errors'][0]['message'] == 'This email address is already in use for another account.'
+    assert response_contains_graphql_error(json.loads(response.content),
+        'This email address is already in use for another account.')
 
     # This should raise a graphql error due to the invalid username
     response = client.post('/graphql', data=json.dumps({
@@ -76,9 +78,21 @@ def test_registration(gino_db):
             """
         }
     ), headers={'Accept': 'application/json', 'content-type': 'application/json'})
+    assert response_contains_graphql_error(json.loads(response.content),
+        'Invalid user name. Characters allowed are a-z and _.')
+    
+    # This should raise a graphql error due to the invalid email syntax
+    response = client.post('/graphql', data=json.dumps({
+        'query': """
+            mutation testMutation {
+              registerUser(userName: "test_abc", emailAddress: "test_abc", password: "abcde") {
+                identity {displayName}}}
+            """
+        }
+    ), headers={'Accept': 'application/json', 'content-type': 'application/json'})
     response_body = json.loads(response.content)
-    assert response_body['errors'][0]['message'] == 'Invalid user name. Characters allowed are a-z and _.'
-
+    assert response_contains_graphql_error(json.loads(response.content),
+        'Email address as entered is not a valid email address.')
 
 def test_identity_query(gino_db):
     client = TestClient(app)
@@ -106,6 +120,7 @@ def test_identity_query(gino_db):
         }
     ), headers={'Accept': 'application/json', 'content-type': 'application/json'})
     response_body = json.loads(response.content)
-    assert response_body['errors'][0]['message'] == 'Identity does not exist!'
+    assert response_contains_graphql_error(json.loads(response.content),
+        'Identity does not exist!')
 
 

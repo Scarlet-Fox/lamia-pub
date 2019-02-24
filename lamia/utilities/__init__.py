@@ -1,5 +1,6 @@
 """Basic lamia utilities that don't need their own module."""
 from starlette.requests import Request
+from lamia.translation import _
 
 
 def get_request_base_url(request: Request) -> str:
@@ -29,3 +30,26 @@ async def get_site_stats() -> dict:
         'local_posts': local_posts,
         'open_registration': open_registration
     }
+
+
+def response_contains_graphql_error(response: dict,
+                                    error_message: str) -> bool:
+    """Given a graphql result and an error message, checks through the result
+    to see if the error message is included in response['errors'].
+    """
+
+    if response is None:
+        raise Exception(_('Response is null.'))
+
+    if 'errors' not in response:
+        return False
+
+    if response['errors'] == []:
+        return False
+
+    found_error = False
+    for error in response['errors']:
+        if error['message'] == _(error_message):
+            found_error = True
+
+    return found_error

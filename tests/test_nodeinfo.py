@@ -7,7 +7,7 @@ import pytest
 import ujson as json
 from starlette.testclient import TestClient
 from lamia import app
-from lamia.version import _version_
+from lamia.version import VERSION
 
 def test_nodeinfo_index():
     client = TestClient(app)
@@ -35,7 +35,7 @@ def test_nodeinfo_schema_20():
     
     assert response_body['version'] == '2.0'
     assert response_body['software']['name'] == 'lamia'
-    assert response_body['software']['version'] == _version_
+    assert response_body['software']['version'] == VERSION
     assert 'activitypub' in response_body['protocols']
     assert isinstance(response_body['services']['inbound'], list)
     assert isinstance(response_body['services']['outbound'], list)

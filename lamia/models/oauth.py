@@ -16,7 +16,6 @@ class OauthToken(db.Model):
             'accounts.id', ondelete='CASCADE', name='fk_oauthtoken_account'))
 
     access_token = db.Column(db.String())
-    refresh_token = db.Column(db.String())
     expires = db.Column(db.DateTime())
     created = db.Column(db.DateTime())
 

@@ -6,6 +6,7 @@ from lamia.views.graph.objecttypes import IdentityObjectType
 from lamia.models.features import Identity
 from lamia.models.activitypub import Actor
 from lamia.config import BASE_URL
+from lamia.translation import _
 
 
 class IdentityQuery(graphene.ObjectType):
@@ -13,6 +14,7 @@ class IdentityQuery(graphene.ObjectType):
     identity = graphene.Field(
         lambda: IdentityObjectType,
         name=graphene.String(
+            description=
             'The "handle" name of the identity that you would like to find.'))
 
     async def resolve_identity(self, info, name):
@@ -25,7 +27,7 @@ class IdentityQuery(graphene.ObjectType):
                 Identity.id).load(actor=Actor.distinct(Actor.id))).first()
 
         if identity_ is None:
-            raise GraphQLError('Identity does not exist!')
+            raise GraphQLError(_('Identity does not exist!'))
 
         identity_object = IdentityObjectType(
             display_name=identity_.display_name,

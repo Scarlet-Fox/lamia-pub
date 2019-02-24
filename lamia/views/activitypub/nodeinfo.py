@@ -13,7 +13,7 @@ from starlette.responses import JSONResponse
 from starlette.requests import Request
 from lamia.utilities import get_request_base_url
 from lamia.utilities import get_site_stats
-from lamia.version import _version_, _name_, _description_
+from lamia.version import VERSION, NAME, DESCRIPTION
 
 
 async def nodeinfo_index(request: Request) -> JSONResponse:
@@ -39,9 +39,9 @@ async def nodeinfo_schema_20(request: Request) -> JSONResponse:  # pylint: disab
         {
             'version': '2.0',
             'software': {
-                'name': _name_,
-                'description': _description_,
-                'version': _version_
+                'name': NAME,
+                'description': DESCRIPTION,
+                'version': VERSION
             },
             'protocols': [
                 'activitypub',
