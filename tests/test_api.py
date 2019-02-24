@@ -41,7 +41,7 @@ def test_registration(gino_db):
         }
     ), headers={'Accept': 'application/json', 'content-type': 'application/json'})
     response_body = json.loads(response.content)
-    assert len(response_body['errors']) == 1
+    assert response_body['errors'][0]['message'] == 'Password is too short! Should be at least five characters in length.'
     
     # This should raise a graphql error due to the duplicate name
     response = client.post('/graphql', data=json.dumps({
@@ -53,7 +53,7 @@ def test_registration(gino_db):
         }
     ), headers={'Accept': 'application/json', 'content-type': 'application/json'})
     response_body = json.loads(response.content)
-    assert len(response_body['errors']) == 1
+    assert response_body['errors'][0]['message'] == 'This user name is already in use. User names must be unique.'
 
     # This should raise a graphql error due to the duplicate email
     response = client.post('/graphql', data=json.dumps({
@@ -65,7 +65,7 @@ def test_registration(gino_db):
         }
     ), headers={'Accept': 'application/json', 'content-type': 'application/json'})
     response_body = json.loads(response.content)
-    assert len(response_body['errors']) == 1
+    assert response_body['errors'][0]['message'] == 'This email address is already in use for another account.'
 
     # This should raise a graphql error due to the invalid username
     response = client.post('/graphql', data=json.dumps({
@@ -77,7 +77,7 @@ def test_registration(gino_db):
         }
     ), headers={'Accept': 'application/json', 'content-type': 'application/json'})
     response_body = json.loads(response.content)
-    assert len(response_body['errors']) == 1
+    assert response_body['errors'][0]['message'] == 'Invalid user name. Characters allowed are a-z and _.'
 
 
 def test_identity_query(gino_db):
@@ -106,6 +106,6 @@ def test_identity_query(gino_db):
         }
     ), headers={'Accept': 'application/json', 'content-type': 'application/json'})
     response_body = json.loads(response.content)
-    assert len(response_body['errors']) == 1
+    assert response_body['errors'][0]['message'] == 'Identity does not exist!'
 
 
