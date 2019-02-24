@@ -6,6 +6,8 @@
   <img src="https://coveralls.io/repos/github/Scarly-Cat/lamia/badge.svg?branch=master">
 </a>
 
+**FYI - we are not really at a usable state, right now.**
+
 **Progress is being made towards 0.1.0 - if you are interested in contributing, please check out our open issues. Pull requests that pass review are accepted, and work is being done on specific guidelines for contributing, but don't let that stop you.**
 
 lamia
