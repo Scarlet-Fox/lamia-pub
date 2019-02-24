@@ -13,7 +13,7 @@ from starlette.responses import JSONResponse
 from starlette.requests import Request
 from lamia.utilities import get_request_base_url
 from lamia.utilities import get_site_stats
-from lamia.version import __version__
+from lamia.version import __version__, __name__, __description__
 
 
 async def nodeinfo_index(request: Request) -> JSONResponse:
@@ -39,7 +39,8 @@ async def nodeinfo_schema_20(request: Request) -> JSONResponse:  # pylint: disab
         {
             'version': '2.0',
             'software': {
-                'name': 'lamia',
+                'name': __name__,
+                'description': __description__,
                 'version': __version__
             },
             'protocols': [
