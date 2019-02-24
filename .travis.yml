@@ -13,4 +13,5 @@ before_script:
   - psql -c 'create database lamia_test;' -U postgres
   - ./scripts/lamia-cli build-babel
 script:
-  - pytest
+  - pytest --cov=lamia tests/
+  - coveralls
