@@ -10,7 +10,7 @@ from lamia.views.graph.objecttypes import IdentityObjectType
 from lamia.models.features import Identity, Account
 from lamia.activitypub.schema import ActorSchema
 
-ALLOWED_NAME_CHARACTERS_RE = re.compile(r'[a-zA-Z_]+')
+ALLOWED_NAME_CHARACTERS_RE = re.compile(r'^[a-zA-Z_]+$')
 
 
 class RegisterUser(graphene.Mutation):
