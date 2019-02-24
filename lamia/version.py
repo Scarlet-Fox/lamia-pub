@@ -2,6 +2,6 @@
 
 We don't really want to load the entire app for a simple version inquiry.
 """
-__version__ = '0.1.0-dev'
-__name__ = 'lamia'
-__description__ = 'We Are Muffins, Yes'
+_version_ = '0.1.0-dev'
+_name_ = 'lamia'
+_description_ = 'We Are Muffins, Yes'

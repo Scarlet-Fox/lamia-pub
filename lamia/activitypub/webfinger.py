@@ -14,7 +14,7 @@ from typing import Tuple
 from aiohttp import ClientSession
 import ujson as json
 
-from lamia.version import __version__
+from lamia.version import _version_
 
 PORT_RE = re.compile(r'(\:\d+)')
 
@@ -73,7 +73,7 @@ async def finger(identifier: str) -> dict:
         # We aren't going to be accepting anything other than json
         'Accept': 'q=2, application/jrd+json; q=1, application/json',
         # Gotta be a good neighbor
-        'User-Agent': f'Lamia/{__version__}',
+        'User-Agent': f'Lamia/{_version_}',
     }
 
     uid, url = normalize(identifier)
