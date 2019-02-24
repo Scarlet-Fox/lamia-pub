@@ -2,6 +2,7 @@
 just a plain federator. They're directly or indirectly associated with the
 user-level things that make ActivityPub taste better.
 """
+import bcrypt
 from lamia.database import db
 
 
@@ -47,6 +48,14 @@ class Account(db.Model):
     banned = db.Column(db.Boolean())
     # Profile customizations enabled/disabled for this account
     disable_profile_customizations = db.Column(db.Boolean())
+
+    def set_password(self, password: str) -> None:
+        """Hash a plaintext password and set the class property."""
+        self.password = str(bcrypt.hashpw(password.encode(), bcrypt.gensalt()))
+
+    def check_password(self, password: str) -> bool:
+        """Compare a plaintext password to the class property."""
+        return bcrypt.checkpw(password.encode(), self.password)
 
 
 class Identity(db.Model):

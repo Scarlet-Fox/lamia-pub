@@ -244,8 +244,8 @@ class ActorSchema(Schema):
         model.user_name = self.name
         model.uri = self.id
         model.local = False
-        model.created = pendulum.now()
-        model.last_updated = pendulum.now()
+        model.created = pendulum.now().naive()
+        model.last_updated = pendulum.now().naive()
 
         if 'preferredUsername' in self.representation:
             model.display_name = self.preferredUsername

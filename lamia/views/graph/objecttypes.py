@@ -11,6 +11,8 @@ a predictable approach to database/cache access.
 
 TODO: This file is a work in progress. Fields, classes, and methods will be
 added and removed as everything is felt out.
+
+TODO: Add descriptions where needed, once things settle down.
 """
 import graphene
 

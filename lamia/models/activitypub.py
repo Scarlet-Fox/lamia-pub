@@ -2,8 +2,10 @@
 ActivityPub. They may be referenced by other models but probably shouldn't
 depend on them.
 """
+from Crypto.PublicKey import RSA
 from gino.dialects.asyncpg import JSONB
 from lamia.database import db
+from lamia.config import BASE_URL
 
 
 class Actor(db.Model):
@@ -33,6 +35,22 @@ class Actor(db.Model):
     last_updated = db.Column(db.DateTime())
 
     data = db.Column(JSONB())
+
+    def generate_keys(self):
+        """Create new keys and stuff them into an already created actor"""
+        key = RSA.generate(2048)
+        self.private_key = key.export_key("PEM").decode()
+
+        try:
+            del self.data['publicKey']
+        except KeyError:
+            pass
+
+        self.data['publicKey'] = {
+            'id': f'{BASE_URL}/u/{self.user_name}#main-key',
+            'owner': f'{BASE_URL}/u/{self.user_name}',
+            'publicKeyPem': key.publickey().export_key("PEM").decode()
+        }
 
     # Convenience fields for local actors.
     identity_id = db.Column(
