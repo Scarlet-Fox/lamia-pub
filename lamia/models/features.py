@@ -51,11 +51,12 @@ class Account(db.Model):
 
     def set_password(self, password: str) -> None:
         """Hash a plaintext password and set the class property."""
-        self.password = str(bcrypt.hashpw(password.encode(), bcrypt.gensalt()))
+        self.password = bcrypt.hashpw(password.encode(),
+                                      bcrypt.gensalt()).decode()
 
     def check_password(self, password: str) -> bool:
         """Compare a plaintext password to the class property."""
-        return bcrypt.checkpw(password.encode(), self.password)
+        return bcrypt.checkpw(password.encode(), self.password.encode())
 
 
 class Identity(db.Model):
@@ -72,6 +73,11 @@ class Identity(db.Model):
         db.Integer(),
         db.ForeignKey(
             'actors.id', ondelete='CASCADE', name='fk_identity_actor'),
+    )
+    account_id = db.Column(
+        db.Integer(),
+        db.ForeignKey(
+            'accounts.id', ondelete='CASCADE', name='fk_identity_account'),
     )
     display_name = db.Column(db.String())
     user_name = db.Column(db.String())

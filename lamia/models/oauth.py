@@ -1,4 +1,7 @@
 """Oauth2 implementation for lamias everywhere."""
+import os
+import jwt
+import pendulum
 from lamia.database import db
 
 
@@ -16,8 +19,31 @@ class OauthToken(db.Model):
             'accounts.id', ondelete='CASCADE', name='fk_oauthtoken_account'))
 
     access_token = db.Column(db.String())
+    token_secret = db.Column(db.String())
     expires = db.Column(db.DateTime())
     created = db.Column(db.DateTime())
+
+    def set_access_token(self, payload: dict, days: int = 7) -> str:
+        """Encode a payload for this token."""
+        now = pendulum.now()
+        duration = pendulum.duration(days=days)
+        expires = now + duration
+
+        payload['created'] = now.to_iso8601_string()
+        payload['expiration'] = expires.to_iso8601_string()
+
+        self.expires = expires.naive()
+        self.created = now.naive()
+
+        secret = os.urandom(24).hex()
+        self.token_secret = secret
+        self.access_token = jwt.encode(
+            payload, secret, algorithm='HS256').decode()
+        return self.access_token
+
+    def decode_access_token(self, token: str) -> dict:
+        """Decode a previously encoded token."""
+        return jwt.decode(token, self.token_secret, algorithms=['HS256'])
 
 
 class OauthApplication(db.Model):

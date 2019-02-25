@@ -18,7 +18,7 @@ def test_registration(gino_db):
     # Test account creation
     response = client.post('/graphql', data=json.dumps({
         'query': """
-            mutation testMutation {
+            mutation {
               registerUser(userName: "test", emailAddress: "test@test.com", password: "abcde") {
                 identity {
                   displayName,
@@ -36,55 +36,55 @@ def test_registration(gino_db):
     # This should raise a graphql error due to the empty password
     response = client.post('/graphql', data=json.dumps({
         'query': """
-            mutation testMutation {
+            mutation {
               registerUser(userName: "test", emailAddress: "test@test.com", password: "") {
                 identity {displayName}}}
             """
         }
     ), headers={'Accept': 'application/json', 'content-type': 'application/json'})
     assert response_contains_graphql_error(json.loads(response.content),
-        'Password is too short! Should be at least five characters in length.')
+        _('Password is too short! Should be at least five characters in length.'))
     
     # This should raise a graphql error due to the duplicate name
     response = client.post('/graphql', data=json.dumps({
         'query': """
-            mutation testMutation {
+            mutation {
               registerUser(userName: "test", emailAddress: "test123@test.com", password: "abcde") {
                 identity {displayName}}}
             """
         }
     ), headers={'Accept': 'application/json', 'content-type': 'application/json'})
     assert response_contains_graphql_error(json.loads(response.content),
-        'This user name is already in use. User names must be unique.')
+        _('This user name is already in use. User names must be unique.'))
 
     # This should raise a graphql error due to the duplicate email
     response = client.post('/graphql', data=json.dumps({
         'query': """
-            mutation testMutation {
+            mutation {
               registerUser(userName: "test_a", emailAddress: "test@test.com", password: "abcde") {
                 identity {displayName}}}
             """
         }
     ), headers={'Accept': 'application/json', 'content-type': 'application/json'})
     assert response_contains_graphql_error(json.loads(response.content),
-        'This email address is already in use for another account.')
+        _('This email address is already in use for another account.'))
 
     # This should raise a graphql error due to the invalid username
     response = client.post('/graphql', data=json.dumps({
         'query': """
-            mutation testMutation {
+            mutation {
               registerUser(userName: "test@test.com", emailAddress: "test123@test.com", password: "abcde") {
                 identity {displayName}}}
             """
         }
     ), headers={'Accept': 'application/json', 'content-type': 'application/json'})
     assert response_contains_graphql_error(json.loads(response.content),
-        'Invalid user name. Characters allowed are a-z and _.')
+        _('Invalid user name. Characters allowed are a-z and _.'))
     
     # This should raise a graphql error due to the invalid email syntax
     response = client.post('/graphql', data=json.dumps({
         'query': """
-            mutation testMutation {
+            mutation {
               registerUser(userName: "test_abc", emailAddress: "test_abc", password: "abcde") {
                 identity {displayName}}}
             """
@@ -92,7 +92,53 @@ def test_registration(gino_db):
     ), headers={'Accept': 'application/json', 'content-type': 'application/json'})
     response_body = json.loads(response.content)
     assert response_contains_graphql_error(json.loads(response.content),
-        'Email address as entered is not a valid email address.')
+        _('Email address as entered is not a valid email address.'))
+
+
+access_token = ''
+def test_login(gino_db):
+    client = TestClient(app)
+    
+    # Test account creation
+    response = client.post('/graphql', data=json.dumps({
+        'query': """
+        mutation {loginUser(userName: "test@test.com", password: "abcde") {token}}
+        """
+        }
+    ), headers={'Accept': 'application/json', 'content-type': 'application/json'})
+    response_body = json.loads(response.content)
+    access_token = response_body['data'].get('loginUser', {}).get('token')
+    assert access_token is not None
+    
+    response = client.post('/graphql', data=json.dumps({
+        'query': """
+        mutation {loginUser(userName: "test", password: "abcde") {token}}
+        """
+        }
+    ), headers={'Accept': 'application/json', 'content-type': 'application/json'})
+    response_body = json.loads(response.content)
+    assert access_token is not None
+    
+    response = client.post('/graphql', data=json.dumps({
+        'query': """
+        mutation {loginUser(userName: "test", password: "12345") {token}}
+        """
+        }
+    ), headers={'Accept': 'application/json', 'content-type': 'application/json'})
+    response_body = json.loads(response.content)
+    assert response_contains_graphql_error(json.loads(response.content),
+        _('Invalid username or password.'))
+    
+    response = client.post('/graphql', data=json.dumps({
+        'query': """
+        mutation {loginUser(userName: "not_real", password: "abcde") {token}}
+        """
+        }
+    ), headers={'Accept': 'application/json', 'content-type': 'application/json'})
+    response_body = json.loads(response.content)
+    assert response_contains_graphql_error(json.loads(response.content),
+        _('Invalid username or password.'))
+
 
 def test_identity_query(gino_db):
     client = TestClient(app)
@@ -100,7 +146,7 @@ def test_identity_query(gino_db):
     # Test account (actually identity) querying
     response = client.post('/graphql', data=json.dumps({
         'query': """
-            {
+            query {
               identity(name: "test") {
                 displayName,
                 userName
@@ -121,6 +167,6 @@ def test_identity_query(gino_db):
     ), headers={'Accept': 'application/json', 'content-type': 'application/json'})
     response_body = json.loads(response.content)
     assert response_contains_graphql_error(json.loads(response.content),
-        'Identity does not exist!')
+        _('Identity does not exist!'))
 
 

@@ -9,6 +9,7 @@ from lamia.translation import _
 from lamia.config import BASE_URL
 from lamia.views.graph.objecttypes import IdentityObjectType
 from lamia.models.features import Identity, Account
+from lamia.models.oauth import OauthToken
 from lamia.activitypub.schema import ActorSchema
 
 ALLOWED_NAME_CHARACTERS_RE = re.compile(r'^[a-zA-Z_]+$')
@@ -20,15 +21,40 @@ class LoginUser(graphene.Mutation):
 
     class Arguments:
         """Graphene arguments meta class."""
-        email_address = graphene.String(
+        user_name = graphene.String(
             description=_('The email address for the account to login as.'))
         password = graphene.String(
             description=_('Password to use for this login attempt.'))
 
-    async def mutate(self, info, email_address, password):
-        """Attempts to log a user in using a given email address and
-        password.
+    async def mutate(self, info, user_name, password):
+        """Attempts to log a user in using either an email_address or a
+        local handle.
         """
+        query = Account.join(Identity, Account.id == Identity.account_id) \
+            .select() \
+            .where(Account.email_address == user_name)
+
+        account = await query.gino.load(Account.distinct(Account.id) \
+            .load(identity=Identity.distinct(Identity.id))).first()
+
+        if account is None:
+            query = Account.join(Identity, Account.id == Identity.account_id) \
+                .select() \
+                .where(Identity.user_name == user_name)
+
+            account = await query.gino.load(Account.distinct(Account.id) \
+                .load(identity=Identity.distinct(Identity.id))).first()
+
+            if account is None:
+                raise GraphQLError(_('Invalid username or password.'))
+
+        if account.check_password(password):
+            token = OauthToken(account_id=account.id)
+            token.set_access_token({'identity_id': account.identity.id})
+            await token.create()
+            return LoginUser(token=token.access_token)
+
+        raise GraphQLError(_('Invalid username or password.'))
 
 
 class RegisterUser(graphene.Mutation):
@@ -116,6 +142,7 @@ class RegisterUser(graphene.Mutation):
         account_model.created = created_
         account_model.set_password(password)
         await account_model.create()
+        await identity_model.update(account_id=account_model.id).apply()
 
         new_identity = IdentityObjectType(
             display_name=user_name,
@@ -131,3 +158,5 @@ class Mutations(graphene.ObjectType):
     """Container class for all lamia authentication mutations."""
     register_user = RegisterUser.Field(
         description=RegisterUser.mutate.__doc__.replace('\n', ''))
+    login_user = LoginUser.Field(
+        description=LoginUser.mutate.__doc__.replace('\n', ''))

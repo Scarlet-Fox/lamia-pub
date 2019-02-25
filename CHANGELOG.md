@@ -22,7 +22,7 @@ A human readable summary of important changes.
 - Babel configuration and setup current code with translation - [@TheHottestPotato](https://cybre.space/@TheHottestPotato)
 - Setup coveralls and travis ci for coverage in the main branch
 - Setup general framework for graphql api implementation
-- Created graphql query and mutation for user registration
+- Created graphql query and mutation for user registration/login
 
 ## Please use the following format for entries
 

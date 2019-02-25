@@ -6,7 +6,8 @@ import lamia.utilities.gino as gino
 import lamia.config as CONFIG
 
 db = gino.Gino(CONFIG.config)
-asyncio.get_event_loop().run_until_complete(db.startup())
+loop = asyncio.get_event_loop()
+loop.run_until_complete(db.startup())
 
 
 def shutdown_db() -> None:

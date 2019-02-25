@@ -14,7 +14,7 @@ import asyncio
 import sys
 
 from typing import Any
-from sqlalchemy.engine.url import URL
+from sqlalchemy.engine.url import URL as SQLA_URL
 from gino.api import Gino as _Gino, GinoExecutor as _Executor
 from gino.engine import GinoConnection as _Connection, GinoEngine as _Engine
 from gino.strategies import GinoStrategy
@@ -136,7 +136,7 @@ class Gino(_Gino):
         if self.config('DB_DSN', default=False):
             dsn = str(self.config('DB_DSN', cast=URL))
         else:
-            dsn = URL(
+            dsn = SQLA_URL(
                 drivername=self.config(
                     'DB_DRIVER', cast=str, default='asyncpg'),
                 host=self.config('DB_HOST', cast=str, default='localhost'),

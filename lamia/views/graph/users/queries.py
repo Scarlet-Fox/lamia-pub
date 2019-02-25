@@ -19,12 +19,10 @@ class IdentityQuery(graphene.ObjectType):
 
     async def resolve_identity(self, info, name):
         """Looks up and returns an identity object based on the given user name."""
-        query = Identity.join(Actor,
-                              Actor.id == Identity.actor_id).select().where(
-                                  Identity.user_name == name)
-        identity_ = await query.gino.load(
-            Identity.distinct(
-                Identity.id).load(actor=Actor.distinct(Actor.id))).first()
+        query = Identity.join(Actor, Actor.id == Identity.actor_id) \
+            .select().where(Identity.user_name == name)
+        identity_ = await query.gino.load(Identity.distinct(Identity.id) \
+            .load(actor=Actor.distinct(Actor.id))).first()
 
         if identity_ is None:
             raise GraphQLError(_('Identity does not exist!'))
