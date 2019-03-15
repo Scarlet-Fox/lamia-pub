@@ -71,7 +71,7 @@ class Email():
                 "A starlette app was provided, but no configuration.")
         if app is not None:
             self.init_app(app, config)
-        if config is not None:
+        elif config is not None:
             self.config = config
 
         self.stubs = []  # a list of stubbed emails, if needed.
