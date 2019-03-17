@@ -74,6 +74,18 @@ If set to true, enables ssl for the communication with the database. Defaults to
 
 These two settings configure the minimum and maximum number of database connections that can be alive in the database pool.
 
+### `REDIS_DSN`
+    URL for redis with shape `redis://[usrname:pass]@hostname` username is unused, but if password is included it will be used to authenticate with the redis server.
+
+### `REDIS_NO_PASS`
+    Supresses warning of no password on redis server when set to true, as a positive confirmation that the server has been secured.
+
+### `REDIS_MIN_POOL`
+    Sets the minimum number of pool workers, default is 1.
+
+### `REDIS_MAX_POOL`
+    Sets the maximum number of pool workers, defualt is 10.
+
 ## Development settings
 
 ### `DEBUG`
