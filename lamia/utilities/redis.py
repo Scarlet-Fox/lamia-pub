@@ -62,28 +62,23 @@ class Redis():
 
         # pylint: disable=attribute-defined-outside-init
         # Disabled because _startup functions as the init method for this class
-        self._pool = None
-        try:
-            self._pool = await aioredis.create_pool(
-                str(self.config('REDIS_DSN', cast=URL)),
-                minsize=self.config('REDIS_MINPOOL', cast=int, default=1),
-                maxsize=self.config('REDIS_MAXPOOL', cast=int, default=10))
-            if self.config('REDIS_DSN', cast=URL).password is None\
-                    and not self.config('REDIS_NO_PASS', cast=bool, default=False):
-                logging.warning(
-                    "REDIS: Was able to connect to redis server without a "
-                    "password, this could leave your redis server "
-                    "vulerable, if other security measures are not taken.\n"
-                    "   Please make sure you have properly "
-                    "secured the redis server.\n"
-                    "   This message can be suppresed by setting "
-                    "REDIS_NO_PASS to True in your configuration file.\n"
-                    "   Read here for more information on redis security: "
-                    "https://redis.io/topics/security")
-            self.command = aioredis.Redis(self._pool)
-
-        except aioredis.ReplyError as e:
-            sys.exit(e)
+        self._pool = await aioredis.create_pool(
+            str(self.config('REDIS_DSN', cast=URL)),
+            minsize=self.config('REDIS_MINPOOL', cast=int, default=1),
+            maxsize=self.config('REDIS_MAXPOOL', cast=int, default=10))
+        if self.config('REDIS_DSN', cast=URL).password is None\
+                and not self.config('REDIS_NO_PASS', cast=bool, default=False):
+            logging.warning(
+                "REDIS: Was able to connect to redis server without a "
+                "password, this could leave your redis server "
+                "vulerable, if other security measures are not taken.\n"
+                "   Please make sure you have properly "
+                "secured the redis server.\n"
+                "   This message can be suppresed by setting "
+                "REDIS_NO_PASS to True in your configuration file.\n"
+                "   Read here for more information on redis security: "
+                "https://redis.io/topics/security")
+        self.command = aioredis.Redis(self._pool)
         # pylint: enable=attribute-defined-outside-init
 
     async def _shutdown(self) -> None:
