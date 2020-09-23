@@ -32,7 +32,6 @@ Primary Team
 ------------
 
 * [scarly](https://computerfairi.es/@scarly) - project manager, lead developer
-* [maple](https://computerfairi.es/@maple) - layouts, css, admin insights
 * [Chel](https://computerfairi.es/@Chel) - interface design, user experience, project secretary
 
 Installation Instructions
