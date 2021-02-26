@@ -2,7 +2,7 @@ Click==7.0
 Jinja2==2.10
 SQLAlchemy==1.2.18
 aiofiles==0.4.0
-aiohttp==3.5.4
+aiohttp==3.7.4
 aiosmtplib==1.0.4
 asyncpg==0.18.2
 gino==0.8.1
