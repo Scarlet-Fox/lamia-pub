@@ -4,7 +4,7 @@ SQLAlchemy==1.2.18
 aiofiles==0.4.0
 aiohttp==3.5.4
 aiosmtplib==1.0.4
-asyncpg==0.18.2
+asyncpg==0.21.0
 gino==0.8.1
 pendulum==2.0.4
 pycryptodome==3.7.3
